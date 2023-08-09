@@ -48,11 +48,11 @@ def populate_database(data_file, conn):
 
             print("-- Loading data into database...")
             for line in lines:
-                values = line.strip().split(';')
-                if '?' in values:
+                values = line.strip().split(',')
+                if '' in values:
                     continue
                 conn.execute("""
-                    INSERT INTO p.consumption (record_date, record_time, global_active_power, global_reactive_power, voltage, global_intensity, sub_metering_1, sub_metering_2, sub_metering_3)
+                    INSERT INTO p.consumption (id,start_date,end_date,duration_days,device_type,device_category,device_name,files_names,total_power)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
                 """, values)
 
@@ -77,4 +77,4 @@ def populate_database(data_file, conn):
         conn.disconnect()
 
 create_database_schema('create_db_schema.sql', connector)
-populate_database('household_power_consumption.txt', connector)
+populate_database('consumption.csv', connector)
