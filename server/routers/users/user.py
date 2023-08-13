@@ -1,6 +1,6 @@
 import json
 from fastapi import APIRouter
-from ...config.database import PostgresConnector
+from ...model.dbconnector import PostgresConnector
 
 router = APIRouter()
 
