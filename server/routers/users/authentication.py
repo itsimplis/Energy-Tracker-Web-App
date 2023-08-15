@@ -18,13 +18,11 @@ connector = PostgresConnector(
     password="password",
 )
 
-
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, Decimal):
             return float(o)
         return super(DecimalEncoder, self).default(o)
-
 
 class RegisterData(BaseModel):
     email: str
@@ -85,7 +83,7 @@ async def register(data: RegisterData):
     hashed_password = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt())
 
     connector.execute(
-        "INSERT INTO prd.user (username, email, password, first_name, last_name, age, gender, country) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+        "INSERT INTO p.user (username, email, password, first_name, last_name, age, gender, country) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
         (data.username, data.email, hashed_password.decode('utf-8'), data.first_name, data.last_name, data.age, data.gender, data.country)
     )
 
@@ -99,7 +97,7 @@ async def login(data: LoginData):
     connector.connect()
 
     result = connector.execute(
-        "SELECT * FROM prd.user WHERE prd.user.username = %s", (data.username,)
+        "SELECT * FROM p.user WHERE p.user.username = %s", (data.username,)
     )
 
     if result:

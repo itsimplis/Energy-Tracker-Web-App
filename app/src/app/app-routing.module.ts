@@ -7,11 +7,14 @@ import { DevicesComponent } from './pages/devices/devices.component';
 import { AlertsComponent } from './pages/alerts/alerts.component';
 import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { AccountComponent } from './pages/account/account.component';
-
+import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './pages/register/register.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home-page', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   { path: 'devices', component: DevicesComponent, canActivate: [AuthGuard]},
   { path: 'alerts', component: AlertsComponent, canActivate: [AuthGuard]},
