@@ -25,16 +25,10 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(o)
 
 class RegisterData(BaseModel):
-    email: str
     username: str
+    email: str
     password: str
     password2: str
-    first_name: str
-    last_name: str
-    age: str
-    gender: str
-    country: str
-    
 
 class LoginData(BaseModel):
     username: str
@@ -68,7 +62,7 @@ async def register(data: RegisterData):
     # Case check - Password validation failed
     if (data.password != data.password2):
         raise HTTPException(
-            status_code=400, detail="Password do not match!")
+            status_code=400, detail="Passwords do not match!")
 
     # Case check - Username already exists
     result = connector.execute(
@@ -83,8 +77,8 @@ async def register(data: RegisterData):
     hashed_password = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt())
 
     connector.execute(
-        "INSERT INTO p.user (username, email, password, first_name, last_name, age, gender, country) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-        (data.username, data.email, hashed_password.decode('utf-8'), data.first_name, data.last_name, data.age, data.gender, data.country)
+        "INSERT INTO p.user (username, email, password, first_name, last_name, age, gender, country) VALUES (%s, %s, %s, '', '', '', '', '')",
+        (data.username, data.email, hashed_password.decode('utf-8'))
     )
 
     connector.commit()

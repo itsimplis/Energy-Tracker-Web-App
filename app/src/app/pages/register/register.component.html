@@ -1,25 +1,41 @@
+<ng-template #registerSuccess>
+    <mat-card-title class="item-centered">Registration successful !</mat-card-title>
+    <mat-card-subtitle class="item-centered">Your account has been created successfully</mat-card-subtitle>
+    <div class="wrapper">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+        </svg>
+    </div>
+</ng-template>
+
 <mat-card class="register-card">
-    <mat-card-title class="text-center">Login</mat-card-title>
-    <mat-card-content>
-      <mat-form-field>
-        <mat-label>Username</mat-label>
-        <input matInput placeholder="Username" [(ngModel)]="username">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Email</mat-label>
-        <input matInput placeholder="Email" [(ngModel)]="email">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Password</mat-label>
-        <input matInput type="password" placeholder="Password" [(ngModel)]="password">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Verify Password</mat-label>
-        <input matInput type="password" placeholder="Verify Password" [(ngModel)]="password2">
-      </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="register()">Register</button>
-      <a routerLink="/register">Register an account</a>
-    </mat-card-actions>
-  </mat-card>
+    <div *ngIf="output.result != 'success' else registerSuccess">
+        <mat-card-title class="item-centered">Register</mat-card-title>
+        <mat-card-subtitle class="item-centered">Please provide your details to create a new account</mat-card-subtitle>
+        <br>
+        <mat-divider></mat-divider>
+        <br>
+        <mat-card-content>
+            <mat-form-field class="form-items-centered">
+                <mat-label>Username</mat-label>
+                <input matInput placeholder="Username" [(ngModel)]="username" required>
+            </mat-form-field>
+            <mat-form-field class="form-items-centered">
+                <mat-label>Email</mat-label>
+                <input matInput placeholder="Email" [(ngModel)]="email" required>
+            </mat-form-field>
+            <mat-form-field class="form-items-centered">
+                <mat-label>Password</mat-label>
+                <input matInput type="password" placeholder="Password" [(ngModel)]="password" required>
+            </mat-form-field>
+            <mat-form-field class="form-items-centered">
+                <mat-label>Verify Password</mat-label>
+                <input matInput type="password" placeholder="Verify Password" [(ngModel)]="password2" required>
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions class="form-items-centered">
+            <button [disabled]="username == '' || email == '' || password == '' || password2 == '' "mat-raised-button color="primary" (click)="register()">Register</button>
+        </mat-card-actions>
+    </div>
+</mat-card>

@@ -12,24 +12,6 @@ export class UserApiService {
 
   constructor(private http: HttpClient) { }
 
-  // [POST] Send user details to register
-  registerUser(username: string, email: string, password: string, password2: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/user/register`, {
-      username: username,
-      email: email,
-      password: password,
-      password2: password2,
-    });
-  }
-
-  // [POST] Send user credentials to login
-  loginUser(username: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/user/login`, {
-      username: username,
-      password: password,
-    });
-  }
-
   // [GET] Get user details
   getUser(username: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/user/get?username=${username}`, { withCredentials: true });

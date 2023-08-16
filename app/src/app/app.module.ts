@@ -27,6 +27,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -54,11 +55,12 @@ import { RegisterComponent } from './pages/register/register.component';
     MatToolbarModule,
     MatCardModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
   ],
   providers: [
     JwtHelperService,
-    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }
+    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+    MatSnackBar
   ],
   bootstrap: [AppComponent]
 })
