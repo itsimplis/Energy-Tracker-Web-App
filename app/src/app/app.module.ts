@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { FormsModule } from '@angular/forms';
+import { FlexLayoutModule} from '@angular/flex-layout'
 
 // Angular Material
 import { MatButtonModule} from '@angular/material/button';
@@ -19,6 +20,7 @@ import { MatTableModule, MatTableDataSource} from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input'
+import { MatBadgeModule } from '@angular/material/badge'
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
@@ -28,7 +30,7 @@ import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { AccountComponent } from './pages/account/account.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     HomeComponent,
     StatisticsComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    AccountComponent
   ],
   imports: [
     AppRoutingModule,
@@ -46,6 +49,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
+    FlexLayoutModule,
     MatButtonModule,
     MatSidenavModule,
     MatTableModule,
@@ -56,6 +60,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatBadgeModule
   ],
   providers: [
     JwtHelperService,

@@ -14,11 +14,13 @@ export class LoginComponent {
   output: Output;
   username: string;
   password: string;
+  hidePwd: boolean;
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar) {
     this.output = { result: '', message: '' };
     this.username = '';
     this.password = '';
+    this.hidePwd = true;
   }
 
   // Login to the account

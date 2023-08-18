@@ -47,7 +47,7 @@ async def get_data(username: str):
     result = connector.execute(f"""
         SELECT p.user.username, p.user.email, p.user.first_name, p.user.last_name, p.user.age, p.user.gender, p.user.country 
         FROM p.user
-        WHERE p.user.username = %s""", (username))
+        WHERE p.user.username = %s""", (username,))
     
     data = [collections.OrderedDict(zip(keys, row)) for row in result]
     json_data = json.dumps(data, cls=DecimalEncoder)
@@ -76,7 +76,7 @@ async def update(data: UpdateData):
 
     # Update user's details
     connector.execute(
-        "UPDATE p.user SET p.user.first_name = %s, p.user.last_name = %s, p.user.age = %s, p.user.gender = %s, p.user.country = %s WHERE p.user.username = %s",
+        "UPDATE p.user SET first_name = %s, last_name = %s, age = %s, gender = %s, country = %s WHERE username = %s",
         (data.first_name, data.last_name, data.age, data.gender, data.country, data.username)
     )
 

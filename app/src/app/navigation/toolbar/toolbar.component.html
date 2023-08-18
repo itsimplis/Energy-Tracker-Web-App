@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-    <div fxHide.gt-xs>
+    <div>
         <button mat-icon-button (click)="onToggleSidenav()">
             <mat-icon>menu</mat-icon>
         </button>
@@ -7,10 +7,12 @@
     <div>
         <a routerLink="/home">Home Energy Consumption Monitor</a>
     </div>
-    <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
+    <div fxFlex fxLayout fxLayoutAlign="end">
         <ul fxLayout fxLayoutGap="65px" class="navigation-items">
-            <li>
-                <!-- Todo: add icons later -->
+            <li *ngIf="isAuthenticated()">
+                <button mat-icon-button routerLink="/alerts">
+                    <mat-icon matBadge="15" matBadgeColor="warn">notifications_active</mat-icon>
+                </button>
             </li>
             <li>
                 <!-- Todo: add icons later -->

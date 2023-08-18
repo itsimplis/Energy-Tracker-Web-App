@@ -1,4 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
+import { AuthenticationService } from 'src/app/service/authentication.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -7,9 +8,16 @@ import { Component, Output, EventEmitter } from '@angular/core';
 })
 export class ToolbarComponent {
 
+  constructor(private authenticationService: AuthenticationService) {}
+
   @Output() public sidenavToggle = new EventEmitter();
 
   onToggleSidenav() {
     this.sidenavToggle.emit();
+  }
+
+   // Check if user got authenticated
+   isAuthenticated(): boolean {
+    return this.authenticationService.isAuthenticated();
   }
 }

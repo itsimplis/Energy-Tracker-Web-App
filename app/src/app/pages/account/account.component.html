@@ -1,1 +1,58 @@
-<h1 style="text-align: center;">My account page !</h1>
+<mat-card class="user-info-card">
+    <mat-card-header>
+        <mat-card-title>Account Details</mat-card-title>
+    </mat-card-header>
+    <br>
+    <mat-divider></mat-divider>
+    <br>
+    <mat-card-content>
+        <div fxLayout="row wrap" fxLayoutGap="10px">
+            <mat-icon class="user-icon">account_circle</mat-icon>
+            <div fxLayoutGap="10px">
+            <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput [(ngModel)]="username" (ngModelChange)="onInputChange()" readonly>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput [(ngModel)]="email" (ngModelChange)="onInputChange()" readonly>
+            </mat-form-field>
+        </div>
+        </div>
+    </mat-card-content>
+    <mat-card-header>
+        <mat-card-title>User Details</mat-card-title>
+    </mat-card-header>
+    <br>
+    <mat-divider></mat-divider>
+    <br>
+    <mat-card-content>
+        <div fxLayout="row wrap" fxLayoutGap="10px">
+
+            <mat-form-field>
+                <mat-label>First Name</mat-label>
+                <input matInput [(ngModel)]="first_name" (ngModelChange)="onInputChange()">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Last Name</mat-label>
+                <input matInput [(ngModel)]="last_name" (ngModelChange)="onInputChange()">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Age</mat-label>
+                <input matInput [(ngModel)]="age" (ngModelChange)="onInputChange()">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Gender</mat-label>
+                <input matInput [(ngModel)]="gender" (ngModelChange)="onInputChange()">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Country</mat-label>
+                <input matInput [(ngModel)]="country" (ngModelChange)="onInputChange()">
+            </mat-form-field>
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="primary" [disabled]="!isFormChanged" (click)="updateUserDetails()">Update
+            Details</button>
+    </mat-card-actions>
+</mat-card>
