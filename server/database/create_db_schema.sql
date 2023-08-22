@@ -35,6 +35,15 @@ CREATE TABLE p.user_consumption (
     PRIMARY KEY(user_username, consumption_id)
 );
 
+CREATE TABLE p.alert (
+    id SERIAL PRIMARY KEY NOT NULL,
+    username VARCHAR(100),
+    title VARCHAR(100),
+    description VARCHAR(250),
+    type CHAR(1),
+    read_status CHAR(1)
+);
+
 CREATE TABLE p.device (
     type SERIAL PRIMARY KEY NOT NULL,
     power_per_second DECIMAL(6,1)
