@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../service/authentication.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -7,4 +8,10 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
 
+  constructor(private authenticationService: AuthenticationService) { }
+
+  // Check if user got authenticated
+  isAuthenticated(): boolean {
+    return this.authenticationService.isAuthenticated();
+  }
 }

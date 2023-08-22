@@ -1,1 +1,11 @@
-<h1 style="text-align: center;">Home page :)</h1>
+<div class="home-content">
+    <div class="center-content">
+      <h1>Welcome to the Energy Management App</h1>
+      <p>Efficiently manage your home energy consumption with our user-friendly tools.</p>
+      <div class="button-container">
+        <button *ngIf="!isAuthenticated()" mat-raised-button color="primary" routerLink="/login">Login</button>
+        <button *ngIf="!isAuthenticated()" mat-raised-button color="accent" routerLink="/register">Register</button>
+        <button *ngIf="isAuthenticated()" mat-raised-button color="primary" routerLink="/dashboard">Go to Dashboard</button>
+      </div>
+    </div>
+  </div>
