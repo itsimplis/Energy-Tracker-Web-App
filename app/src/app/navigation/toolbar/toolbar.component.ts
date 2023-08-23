@@ -1,3 +1,4 @@
+import { DataApiService } from './../../service/data-api.service';
 import { Component, Output, EventEmitter } from '@angular/core';
 import { AuthenticationService } from 'src/app/service/authentication.service';
 
@@ -8,16 +9,41 @@ import { AuthenticationService } from 'src/app/service/authentication.service';
 })
 export class ToolbarComponent {
 
-  constructor(private authenticationService: AuthenticationService) {}
+  unreadAlerts: any[];
+
+  constructor(private authenticationService: AuthenticationService, private dataApiService: DataApiService) {
+    this.unreadAlerts = [];
+   }
 
   @Output() public sidenavToggle = new EventEmitter();
+
+  ngOnInit(): void {
+    this.loadAlerts();
+  }
 
   onToggleSidenav() {
     this.sidenavToggle.emit();
   }
 
-   // Check if user got authenticated
-   isAuthenticated(): boolean {
+  // Check if user got authenticated
+  isAuthenticated(): boolean {
     return this.authenticationService.isAuthenticated();
   }
+
+  
+
+  loadAlerts() {
+
+    this.unreadAlerts = [];
+
+    this.dataApiService.getUnreadAlerts(this.authenticationService.getUserName()!).subscribe({
+      next: (data) => {
+        this.unreadAlerts = data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    })
+  }
+
 }

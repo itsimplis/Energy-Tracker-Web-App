@@ -21,6 +21,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input'
 import { MatBadgeModule } from '@angular/material/badge'
+import  { MatMenuModule} from '@angular/material/menu'
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
@@ -60,7 +61,8 @@ import { AccountComponent } from './pages/account/account.component';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatMenuModule
   ],
   providers: [
     JwtHelperService,

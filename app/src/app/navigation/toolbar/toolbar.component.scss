@@ -17,6 +17,11 @@ mat-toolbar{
     border-radius: 3px;
 }
 
+.alerts-menu {
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
 @media(max-width: 959px){
     mat-toolbar{
         border-radius: 0px;
