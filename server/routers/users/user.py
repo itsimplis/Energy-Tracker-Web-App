@@ -45,7 +45,7 @@ class UpdateData(BaseModel):
 # ===============================================================================================
 # Endpoint to get the user details
 @router.get("/get")
-async def get_data(username: str):
+async def get_user(username: str):
     connector.connect()
     keys = ["username", "email", "first_name", "last_name", "age", "gender", "country", "visibility", "notifications"]
     result = connector.execute(f"""
@@ -61,7 +61,7 @@ async def get_data(username: str):
 # ===============================================================================================
 # Endpoint to update user data
 @router.patch("/update")
-async def update(data: UpdateData):
+async def update_user(data: UpdateData):
     connector.connect()
 
     try:

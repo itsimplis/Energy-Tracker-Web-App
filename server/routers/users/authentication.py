@@ -41,7 +41,7 @@ JWT_SECRET_KEY = "7f59da32cdeef05ac9ec8a5da22b9f120c152bccfc1a02a57b96db5c14db52
 # ===============================================================================================
 # Endpoint to register as a new user
 @router.post("/register")
-async def register(data: RegisterData):
+async def register_user(data: RegisterData):
     connector.connect()
 
     try:
@@ -90,7 +90,7 @@ async def register(data: RegisterData):
 # ===============================================================================================
 # Endpoint to login as an existing user
 @router.post("/login")
-async def login(data: LoginData):
+async def login_user(data: LoginData):
     connector.connect()
 
     try:

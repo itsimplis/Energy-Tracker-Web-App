@@ -43,14 +43,14 @@ def convert_to_json(result, keys):
     json_data = json.dumps(data, cls=DecimalEncoder)
     return json.loads(json_data)
 
-# ****************
-# ALERTS
-# ****************
+# **************** #
+# ALERTS ENDPOINTS #
+# **************** #
 
 # ===============================================================================================
 # Endpoint to get user's alerts, with basic info
 @router.get("/getAlerts")
-async def get_data(username: str, unreadAlertsOnly: bool):
+async def get_alerts(username: str, unreadAlertsOnly: bool):
     
     with database_connection():
         keys = ["id", "title", "type"]
@@ -71,7 +71,7 @@ async def get_data(username: str, unreadAlertsOnly: bool):
 # ===============================================================================================
 # Endpoint to get user's all unread alerts, with all info
 @router.get("/getAlertsDetails")
-async def get_data(username: str):
+async def get_alerts_details(username: str):
     
     with database_connection():
         keys = ["id", "title", "description", "date", "type", "read_status"]
@@ -85,23 +85,39 @@ async def get_data(username: str):
 
 # ===============================================================================================
 # Endpoint to add an alert for a user
-@router.get("/addAlert")
-async def get_data(data: AddAlert):
+@router.post("/addAlert")
+async def add_alert(data: AddAlert):
     
     with database_connection():
         connector.execute(f"""
             INSERT INTO p.alert (username, title, description, date, type, read_status) 
-            VALUES (%s, %s, %s, %s, %s, %s)f""",
+            VALUES (%s, %s, %s, %s, %s, %s)""",
             (data.username, data.title, data.description, data.date, data.type, data.read_status)
         )
         connector.commit()
-        
+
     return {"message": f"A new alert has been added!"}
 
 # ===============================================================================================
+# Endpoint to update an alert for a user (alert read status)
+@router.patch("/updateAlert")
+async def update_alert(data: AddAlert):
+    
+    with database_connection():
+        connector.execute(f"""
+            UPDATE p.alert 
+            SET read_status = %s
+            WHERE id = %s""",
+            (data.read_status, data.id)
+        )
+        connector.commit()
+        
+    return {"message": f"The alert read status has been updated!"}
+
+# ===============================================================================================
 # Endpoint to clear all alerts of a user
-@router.get("/clearAlerts")
-async def get_data(username: str):
+@router.post("/clearAlerts")
+async def clear_alerts(username: str):
     
     with database_connection():
 
