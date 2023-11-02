@@ -29,6 +29,8 @@ class GetData(BaseModel):
     age: str
     gender: str
     country: str
+    visibility: str
+    notifications: str
 
 class UpdateData(BaseModel):
     username: str
@@ -37,15 +39,17 @@ class UpdateData(BaseModel):
     age: str
     gender: str
     country: str
+    visibility: str
+    notifications: str
 
 # ===============================================================================================
 # Endpoint to get the user details
 @router.get("/get")
 async def get_data(username: str):
     connector.connect()
-    keys = ["username", "email", "first_name", "last_name", "age", "gender", "country"]
+    keys = ["username", "email", "first_name", "last_name", "age", "gender", "country", "visibility", "notifications"]
     result = connector.execute(f"""
-        SELECT p.user.username, p.user.email, p.user.first_name, p.user.last_name, p.user.age, p.user.gender, p.user.country 
+        SELECT p.user.username, p.user.email, p.user.first_name, p.user.last_name, p.user.age, p.user.gender, p.user.country, p.user.visibility, p.user.notifications 
         FROM p.user
         WHERE p.user.username = %s""", (username,))
     
@@ -60,25 +64,28 @@ async def get_data(username: str):
 async def update(data: UpdateData):
     connector.connect()
 
-    result = connector.execute(
-        "SELECT * FROM p.user WHERE p.user.username = %s", (data.username,)
-    )
+    try:
+        result = connector.execute(
+            "SELECT * FROM p.user WHERE p.user.username = %s", (data.username,)
+        )
 
-    if result:
-        user = result[0]
-    else:
-        user = None
+        if result:
+            user = result[0]
+        else:
+            user = None
 
-    # Case check - User does not exist
-    if user is None:
-        raise HTTPException(
-            status_code=400, detail="User does not exist!")
+        # Case check - User does not exist
+        if user is None:
+            raise HTTPException(
+                status_code=400, detail="User does not exist!")
 
-    # Update user's details
-    connector.execute(
-        "UPDATE p.user SET first_name = %s, last_name = %s, age = %s, gender = %s, country = %s WHERE username = %s",
-        (data.first_name, data.last_name, data.age, data.gender, data.country, data.username)
-    )
+        # Update user's details
+        connector.execute(
+            "UPDATE p.user SET first_name = %s, last_name = %s, age = %s, gender = %s, country = %s, visibility = %s, notifications = %s WHERE username = %s",
+            (data.first_name, data.last_name, data.age, data.gender, data.country, data.visibility, data.notifications, data.username)
+        )
 
-    connector.commit()
-    return {"message": "User details updated successfully!"}
+        connector.commit()
+        return {"message": "User details updated successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Something went wrong!")

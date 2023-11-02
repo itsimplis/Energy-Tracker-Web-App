@@ -14,3 +14,17 @@
     align-items: center;
     flex-direction: column;
   }
+
+  .section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+  }
+
+  .radio-header {
+    margin: 0px;
+  }
+  
+  .radio-button {
+    margin: 0 10px;
+  }

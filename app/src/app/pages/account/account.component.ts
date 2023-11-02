@@ -21,6 +21,9 @@ export class AccountComponent implements OnInit {
   age: string;
   gender: string;
   country: string;
+  visibility: string;
+  notifications: string;
+
 
   constructor(private userApiService: UserApiService, private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar) {
     this.output = { result: '', message: '' };
@@ -32,6 +35,8 @@ export class AccountComponent implements OnInit {
     this.gender = '';
     this.country = '';
     this.isFormChanged = false;
+    this.visibility = '';
+    this.notifications = '';
   }
 
   ngOnInit(): void {
@@ -48,6 +53,8 @@ export class AccountComponent implements OnInit {
         this.age = data[0].age;
         this.gender = data[0].gender;
         this.country = data[0].country;
+        this.visibility = data[0].visibility;
+        this.notifications = data[0].notifications;
       },
       error: (error) => {
         console.log(error);
@@ -56,7 +63,7 @@ export class AccountComponent implements OnInit {
   }
 
   updateUserDetails() {
-    this.userApiService.updateUser(this.authenticationService.getUserName()!, this.first_name, this.last_name, this.age, this.gender, this.country).subscribe({
+    this.userApiService.updateUser(this.authenticationService.getUserName()!, this.first_name, this.last_name, this.age, this.gender, this.country, this.visibility, this.notifications).subscribe({
       next: (data) => {
         this.output.result = 'success';
         this.output.message = data.message;

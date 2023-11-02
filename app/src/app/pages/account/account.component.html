@@ -2,28 +2,26 @@
     <mat-card-header>
         <mat-card-title>Account Details</mat-card-title>
     </mat-card-header>
-    <br>
     <mat-divider></mat-divider>
     <br>
     <mat-card-content>
         <div fxLayout="row wrap" fxLayoutGap="10px">
             <mat-icon class="user-icon">account_circle</mat-icon>
             <div fxLayoutGap="10px">
-            <mat-form-field appearance="outline">
-                <mat-label>Username</mat-label>
-                <input matInput [(ngModel)]="username" (ngModelChange)="onInputChange()" readonly>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Email</mat-label>
-                <input matInput [(ngModel)]="email" (ngModelChange)="onInputChange()" readonly>
-            </mat-form-field>
-        </div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input matInput [(ngModel)]="username" (ngModelChange)="onInputChange()" readonly>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput [(ngModel)]="email" (ngModelChange)="onInputChange()" readonly>
+                </mat-form-field>
+            </div>
         </div>
     </mat-card-content>
     <mat-card-header>
         <mat-card-title>User Details</mat-card-title>
     </mat-card-header>
-    <br>
     <mat-divider></mat-divider>
     <br>
     <mat-card-content>
@@ -50,6 +48,28 @@
                 <input matInput [(ngModel)]="country" (ngModelChange)="onInputChange()">
             </mat-form-field>
         </div>
+    </mat-card-content>
+    <mat-card-header>
+        <mat-card-title>Profile Preferences</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <br>
+    <mat-card-content>
+        <section class="section">
+            <h4 class="radio-header">Visibility: </h4>
+            <mat-radio-group [(ngModel)]="visibility" (ngModelChange)="onInputChange()">
+                <mat-radio-button class="radio-button" value="public">Public</mat-radio-button>
+                <mat-radio-button class="radio-button" value="private">Private</mat-radio-button>
+            </mat-radio-group>
+        </section>
+        <section class="section">
+            <h4 class="radio-header">Notifications: </h4>
+            <mat-radio-group [(ngModel)]="notifications" (ngModelChange)="onInputChange()">
+                <mat-radio-button class="radio-button" value="on">Enabled</mat-radio-button>
+                <mat-radio-button class="radio-button" value="off">Disabled</mat-radio-button>
+            </mat-radio-group>
+        </section>
+        <br><br>
     </mat-card-content>
     <mat-card-actions>
         <button mat-raised-button color="primary" [disabled]="!isFormChanged" (click)="updateUserDetails()">Update

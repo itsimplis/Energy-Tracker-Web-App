@@ -44,45 +44,48 @@ JWT_SECRET_KEY = "7f59da32cdeef05ac9ec8a5da22b9f120c152bccfc1a02a57b96db5c14db52
 async def register(data: RegisterData):
     connector.connect()
 
-    # Case check - Blank username or white-space
-    if not data.username.strip():
-        raise HTTPException(
-            status_code=400, detail="Username cannot be blank!")
+    try:
+        # Case check - Blank username or white-space
+        if not data.username.strip():
+            raise HTTPException(
+                status_code=400, detail="Username cannot be blank!")
 
-    # Case check - Blank password or white-space
-    if not data.password.strip():
-        raise HTTPException(
-            status_code=400, detail="Password cannot be blank!")
+        # Case check - Blank password or white-space
+        if not data.password.strip():
+            raise HTTPException(
+                status_code=400, detail="Password cannot be blank!")
 
-    # Case check - Blank email or white-space
-    if not data.email.strip():
-        raise HTTPException(
-            status_code=400, detail="Email cannot be blank")
+        # Case check - Blank email or white-space
+        if not data.email.strip():
+            raise HTTPException(
+                status_code=400, detail="Email cannot be blank")
 
-    # Case check - Password validation failed
-    if (data.password != data.password2):
-        raise HTTPException(
-            status_code=400, detail="Passwords do not match!")
+        # Case check - Password validation failed
+        if (data.password != data.password2):
+            raise HTTPException(
+                status_code=400, detail="Passwords do not match!")
 
-    # Case check - Username already exists
-    result = connector.execute(
-        "SELECT p.user.username FROM p.user WHERE p.user.username = %s", (
-            data.username,)
-    )
-    if result:
-        raise HTTPException(
-            status_code=400, detail=f"Username '{data.username}' already exists!")
+        # Case check - Username already exists
+        result = connector.execute(
+            "SELECT p.user.username FROM p.user WHERE p.user.username = %s", (
+                data.username,)
+        )
+        if result:
+            raise HTTPException(
+                status_code=400, detail=f"Username '{data.username}' already exists!")
 
-    # Hash the password before storing
-    hashed_password = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt())
+        # Hash the password before storing
+        hashed_password = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt())
 
-    connector.execute(
-        "INSERT INTO p.user (username, email, password, first_name, last_name, age, gender, country) VALUES (%s, %s, %s, '', '', '', '', '')",
-        (data.username, data.email, hashed_password.decode('utf-8'))
-    )
+        connector.execute(
+            "INSERT INTO p.user (username, email, password, first_name, last_name, age, gender, country, visibility, notifications) VALUES (%s, %s, %s, '', '', '', '', '', 'public', 'on')",
+            (data.username, data.email, hashed_password.decode('utf-8'))
+        )
 
-    connector.commit()
-    return {"message": "Account registered successfully!"}
+        connector.commit()
+        return {"message": "Account registered successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Something went wrong!")
 
 # ===============================================================================================
 # Endpoint to login as an existing user
@@ -90,23 +93,26 @@ async def register(data: RegisterData):
 async def login(data: LoginData):
     connector.connect()
 
-    result = connector.execute(
-        "SELECT * FROM p.user WHERE p.user.username = %s", (data.username,)
-    )
+    try:
+        result = connector.execute(
+            "SELECT * FROM p.user WHERE p.user.username = %s", (data.username,)
+        )
 
-    if result:
-        user = result[0]
-    else:
-        user = None
+        if result:
+            user = result[0]
+        else:
+            user = None
 
-    # Case check - Incorrect username or password
-    if user is None or not bcrypt.checkpw(data.password.encode(), user[2].encode('utf-8')):
-        raise HTTPException(
-            status_code=400, detail="Incorrect username or password!")
+        # Case check - Incorrect username or password
+        if user is None or not bcrypt.checkpw(data.password.encode(), user[2].encode('utf-8')):
+            raise HTTPException(
+                status_code=400, detail="Incorrect username or password!")
 
-    # Generate JWT access token
-    access_token = generate_access_token(user[0])
-    return {"access_token": access_token, "username": user[0], "message": "Logged in successfully!"}
+        # Generate JWT access token
+        access_token = generate_access_token(user[0])
+        return {"access_token": access_token, "username": user[0], "message": "Logged in successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Something went wrong!")
 
 # ===============================================================================================
 # Define JWT payload and generate JWT token (token expiration days: 1)

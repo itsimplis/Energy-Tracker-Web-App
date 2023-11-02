@@ -1,10 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .routers.data.api import router as api_router
 from .routers.users.authentication import router as auth_router
 from .routers.users.user import router as user_router
 
 app = FastAPI()
+
+# Custom exception handler to catch unexpected errors
+@app.exception_handler(Exception)
+async def handle_unexpected_errors(request, exc):
+    return HTTPException(status_code=500, detail="Internal Server Error").to_dict()
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,6 +22,8 @@ app.add_middleware(
 app.include_router(api_router, prefix="/data")
 app.include_router(auth_router, prefix="/auth")
 app.include_router(user_router, prefix="/user")
+
+
 
 @app.get("/")
 def get_data():

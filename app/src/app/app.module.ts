@@ -19,9 +19,10 @@ import { MatTabsModule} from '@angular/material/tabs';
 import { MatTableModule, MatTableDataSource} from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input'
-import { MatBadgeModule } from '@angular/material/badge'
-import  { MatMenuModule} from '@angular/material/menu'
+import { MatInputModule } from '@angular/material/input';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioButton, MatRadioGroup, MatRadioModule } from '@angular/material/radio'
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
@@ -62,7 +63,8 @@ import { AccountComponent } from './pages/account/account.component';
     MatFormFieldModule,
     MatInputModule,
     MatBadgeModule,
-    MatMenuModule
+    MatMenuModule,
+    MatRadioModule,
   ],
   providers: [
     JwtHelperService,

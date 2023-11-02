@@ -18,7 +18,7 @@ export class UserApiService {
   }
 
   // [PATCH] Update user details
-  updateUser(username:string, first_name: string, last_name: string, age: string, gender: string, country: string): Observable<any> {
+  updateUser(username:string, first_name: string, last_name: string, age: string, gender: string, country: string, visibility: string, notifications: string): Observable<any> {
     return this.http.patch<any>(`${this.baseUrl}/user/update`, {
       username: username,
       first_name: first_name,
@@ -26,6 +26,8 @@ export class UserApiService {
       age: age,
       gender: gender,
       country: country,
+      visibility: visibility,
+      notifications: notifications
     });
   }
 }

@@ -26,7 +26,9 @@ CREATE TABLE p.user (
 	last_name VARCHAR(100),
 	age VARCHAR(100),
 	gender VARCHAR(100),
-	country VARCHAR(100)
+	country VARCHAR(100),
+    visibility VARCHAR(100),
+    notifications VARCHAR(100)
 );
 
 CREATE TABLE p.user_consumption (
