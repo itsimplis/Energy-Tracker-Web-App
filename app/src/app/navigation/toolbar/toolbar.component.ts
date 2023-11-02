@@ -36,7 +36,7 @@ export class ToolbarComponent {
 
     this.unreadAlerts = [];
 
-    this.dataApiService.getUnreadAlerts(this.authenticationService.getUserName()!).subscribe({
+    this.dataApiService.getAlerts(this.authenticationService.getUserName()!, true).subscribe({
       next: (data) => {
         this.unreadAlerts = data;
       },

@@ -12,8 +12,8 @@ export class DataApiService {
 
   constructor(private http: HttpClient) { }
 
-   // [GET] Get user's unread alerts
-   getUnreadAlerts(username: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/data/getUnreadAlerts?username=${username}`, { withCredentials: true });
+   // [GET] Get user's alerts
+   getAlerts(username: string, unreadAlertsOnly: boolean): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getAlerts?username=${username}&unreadAlertsOnly=${unreadAlertsOnly}`, { withCredentials: true });
   }
 }

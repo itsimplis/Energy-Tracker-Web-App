@@ -42,6 +42,7 @@ CREATE TABLE p.alert (
     username VARCHAR(100),
     title VARCHAR(100),
     description VARCHAR(250),
+    date TEXT,
     type CHAR(1),
     read_status CHAR(1)
 );

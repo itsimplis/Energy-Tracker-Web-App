@@ -6,11 +6,6 @@ from .routers.users.user import router as user_router
 
 app = FastAPI()
 
-# Custom exception handler to catch unexpected errors
-@app.exception_handler(Exception)
-async def handle_unexpected_errors(request, exc):
-    return HTTPException(status_code=500, detail="Internal Server Error").to_dict()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:4200", "http://localhost:8000"],
