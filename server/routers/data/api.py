@@ -53,32 +53,17 @@ def convert_to_json(result, keys):
 async def get_alerts(username: str, unreadAlertsOnly: bool):
     
     with database_connection():
-        keys = ["id", "title", "type"]
+        keys = ["id", "title", "description", "date", "type", "read_status"]
         if (unreadAlertsOnly):
             result = connector.execute(f"""
-            SELECT p.alert.id, p.alert.title, p.alert.type 
+            SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
             FROM p.alert
             WHERE p.alert.username = %s AND p.alert.read_status = %s""", (username, 'N'))
         else:
             result = connector.execute(f"""
-            SELECT p.alert.id, p.alert.title, p.alert.type 
+            SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
             FROM p.alert
             WHERE p.alert.username = %s""", (username))
-        json_data = convert_to_json(result, keys)
-    
-    return json_data
-
-# ===============================================================================================
-# Endpoint to get user's all unread alerts, with all info
-@router.get("/getAlertsDetails")
-async def get_alerts_details(username: str):
-    
-    with database_connection():
-        keys = ["id", "title", "description", "date", "type", "read_status"]
-        result = connector.execute(f"""
-        SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
-        FROM p.alert
-        WHERE p.alert.username = %s""", (username))
         json_data = convert_to_json(result, keys)
     
     return json_data

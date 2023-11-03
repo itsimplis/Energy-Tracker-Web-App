@@ -2,11 +2,23 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    //justify-content: center;
     height: calc(100vh - 84px);
   }
   
-  
+  .center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 200px;
+  }
+
+  .home-logo {
+    width: 50%;
+    margin-bottom: 50px;
+  }
+
   .button-container {
     display: flex;
     flex-direction: row;

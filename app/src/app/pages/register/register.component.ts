@@ -1,5 +1,6 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from './../../service/authentication.service';
+import { DataApiService } from 'src/app/service/data-api.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -15,7 +16,7 @@ export class RegisterComponent {
   password: string;
   password2: string;
 
-  constructor(private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar) {
+  constructor(private authenticationService: AuthenticationService, private dataApiService: DataApiService,  private matSnackBar: MatSnackBar) {
     this.output = { result: '', message: '' };
     this.username = '';
     this.email = '';
@@ -29,6 +30,13 @@ export class RegisterComponent {
       next: (data) => {
         this.output.result = 'success';
         this.output.message = data.message;
+        this.dataApiService.addAlert(this.username, "Welcome user !", "Welcome. Please don't forget to update your profile details!", new Date().toLocaleString(), 'I', 'N').subscribe({
+          next: (data) => {
+          },
+          error: (error) => {
+
+          }
+        });
         this.matSnackBar.open(this.output.message, 'Close', { duration: 3500, });
       },
       error: (error) => {

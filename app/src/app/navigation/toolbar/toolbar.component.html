@@ -10,20 +10,22 @@
     <div fxFlex fxLayout fxLayoutAlign="end">
         <ul fxLayout fxLayoutGap="65px" class="navigation-items">
             <li *ngIf="isAuthenticated()">
-                <button mat-icon-button [matMenuTriggerFor]="alerts" routerLink="/alerts">
+                <button mat-icon-button [matMenuTriggerFor]="alerts">
                     <mat-icon [matBadge]="unreadAlerts.length" matBadgeColor="warn">notifications_active</mat-icon>
-                    <mat-menu #alerts="matMenu" class="alerts-menu">
-                        <mat-list>
-                            <mat-list-item *ngFor="let alert of unreadAlerts" class="alert-panel">
-                                <mat-icon mat-list-icon>
-                                    <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
-                                    <ng-container *ngIf="alert.type === 'I'">info</ng-container>
-                                </mat-icon>
-                                <h4 mat-line>{{ alert.title }}</h4>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-menu>
                 </button>
+                <mat-menu #alerts="matMenu">
+                    <h5 mat-line class="alert-menu-header">Unread Alerts</h5>
+                    <mat-divider></mat-divider>
+                    <div class="custom-menu">
+                        <button *ngFor="let alert of unreadAlerts" mat-menu-item>
+                            <mat-icon mat-list-icon>
+                                <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
+                                <ng-container *ngIf="alert.type === 'I'">info</ng-container>
+                            </mat-icon>
+                            <span><h5 class="alert-menu-item-title">{{ alert.title }}<br>{{alert.date}}</h5></span>
+                        </button>
+                    </div>
+                </mat-menu>
             </li>
         </ul>
     </div>

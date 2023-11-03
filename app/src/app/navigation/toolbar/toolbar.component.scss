@@ -11,16 +11,38 @@ a:hover, a:active{
     list-style-type: none;
     padding: 0;
     margin: 0;
+    //border-bottom: 1px solid gray;
 }
 
 mat-toolbar{
-    border-radius: 3px;
+    border-radius: 0px;
 }
 
-.alerts-menu {
-    max-height: 250px;
-    overflow-y: auto;
-  }
+::ng-deep .mat-mdc-menu-content {
+    padding-top: 0px !important;
+}
+
+::ng-deep .mat-mdc-menu-item {
+    border-bottom: 1px solid rgb(234, 234, 234)  !important;
+}
+
+.alert-menu-header {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: rgb(52, 52, 108);
+    color: white;
+    margin: 0px;
+}
+
+.custom-menu {
+    max-height: 300px !important;
+    overflow-y: scroll;
+}
+
+.alert-menu-item-title {
+    margin: 0px;
+}
 
 @media(max-width: 959px){
     mat-toolbar{
