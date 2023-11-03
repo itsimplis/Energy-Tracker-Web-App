@@ -4,7 +4,8 @@ Dissertation Project
 
 ## Database initiliazation
 
-Make sure 'household_power_consumption.txt' file is present and placed under: `server\database\` folder.  
+Make sure 'consumption.csv' file is present and placed under: `server\database\` folder.  
+Create a database named 'postgres'.
 Run `python -m server.database.init` to create the database schema, and start loading it with data.  
 The proccess may take ~ 6 minutes due to data cleaning and proccessing taking place, prior to insertions.
 
