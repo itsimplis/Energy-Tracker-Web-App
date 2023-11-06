@@ -22,12 +22,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatRadioButton, MatRadioGroup, MatRadioModule } from '@angular/material/radio'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatCheckboxModule} from '@angular/material/checkbox'
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
 import { SidenavComponent } from './navigation/sidenav/sidenav.component';
 import { HomeComponent } from './pages/home/home.component';
+import { AlertsComponent } from './pages/alerts/alerts.component';
 import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
@@ -40,6 +42,7 @@ import { AccountComponent } from './pages/account/account.component';
     ToolbarComponent,
     SidenavComponent,
     HomeComponent,
+    AlertsComponent,
     StatisticsComponent,
     LoginComponent,
     RegisterComponent,
@@ -65,6 +68,7 @@ import { AccountComponent } from './pages/account/account.component';
     MatBadgeModule,
     MatMenuModule,
     MatRadioModule,
+    MatCheckboxModule
   ],
   providers: [
     JwtHelperService,

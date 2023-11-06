@@ -28,4 +28,12 @@ export class DataApiService {
         read_status: read_status
     });
   }
+
+  // [POST] Update the read status of an Alert
+  updateAlert(id: string, read_status: string): Observable<any[]> {
+    return this.http.patch<any[]>(`${this.baseUrl}/data/updateAlert`, {
+        id: id,
+        read_status: read_status
+    });
+  }
 }

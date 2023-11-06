@@ -30,6 +30,10 @@ class AddAlert(BaseModel):
     type: str
     read_status: str
 
+class UpdateAlert(BaseModel):
+    id: int
+    read_status: str
+
 @contextmanager
 def database_connection():
     try:
@@ -63,7 +67,7 @@ async def get_alerts(username: str, unreadAlertsOnly: bool):
             result = connector.execute(f"""
             SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
             FROM p.alert
-            WHERE p.alert.username = %s""", (username))
+            WHERE p.alert.username = %s""", (username,))
         json_data = convert_to_json(result, keys)
     
     return json_data
@@ -86,7 +90,7 @@ async def add_alert(data: AddAlert):
 # ===============================================================================================
 # Endpoint to update an alert for a user (alert read status)
 @router.patch("/updateAlert")
-async def update_alert(data: AddAlert):
+async def update_alert(data: UpdateAlert):
     
     with database_connection():
         connector.execute(f"""

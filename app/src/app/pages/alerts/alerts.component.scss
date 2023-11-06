@@ -1,0 +1,19 @@
+.page-title {
+    text-align: center;
+}
+
+.alert-mat-card {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+::ng-deep .mat-mdc-card-content {
+    padding-left: 0px !important;
+    padding-bottom: 5px !important;
+}
+
+::ng-deep .alert-icon .mat-icon {
+    height: 40px !important;
+    width: 40px !important;
+    margin-left: 10px !important;
+}
