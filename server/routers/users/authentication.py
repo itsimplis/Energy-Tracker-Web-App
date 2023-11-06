@@ -84,6 +84,8 @@ async def register_user(data: RegisterData):
 
         connector.commit()
         return {"message": "Account registered successfully!"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail="Something went wrong!")
 
@@ -111,6 +113,8 @@ async def login_user(data: LoginData):
         # Generate JWT access token
         access_token = generate_access_token(user[0])
         return {"access_token": access_token, "username": user[0], "message": "Logged in successfully!"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail="Something went wrong!")
 
