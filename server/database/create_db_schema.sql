@@ -34,7 +34,7 @@ CREATE TABLE p.user (
 
 CREATE TABLE p.device (
     id SERIAL PRIMARY KEY NOT NULL,
-    user_username VARCHAR(100) NOT NULL REFERENCES p.user(username),
+    user_username VARCHAR(100) NOT NULL REFERENCES p.user(username) ON DELETE CASCADE,
     device_type VARCHAR(100),
     device_category VARCHAR(50),
     device_name TEXT
@@ -42,14 +42,14 @@ CREATE TABLE p.device (
 
 CREATE TABLE p.device_consumption (
     id SERIAL PRIMARY KEY NOT NULL,
-    device_id INT NOT NULL REFERENCES p.device(id),
+    device_id INT NOT NULL REFERENCES p.device(id) ON DELETE CASCADE,
     consumption_id INT NOT NULL REFERENCES p.consumption(id)
 );
 
 CREATE TABLE p.alert (
     id SERIAL PRIMARY KEY NOT NULL,
-    username VARCHAR(100) REFERENCES p.user(username),
-    device_id INT REFERENCES p.device(id),
+    username VARCHAR(100) REFERENCES p.user(username) ON DELETE CASCADE,
+    device_id INT REFERENCES p.device(id) ON DELETE CASCADE,
     title VARCHAR(100),
     description VARCHAR(250),
     date TIMESTAMP WITH TIME ZONE,
