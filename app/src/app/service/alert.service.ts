@@ -34,8 +34,8 @@ export class AlertService {
   }
 
   // Add an alert
-  addAlert(username: string, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
-    this.dataApiService.addAlert(username, title, description, date, type, read_status).subscribe({
+  addAlert(username: string, device_id: number | null, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
+    this.dataApiService.addAlert(username, device_id, title, description, date, type, read_status).subscribe({
       next: (data) => {
         if (force_refresh) {
           this.loadAlerts();

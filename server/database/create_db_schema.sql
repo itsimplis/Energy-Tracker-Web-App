@@ -49,7 +49,7 @@ CREATE TABLE p.device_consumption (
 CREATE TABLE p.alert (
     id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR(100) REFERENCES p.user(username) ON DELETE CASCADE,
-    device_id INT REFERENCES p.device(id) ON DELETE CASCADE,
+    device_id INT NULL REFERENCES p.device(id) ON DELETE CASCADE,
     title VARCHAR(100),
     description VARCHAR(250),
     date TIMESTAMP WITH TIME ZONE,

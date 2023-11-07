@@ -1,6 +1,8 @@
 import json
 import collections
+import datetime
 from decimal import Decimal
+from typing import Optional
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException
 from contextlib import contextmanager
@@ -16,14 +18,17 @@ connector = PostgresConnector(
     password="password",
 )
 
-class DecimalEncoder(json.JSONEncoder):
+class ExtendedEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, Decimal):
             return float(o)
-        return super(DecimalEncoder, self).default(o)
+        if isinstance(o, datetime.datetime):
+            return o.isoformat()
+        return super().default(o)
     
 class AddAlert(BaseModel):
     username: str
+    device_id: Optional[int] = None
     title: str
     description: str
     date: str
@@ -44,7 +49,7 @@ def database_connection():
 
 def convert_to_json(result, keys):
     data = [collections.OrderedDict(zip(keys, row)) for row in result]
-    json_data = json.dumps(data, cls=DecimalEncoder)
+    json_data = json.dumps(data, cls=ExtendedEncoder)
     return json.loads(json_data)
 
 # **************** #
@@ -57,15 +62,15 @@ def convert_to_json(result, keys):
 async def get_alerts(username: str, unreadAlertsOnly: bool):
     
     with database_connection():
-        keys = ["id", "title", "description", "date", "type", "read_status"]
+        keys = ["id", "title", "username", "device_id", "description", "date", "type", "read_status"]
         if (unreadAlertsOnly):
             result = connector.execute(f"""
-            SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
+            SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
             FROM p.alert
             WHERE p.alert.username = %s AND p.alert.read_status = %s ORDER BY date DESC""", (username, 'N'))
         else:
             result = connector.execute(f"""
-            SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
+            SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
             FROM p.alert
             WHERE p.alert.username = %s ORDER BY (read_status='N') DESC, date DESC""", (username,))
         json_data = convert_to_json(result, keys)
@@ -79,9 +84,9 @@ async def add_alert(data: AddAlert):
     
     with database_connection():
         connector.execute(f"""
-            INSERT INTO p.alert (username, title, description, date, type, read_status) 
-            VALUES (%s, %s, %s, %s, %s, %s)""",
-            (data.username, data.title, data.description, data.date, data.type, data.read_status)
+            INSERT INTO p.alert (username, device_id, title, description, date, type, read_status) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+            (data.username, data.device_id, data.title, data.description, data.date, data.type, data.read_status)
         )
         connector.commit()
 
@@ -105,7 +110,7 @@ async def update_alert(data: UpdateAlert):
 
 # ===============================================================================================
 # Endpoint to clear all alerts of a user
-@router.post("/clearAlerts")
+@router.post("/removeAlerts")
 async def clear_alerts(username: str):
     
     with database_connection():

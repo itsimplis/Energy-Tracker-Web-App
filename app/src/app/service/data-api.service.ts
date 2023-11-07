@@ -18,9 +18,10 @@ export class DataApiService {
   }
 
   // [POST] Add an alert for the user
-  addAlert(username: string, title: string, description: string, date: string, type: string, read_status: string): Observable<any> {
+  addAlert(username: string, device_id: number | null, title: string, description: string, date: string, type: string, read_status: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/data/addAlert`, {
         username: username,
+        device_id: device_id,
         title: title,
         description: description,
         date: date,
