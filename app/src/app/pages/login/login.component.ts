@@ -32,6 +32,7 @@ export class LoginComponent {
         this.output.result = 'success';
         this.output.message = data.message;
         this.matSnackBar.open(this.output.message, 'Close', { duration: 3500, });
+        this.authenticationService.notifyLogin();
       },
       error: (error) => {
         console.log(error);

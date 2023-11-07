@@ -35,6 +35,8 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AccountComponent } from './pages/account/account.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { AlertService } from './service/alert.service';
 
 @NgModule({
   declarations: [
@@ -42,6 +44,7 @@ import { AccountComponent } from './pages/account/account.component';
     ToolbarComponent,
     SidenavComponent,
     HomeComponent,
+    DashboardComponent,
     AlertsComponent,
     StatisticsComponent,
     LoginComponent,
@@ -73,6 +76,7 @@ import { AccountComponent } from './pages/account/account.component';
   providers: [
     JwtHelperService,
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+    AlertService,
     MatSnackBar
   ],
   bootstrap: [AppComponent]

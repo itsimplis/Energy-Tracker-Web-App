@@ -10,14 +10,14 @@
     <div fxFlex fxLayout fxLayoutAlign="end">
         <ul fxLayout fxLayoutGap="65px" class="navigation-items">
             <li *ngIf="isAuthenticated()">
-                <button mat-icon-button [matMenuTriggerFor]="alerts">
-                    <mat-icon [matBadge]="unreadAlerts.length" matBadgeColor="warn">notifications_active</mat-icon>
+                <button mat-icon-button [matMenuTriggerFor]="alertsMenu">
+                    <mat-icon [matBadge]="alerts.length" matBadgeColor="warn">notifications_active</mat-icon>
                 </button>
-                <mat-menu #alerts="matMenu">
+                <mat-menu #alertsMenu="matMenu">
                     <h5 mat-line class="alert-menu-header">Unread Alerts</h5>
                     <mat-divider></mat-divider>
                     <div class="custom-menu">
-                        <button *ngFor="let alert of unreadAlerts" mat-menu-item>
+                        <button *ngFor="let alert of alerts" mat-menu-item>
                             <mat-icon mat-list-icon>
                                 <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
                                 <ng-container *ngIf="alert.type === 'I'">info</ng-container>

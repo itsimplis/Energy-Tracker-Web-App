@@ -9,6 +9,13 @@ body {
     margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; 
 }
 
+// Global Page titles
+.page-title {
+    text-align: center;
+    padding-top: 15px;
+    margin-bottom: 25px;
+}
+
 // Global custom scroll style
 ::-webkit-scrollbar {
     -webkit-appearance: none;

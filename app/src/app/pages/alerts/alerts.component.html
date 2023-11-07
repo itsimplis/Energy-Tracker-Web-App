@@ -1,5 +1,9 @@
+<div class="page-title"> 
+  <h1><strong>MY ALERTS</strong></h1>
+  <mat-divider></mat-divider>
+</div>
 <mat-card class="alert-mat-card" *ngFor="let alert of alerts" fxLayout="row" fxLayoutGap="10px"
-    [ngStyle]="{'background-color': alert.read_status === 'Y' ? 'lightgrey' : 'lightblue'}">
+    [ngStyle]="{'background-color': alert.read_status === 'Y' ? 'lightgrey' : '#d2eafc'}">
     
     <!-- Icon -->
     <div fxFlex="50px" fxLayout="column" fxLayoutAlign="center center" class="alert-icon">

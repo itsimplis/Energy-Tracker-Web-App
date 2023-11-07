@@ -1,5 +1,7 @@
 import { DataApiService } from './../../service/data-api.service';
 import { Component, Output, EventEmitter } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AlertService } from 'src/app/service/alert.service';
 import { AuthenticationService } from 'src/app/service/authentication.service';
 
 @Component({
@@ -8,17 +10,27 @@ import { AuthenticationService } from 'src/app/service/authentication.service';
   styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent {
+  alerts: any[] = [];
+  private alertsSubscription!: Subscription;
 
-  unreadAlerts: any[];
-
-  constructor(private authenticationService: AuthenticationService, private dataApiService: DataApiService) {
-    this.unreadAlerts = [];
-   }
+  constructor(private authenticationService: AuthenticationService, private alertService: AlertService) {}
 
   @Output() public sidenavToggle = new EventEmitter();
 
-  ngOnInit(): void {
-    this.loadAlerts();
+  ngOnInit() {
+    this.alertsSubscription = this.alertService.alerts$.subscribe(
+      data => {
+        this.alerts = data.filter(alert => alert.read_status === 'N');
+    });
+
+    this.alertService.loadAlerts();
+    console.log("ngoninit toolbar alerts")
+  }
+
+  ngOnDestroy() {
+    if (this.alertsSubscription) {
+      this.alertsSubscription.unsubscribe();
+    }
   }
 
   onToggleSidenav() {
@@ -29,21 +41,4 @@ export class ToolbarComponent {
   isAuthenticated(): boolean {
     return this.authenticationService.isAuthenticated();
   }
-
-  
-
-  loadAlerts() {
-
-    this.unreadAlerts = [];
-
-    this.dataApiService.getAlerts(this.authenticationService.getUserName()!, true).subscribe({
-      next: (data) => {
-        this.unreadAlerts = data;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    })
-  }
-
 }

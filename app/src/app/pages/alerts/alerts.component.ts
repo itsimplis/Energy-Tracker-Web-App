@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { DataApiService } from './../../service/data-api.service';
 import { AuthenticationService } from 'src/app/service/authentication.service';
+import { AlertService } from 'src/app/service/alert.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'alerts',
@@ -9,46 +11,34 @@ import { AuthenticationService } from 'src/app/service/authentication.service';
 })
 
 export class AlertsComponent {
-  alerts: any[];
+  alerts: any[] = [];
+  private alertsSubscription!: Subscription;
 
-  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService) {
+  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService) {
     this.alerts = [];
   }
 
   ngOnInit(): void {
-    this.loadAlerts();
+    this.alertsSubscription = this.alertService.alerts$.subscribe(
+      data => {
+        this.alerts = data;
+    });
+
+    this.alertService.loadAlerts();
   }
 
-  loadAlerts() {
-
-    this.alerts = [];
-
-    this.dataApiService.getAlerts(this.authenticationService.getUserName()!, false).subscribe({
-      next: (data) => {
-        this.alerts = data;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    })
+  ngOnDestroy() {
+    if (this.alertsSubscription) {
+      this.alertsSubscription.unsubscribe();
+    }
   }
 
   onMarkAsRead(alert: any) {
-    alert.read_status = 'Y';
-
-    this.dataApiService.updateAlert(alert.id, 'Y').subscribe({
-      next: () => {
-        this.loadAlerts();
-      },
-      error: (error) => {
-        console.log(error);
-        alert.read_status = 'N';
-      }
-    });
+    this.alertService.updateAlerts(alert.id);
   }
 
   onGoToDevice() {
-
+    // Todo:...
   }
 }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs'
@@ -14,6 +14,9 @@ export class AuthenticationService {
   private userName = 'username';
 
   constructor(private jwtHelper: JwtHelperService, private http: HttpClient) {}
+
+    userLoggedOut = new EventEmitter();
+    userLoggedIn = new EventEmitter();
 
     // [POST] Send user details to register
     registerUser(username: string, email: string, password: string, password2: string): Observable<any> {
@@ -57,5 +60,11 @@ export class AuthenticationService {
   logout(): void {
     localStorage.removeItem(this.authToken);
     localStorage.removeItem(this.userName);
+    this.userLoggedOut.emit();
   }
+
+  notifyLogin(): void {
+    this.userLoggedIn.emit();
+  }
+
 }
