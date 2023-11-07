@@ -1,46 +1,50 @@
-<div class="page-title"> 
-  <h1><strong>MY ALERTS</strong></h1>
-  <mat-divider></mat-divider>
+<div class="fade-in-animation">
+    <div class="page-title">
+        <h1><strong>MY ALERTS</strong></h1>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card class="alert-mat-card" *ngFor="let alert of alerts" fxLayout="row" fxLayoutGap="10px"
+        [ngClass]="{'highlighted': alert.id == highlightedAlertId}"
+        [ngStyle]="{'background-color': alert.read_status === 'Y' ? 'lightgrey' : '#d2eafc'}">
+
+        <!-- Icon -->
+        <div fxFlex="50px" fxLayout="column" fxLayoutAlign="center center" class="alert-icon">
+            <mat-icon mat-list-icon style="font-size: 36px;">
+                <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
+                <ng-container *ngIf="alert.type === 'I'">info</ng-container>
+            </mat-icon>
+        </div>
+
+        <!-- Title, Device / Date, Description  -->
+        <div fxFlex="40%" fxLayout="column" fxLayoutAlign="start start">
+            <mat-card-title>{{alert.title}}</mat-card-title>
+            <mat-card-subtitle fxFlexAlign="start">Router - {{alert.date}}</mat-card-subtitle>
+            <mat-card-content fxFlexAlign="start">{{alert.description}}</mat-card-content>
+        </div>
+
+        <!-- Go To Device -->
+        <div fxFlex="30%" fxLayout="column" fxLayoutAlign="center center">
+            <mat-card-actions>
+                <button mat-raised-button extended color="primary">
+                    <mat-icon>developer_board</mat-icon>VIEW DEVICE
+                </button>
+            </mat-card-actions>
+        </div>
+
+        <!-- Mark As Read -->
+        <div fxFlex="30%" fxLayout="column" fxLayoutAlign="center center">
+            <mat-card-actions>
+                <ng-container *ngIf="alert.read_status === 'Y'">
+                    <span style="color: gray">READ</span>
+                </ng-container>
+                <ng-container *ngIf="alert.read_status === 'N'">
+                    <mat-checkbox color="primary" (change)="onMarkAsRead(alert)">MARK AS READ</mat-checkbox>
+                </ng-container>
+            </mat-card-actions>
+        </div>
+    </mat-card>
 </div>
-<mat-card class="alert-mat-card" *ngFor="let alert of alerts" fxLayout="row" fxLayoutGap="10px"
-    [ngStyle]="{'background-color': alert.read_status === 'Y' ? 'lightgrey' : '#d2eafc'}">
-    
-    <!-- Icon -->
-    <div fxFlex="50px" fxLayout="column" fxLayoutAlign="center center" class="alert-icon">
-        <mat-icon mat-list-icon style="font-size: 36px;">
-            <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
-            <ng-container *ngIf="alert.type === 'I'">info</ng-container>
-        </mat-icon>
-    </div>
 
-    <!-- Title, Device / Date, Description  -->
-    <div fxFlex="40%" fxLayout="column" fxLayoutAlign="start start">
-        <mat-card-title>{{alert.title}}</mat-card-title>
-        <mat-card-subtitle fxFlexAlign="start">Router - {{alert.date}}</mat-card-subtitle>
-        <mat-card-content fxFlexAlign="start">{{alert.description}}</mat-card-content>
-    </div>
-
-    <!-- Go To Device -->
-    <div fxFlex="30%" fxLayout="column" fxLayoutAlign="center center">
-        <mat-card-actions>
-            <button mat-raised-button extended color="primary">
-                <mat-icon>developer_board</mat-icon>GO TO DEVICE
-            </button>
-        </mat-card-actions>
-    </div>
-
-    <!-- Mark As Read -->
-    <div fxFlex="30%" fxLayout="column" fxLayoutAlign="center center">
-        <mat-card-actions>
-            <ng-container *ngIf="alert.read_status === 'Y'">
-                <span style="color: gray">READ</span>
-            </ng-container>
-            <ng-container *ngIf="alert.read_status === 'N'">
-                <mat-checkbox color="primary" (change)="onMarkAsRead(alert)">MARK AS READ</mat-checkbox>
-            </ng-container>
-        </mat-card-actions>
-    </div>
-</mat-card>
 
 
 

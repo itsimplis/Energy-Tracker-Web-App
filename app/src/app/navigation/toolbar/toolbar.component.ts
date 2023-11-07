@@ -1,5 +1,5 @@
-import { DataApiService } from './../../service/data-api.service';
 import { Component, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/service/alert.service';
 import { AuthenticationService } from 'src/app/service/authentication.service';
@@ -13,7 +13,7 @@ export class ToolbarComponent {
   alerts: any[] = [];
   private alertsSubscription!: Subscription;
 
-  constructor(private authenticationService: AuthenticationService, private alertService: AlertService) {}
+  constructor(private authenticationService: AuthenticationService, private alertService: AlertService, private router: Router) {}
 
   @Output() public sidenavToggle = new EventEmitter();
 
@@ -24,7 +24,6 @@ export class ToolbarComponent {
     });
 
     this.alertService.loadAlerts();
-    console.log("ngoninit toolbar alerts")
   }
 
   ngOnDestroy() {
@@ -35,6 +34,10 @@ export class ToolbarComponent {
 
   onToggleSidenav() {
     this.sidenavToggle.emit();
+  }
+
+  onAlertMenuItemClick(id: number) {
+    this.router.navigate(['/alerts', id]);
   }
 
   // Check if user got authenticated

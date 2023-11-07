@@ -37,6 +37,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AccountComponent } from './pages/account/account.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { AlertService } from './service/alert.service';
+import { DevicesComponent } from './pages/devices/devices.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { AlertService } from './service/alert.service';
     HomeComponent,
     DashboardComponent,
     AlertsComponent,
+    DevicesComponent,
     StatisticsComponent,
     LoginComponent,
     RegisterComponent,

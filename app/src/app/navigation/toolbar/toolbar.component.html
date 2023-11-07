@@ -11,13 +11,13 @@
         <ul fxLayout fxLayoutGap="65px" class="navigation-items">
             <li *ngIf="isAuthenticated()">
                 <button mat-icon-button [matMenuTriggerFor]="alertsMenu">
-                    <mat-icon [matBadge]="alerts.length" matBadgeColor="warn">notifications_active</mat-icon>
+                    <mat-icon [matBadge]="alerts.length" [matBadgeHidden]="alerts.length === 0" matBadgeColor="warn">notifications_active</mat-icon>
                 </button>
                 <mat-menu #alertsMenu="matMenu">
-                    <h5 mat-line class="alert-menu-header">Unread Alerts</h5>
+                    <h3 mat-line class="alert-menu-header">Unread Alerts</h3>
                     <mat-divider></mat-divider>
-                    <div class="custom-menu">
-                        <button *ngFor="let alert of alerts" mat-menu-item>
+                    <div *ngIf="alerts.length; else noAlertsTemplate" class="custom-menu">
+                        <button *ngFor="let alert of alerts" (click)="onAlertMenuItemClick(alert.id)" mat-menu-item >
                             <mat-icon mat-list-icon>
                                 <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
                                 <ng-container *ngIf="alert.type === 'I'">info</ng-container>
@@ -25,6 +25,11 @@
                             <span><h5 class="alert-menu-item-title">{{ alert.title }}<br>{{alert.date}}</h5></span>
                         </button>
                     </div>
+                    <ng-template #noAlertsTemplate>
+                        <button mat-menu-item disabled>
+                          <span>You don't have any unread alerts</span>
+                        </button>
+                      </ng-template>
                 </mat-menu>
             </li>
         </ul>

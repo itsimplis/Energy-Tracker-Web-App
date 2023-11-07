@@ -18,6 +18,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   { path: 'devices', component: DevicesComponent, canActivate: [AuthGuard]},
   { path: 'alerts', component: AlertsComponent, canActivate: [AuthGuard]},
+  { path: 'alerts/:id', component: AlertsComponent, canActivate: [AuthGuard] },
   { path: 'statistics', component: StatisticsComponent, canActivate: [AuthGuard]},
   { path: 'account', component: AccountComponent, canActivate: [AuthGuard]}
 ];

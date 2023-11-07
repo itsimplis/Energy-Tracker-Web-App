@@ -16,6 +16,22 @@ body {
     margin-bottom: 25px;
 }
 
+// Global fade-in animation
+.fade-in-animation {
+    animation-name: fadeIn;
+    animation-duration: 0.5s; /* or however long you want the animation to be */
+    animation-fill-mode: both; /* This makes sure that the final styles are retained after the animation completes */
+  }
+
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
 // Global custom scroll style
 ::-webkit-scrollbar {
     -webkit-appearance: none;

@@ -18,8 +18,8 @@ export class DataApiService {
   }
 
   // [POST] Add an alert for the user
-  addAlert(username: string, title: string, description: string, date: string, type: string, read_status: string): Observable<any[]> {
-    return this.http.post<any[]>(`${this.baseUrl}/data/addAlert`, {
+  addAlert(username: string, title: string, description: string, date: string, type: string, read_status: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/data/addAlert`, {
         username: username,
         title: title,
         description: description,
@@ -30,8 +30,8 @@ export class DataApiService {
   }
 
   // [POST] Update the read status of an Alert
-  updateAlert(id: string, read_status: string): Observable<any[]> {
-    return this.http.patch<any[]>(`${this.baseUrl}/data/updateAlert`, {
+  updateAlert(id: string, read_status: string): Observable<any> {
+    return this.http.patch<any>(`${this.baseUrl}/data/updateAlert`, {
         id: id,
         read_status: read_status
     });

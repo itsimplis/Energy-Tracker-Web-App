@@ -18,6 +18,10 @@ mat-toolbar{
     border-radius: 0px;
 }
 
+::ng-deep .mat-mdc-menu-panel {
+    width: 500px !important;
+  }
+
 ::ng-deep .mat-mdc-menu-content {
     padding-top: 0px !important;
 }
@@ -37,7 +41,7 @@ mat-toolbar{
 
 .custom-menu {
     max-height: 300px !important;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .alert-menu-item-title {

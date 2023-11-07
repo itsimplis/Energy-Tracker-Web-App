@@ -3,6 +3,12 @@
     width: 100%;
 }
 
+.highlighted {
+    border: 1px solid #555;
+    box-shadow: 0px 0px 8px rgba(52, 52, 108, 0.99);
+    background-color: #f9f9f9;
+}
+
 ::ng-deep .mat-mdc-card-content {
     padding-left: 0px !important;
     padding-bottom: 5px !important;

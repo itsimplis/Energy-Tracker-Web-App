@@ -62,12 +62,12 @@ async def get_alerts(username: str, unreadAlertsOnly: bool):
             result = connector.execute(f"""
             SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
             FROM p.alert
-            WHERE p.alert.username = %s AND p.alert.read_status = %s""", (username, 'N'))
+            WHERE p.alert.username = %s AND p.alert.read_status = %s ORDER BY date DESC""", (username, 'N'))
         else:
             result = connector.execute(f"""
             SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
             FROM p.alert
-            WHERE p.alert.username = %s""", (username,))
+            WHERE p.alert.username = %s ORDER BY (read_status='N') DESC, date DESC""", (username,))
         json_data = convert_to_json(result, keys)
     
     return json_data
@@ -85,7 +85,7 @@ async def add_alert(data: AddAlert):
         )
         connector.commit()
 
-    return {"message": f"A new alert has been added!"}
+    return {"message": f"You have a new alert!"}
 
 # ===============================================================================================
 # Endpoint to update an alert for a user (alert read status)
@@ -101,7 +101,7 @@ async def update_alert(data: UpdateAlert):
         )
         connector.commit()
         
-    return {"message": f"The alert read status has been updated!"}
+    return {"message": f"Alert updated!"}
 
 # ===============================================================================================
 # Endpoint to clear all alerts of a user

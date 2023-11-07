@@ -2,6 +2,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from './../../service/authentication.service';
 import { DataApiService } from 'src/app/service/data-api.service';
 import { Component } from '@angular/core';
+import { AlertService } from 'src/app/service/alert.service';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +17,7 @@ export class RegisterComponent {
   password: string;
   password2: string;
 
-  constructor(private authenticationService: AuthenticationService, private dataApiService: DataApiService,  private matSnackBar: MatSnackBar) {
+  constructor(private authenticationService: AuthenticationService, private alertService: AlertService,  private matSnackBar: MatSnackBar) {
     this.output = { result: '', message: '' };
     this.username = '';
     this.email = '';
@@ -30,14 +31,8 @@ export class RegisterComponent {
       next: (data) => {
         this.output.result = 'success';
         this.output.message = data.message;
-        this.dataApiService.addAlert(this.username, "Welcome user !", "Welcome. Please don't forget to update your profile details!", new Date().toLocaleString(), 'I', 'N').subscribe({
-          next: (data) => {
-          },
-          error: (error) => {
-
-          }
-        });
-        this.matSnackBar.open(this.output.message, 'Close', { duration: 3500, });
+        this.alertService.addAlert(this.username, "Welcome user !", "Welcome. Please don't forget to update your profile details!", new Date().toLocaleString(), 'I', 'N', false);
+        this.alertService.showSnackBar(this.output.message, 'Close', 3500)
       },
       error: (error) => {
         console.log(error);
@@ -49,7 +44,7 @@ export class RegisterComponent {
         } else {
           this.output.message = 'An error occurred!';
         }
-        this.matSnackBar.open(this.output.message, 'Close', { duration: 3500, });
+        this.alertService.showSnackBar(this.output.message, 'Close', 3500)
       }
     });
   }
