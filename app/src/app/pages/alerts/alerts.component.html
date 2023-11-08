@@ -12,13 +12,16 @@
             <mat-icon mat-list-icon style="font-size: 36px;">
                 <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
                 <ng-container *ngIf="alert.type === 'I'">info</ng-container>
+                <ng-container *ngIf="alert.type === 'U'">account_circle</ng-container>
             </mat-icon>
         </div>
 
         <!-- Title, Device / Date, Description  -->
         <div fxFlex="40%" fxLayout="column" fxLayoutAlign="start start">
             <mat-card-title>{{alert.title}}</mat-card-title>
-            <mat-card-subtitle fxFlexAlign="start">{{alert.device_type}} - {{alert.device_name}} <br> {{alert.date}}</mat-card-subtitle>
+            <mat-card-subtitle fxFlexAlign="start">
+              {{ alert.device_id ? ('[' + alert.device_type +'] - ' + alert.device_name) : 'System - User Account' }} <br> {{ alert.date | date:'dd/MM/yyyy, h:mm a' }}
+            </mat-card-subtitle>
             <mat-card-content fxFlexAlign="start">{{alert.description}}</mat-card-content>
         </div>
 
@@ -26,7 +29,7 @@
         <div fxFlex="30%" fxLayout="column" fxLayoutAlign="center center">
             <mat-card-actions>
                 <button mat-raised-button extended color="primary">
-                    <mat-icon>developer_board</mat-icon>VIEW DEVICE
+                    <mat-icon>developer_board</mat-icon>{{ alert.device_id ? ('VIEW DEVICE') : 'VIEW ACCOUNT' }}
                 </button>
             </mat-card-actions>
         </div>
@@ -44,44 +47,3 @@
         </div>
     </mat-card>
 </div>
-
-
-
-
-<!--
-<mat-card class="alert-mat-card" *ngFor="let alert of alerts" fxLayout="row" [ngStyle]="{'background-color': alert.read_status === 'Y' ? 'lightgrey' : 'lightblue'}">
-    <div fxFlex="50%">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon mat-list-icon style="margin-right: 5px;">
-            <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
-            <ng-container *ngIf="alert.type === 'I'">info</ng-container>
-          </mat-icon>
-          {{alert.title}}
-        </mat-card-title>
-        <mat-card-subtitle>{{alert.date}}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{alert.description}}</p>
-      </mat-card-content>
-    </div>
-    <div fxFlex="25%" fxLayout="column" fxLayoutAlign="center end">
-      <mat-card-actions>
-        <button mat-raised-button extended color="primary">
-          <mat-icon>developer_board</mat-icon>GO TO DEVICE
-        </button>
-      </mat-card-actions>
-    </div>
-    <div fxFlex="25%" fxLayout="column" fxLayoutAlign="center end">
-      <mat-card-actions>
-        <ng-container *ngIf="alert.read_status === 'Y'">
-          <span style="color: gray">READ</span>
-        </ng-container>
-        <ng-container *ngIf="alert.read_status === 'N'">
-          <mat-checkbox color="primary" (change)="onMarkAsRead(alert)">MARK AS READ</mat-checkbox>
-        </ng-container>
-      </mat-card-actions>
-    </div>
-  </mat-card>
-  
--->
