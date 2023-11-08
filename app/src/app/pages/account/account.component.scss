@@ -1,41 +1,41 @@
 .user-info-card {
-    padding: 20px;
-    margin-bottom:40px;
+  padding: 20px;
+  margin-bottom: 40px;
 }
 
 .user-icon {
-    height: auto;
-    width: auto;
-    font-size: 56px;
+  height: auto;
+  width: auto;
+  font-size: 56px;
 }
 
 .form-items-centered {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 
-  .section {
-    display: flex;
-    align-content: center;
-    align-items: center;
-  }
+.section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
 
-  .mat-card-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: space-between
-  }
+.mat-card-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between
+}
 
-  .radio-header {
-    margin: 0px;
-  }
-  
-  .radio-button {
-    margin: 0 10px;
-  }
+.radio-header {
+  margin: 0px;
+}
 
-  button {
-    margin-right: 10px;
+.radio-button {
+  margin: 0 10px;
+}
+
+button {
+  margin-right: 10px;
 }

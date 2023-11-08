@@ -60,22 +60,25 @@ def convert_to_json(result, keys):
 # Endpoint to get user's alerts, with basic info
 @router.get("/getAlerts")
 async def get_alerts(username: str, unreadAlertsOnly: bool):
-    
-    with database_connection():
-        keys = ["id", "title", "username", "device_id", "description", "date", "type", "read_status"]
-        if (unreadAlertsOnly):
-            result = connector.execute(f"""
-            SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
-            FROM p.alert
-            WHERE p.alert.username = %s AND p.alert.read_status = %s ORDER BY date DESC""", (username, 'N'))
-        else:
-            result = connector.execute(f"""
-            SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
-            FROM p.alert
-            WHERE p.alert.username = %s ORDER BY (read_status='N') DESC, date DESC""", (username,))
-        json_data = convert_to_json(result, keys)
-    
-    return json_data
+    try:
+        with database_connection():
+            keys = ["id", "title", "username", "device_id", "device_type", "device_name", "description", "date", "type", "read_status"]
+            if (unreadAlertsOnly):
+                result = connector.execute(f"""
+                SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
+                FROM p.alert
+                WHERE p.alert.username = %s AND p.alert.read_status = %s ORDER BY date DESC""", (username, 'N'))
+            else:
+                result = connector.execute(f"""
+                SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.device.device_type, p.device.device_name, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
+                FROM p.alert
+                LEFT JOIN p.device ON p.alert.device_id = p.device.id
+                WHERE p.alert.username = %s ORDER BY (read_status='N') DESC, date DESC""", (username,))
+            json_data = convert_to_json(result, keys)
+        
+        return json_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
 # Endpoint to add an alert for a user
@@ -130,4 +133,24 @@ async def clear_alerts(username: str):
         else:
             raise HTTPException(status_code=400, detail=f"There are no alerts to clear!")
 
+# **************** #
+# DEVICE ENDPOINTS #
+# **************** #
 
+# ===============================================================================================
+# Endpoint to get user's devices
+@router.get("/getDevices")
+async def get_devices(username: str):
+    try:
+        with database_connection():
+            keys = ["id", "user_username", "device_type", "device_category", "device_name"]
+            result = connector.execute("""
+            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name 
+            FROM p.device
+            WHERE p.device.user_username = %s""", (username,))
+            json_data = convert_to_json(result, keys)
+
+        return json_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+        

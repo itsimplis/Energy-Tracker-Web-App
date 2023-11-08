@@ -1,4 +1,40 @@
-<div class="page-title"> 
+<div class="page-title">
     <h1><strong>MY DEVICES</strong></h1>
     <mat-divider></mat-divider>
-  </div>
+</div>
+
+<div *ngFor="let category of devicesByCategory | keyvalue" class="device-category-panel">
+    <mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <h3><strong>{{ category.key | uppercase }}</strong></h3> <!-- Device Category -->
+            </mat-panel-title>
+            <mat-panel-description>
+                <h3><strong>{{ category.value.length }} devices</strong></h3>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-divider></mat-divider>
+        <br>
+        <div class="cards-container">
+            <!-- Loop over each device within the current category -->
+            <mat-card *ngFor="let device of category.value" class="device-card">
+                <mat-card-header>
+                    <div mat-card-avatar class="device-icon">
+                        <mat-icon>{{ getCategoryIcon(category.key) }}</mat-icon>
+                    </div>
+                    <mat-card-title>{{ device.device_name }}</mat-card-title>
+                    <mat-card-subtitle>{{ device.device_type }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <!-- You can add more device details here -->
+                    <p>Some more details about the device...</p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <!-- Add actions if necessary -->
+                    <button mat-raised-button color="primary">VIEW DETAILS</button>
+                    <button mat-raised-button color="warn">DELETE</button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </mat-expansion-panel>
+</div>

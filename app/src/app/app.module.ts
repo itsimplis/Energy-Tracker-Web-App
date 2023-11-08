@@ -40,6 +40,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { AlertService } from './service/alert.service';
 import { DevicesComponent } from './pages/devices/devices.component';
 import { BasicDialogComponent } from './dialog/basic-dialog/basic-dialog.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { BasicDialogComponent } from './dialog/basic-dialog/basic-dialog.compone
     MatMenuModule,
     MatRadioModule,
     MatCheckboxModule,
-    MatDialogModule
+    MatDialogModule,
+    MatExpansionModule
   ],
   providers: [
     JwtHelperService,

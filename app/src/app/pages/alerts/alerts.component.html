@@ -18,7 +18,7 @@
         <!-- Title, Device / Date, Description  -->
         <div fxFlex="40%" fxLayout="column" fxLayoutAlign="start start">
             <mat-card-title>{{alert.title}}</mat-card-title>
-            <mat-card-subtitle fxFlexAlign="start">Router - {{alert.date}}</mat-card-subtitle>
+            <mat-card-subtitle fxFlexAlign="start">{{alert.device_type}} - {{alert.device_name}} <br> {{alert.date}}</mat-card-subtitle>
             <mat-card-content fxFlexAlign="start">{{alert.description}}</mat-card-content>
         </div>
 

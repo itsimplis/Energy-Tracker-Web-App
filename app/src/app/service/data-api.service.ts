@@ -12,6 +12,10 @@ export class DataApiService {
 
   constructor(private http: HttpClient) { }
 
+  //========================================
+  // ALERTS API CALLS
+  //========================================
+
    // [GET] Get user's alerts
    getAlerts(username: string, unreadAlertsOnly: boolean): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getAlerts?username=${username}&unreadAlertsOnly=${unreadAlertsOnly}`, { withCredentials: true });
@@ -36,5 +40,14 @@ export class DataApiService {
         id: id,
         read_status: read_status
     });
+  }
+
+  //========================================
+  // DEVICES API CALLS
+  //========================================
+
+  // [GET] Get user's alerts
+  getDevices(username: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getDevices?username=${username}`, { withCredentials: true });
   }
 }
