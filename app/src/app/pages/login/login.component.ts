@@ -1,7 +1,6 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from './../../service/authentication.service';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +15,7 @@ export class LoginComponent {
   password: string;
   hidePwd: boolean;
 
-  constructor(private router: Router, private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar) {
+  constructor(private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar) {
     this.output = { result: '', message: '' };
     this.username = '';
     this.password = '';

@@ -1,5 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs'
 
@@ -13,10 +14,11 @@ export class AuthenticationService {
   private authToken = 'authToken';
   private userName = 'username';
 
-  constructor(private jwtHelper: JwtHelperService, private http: HttpClient) {}
+  constructor(private jwtHelper: JwtHelperService, private http: HttpClient, private router: Router) {}
 
     userLoggedOut = new EventEmitter();
     userLoggedIn = new EventEmitter();
+    userRegistered = new EventEmitter();
 
     // [POST] Send user details to register
     registerUser(username: string, email: string, password: string, password2: string): Observable<any> {
@@ -61,10 +63,21 @@ export class AuthenticationService {
     localStorage.removeItem(this.authToken);
     localStorage.removeItem(this.userName);
     this.userLoggedOut.emit();
+    this.router.navigate(['/home']);
   }
 
   notifyLogin(): void {
     this.userLoggedIn.emit();
+    setTimeout(() => {
+      this.router.navigate(['/home']);
+    }, 2000);
+  }
+
+  notifyRegister(): void {
+    this.userRegistered.emit();
+    setTimeout(() => {
+      this.router.navigate(['/home']);
+    }, 2000);
   }
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs'
 
 @Injectable({
@@ -18,7 +18,7 @@ export class UserApiService {
   }
 
   // [PATCH] Update user details
-  updateUser(username:string, first_name: string, last_name: string, age: string, gender: string, country: string, visibility: string, notifications: string): Observable<any> {
+  updateUser(username: string, first_name: string, last_name: string, age: string, gender: string, country: string, visibility: string, notifications: string): Observable<any> {
     return this.http.patch<any>(`${this.baseUrl}/user/update`, {
       username: username,
       first_name: first_name,
@@ -29,5 +29,18 @@ export class UserApiService {
       visibility: visibility,
       notifications: notifications
     });
+  }
+
+  // [DELETE] Delete user account
+  deleteUser(username: string): Observable<any> {
+    const httpOptions = {
+      withCredentials: true,
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      params: new HttpParams().set('username', username)
+    };
+
+    return this.http.delete<any>(`${this.baseUrl}/user/delete`, httpOptions);
   }
 }

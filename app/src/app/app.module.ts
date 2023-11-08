@@ -22,8 +22,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatRadioModule } from '@angular/material/radio'
-import { MatCheckboxModule} from '@angular/material/checkbox'
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule} from '@angular/material/checkbox';
+import { MatDialogModule} from '@angular/material/dialog'
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
@@ -38,6 +39,7 @@ import { AccountComponent } from './pages/account/account.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { AlertService } from './service/alert.service';
 import { DevicesComponent } from './pages/devices/devices.component';
+import { BasicDialogComponent } from './dialog/basic-dialog/basic-dialog.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,8 @@ import { DevicesComponent } from './pages/devices/devices.component';
     StatisticsComponent,
     LoginComponent,
     RegisterComponent,
-    AccountComponent
+    AccountComponent,
+    BasicDialogComponent
   ],
   imports: [
     AppRoutingModule,
@@ -73,7 +76,8 @@ import { DevicesComponent } from './pages/devices/devices.component';
     MatBadgeModule,
     MatMenuModule,
     MatRadioModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatDialogModule
   ],
   providers: [
     JwtHelperService,

@@ -1,7 +1,7 @@
-<div class="page-title"> 
+<div class="page-title">
     <h1><strong>MY ACCOUNT</strong></h1>
     <mat-divider></mat-divider>
-  </div>
+</div>
 <mat-card class="user-info-card">
     <mat-card-header>
         <mat-card-title>Account Details</mat-card-title>
@@ -75,8 +75,9 @@
         </section>
         <br><br>
     </mat-card-content>
-    <mat-card-actions>
-        <button mat-raised-button color="primary" [disabled]="!isFormChanged" (click)="updateUserDetails()">Update
-            Details</button>
+    <mat-card-actions align="start">
+        <button mat-raised-button color="primary" [disabled]="!isFormChanged"
+            (click)="onUpdateDetails()">UpdateDetails</button>
+        <button mat-raised-button color="warn" (click)="onDeleteAccount()">Delete Account</button>
     </mat-card-actions>
 </mat-card>

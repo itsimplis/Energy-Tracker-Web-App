@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from 'src/app/service/authentication.service';
 import { UserApiService } from 'src/app/service/user-api.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
+import { DialogRef } from '@angular/cdk/dialog';
+import { AlertService } from 'src/app/service/alert.service';
 
 
 @Component({
@@ -13,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class AccountComponent implements OnInit {
 
   output: Output;
+  dialogRef!: DialogRef;
   isFormChanged: boolean;
   username: string;
   email: string;
@@ -25,7 +29,7 @@ export class AccountComponent implements OnInit {
   notifications: string;
 
 
-  constructor(private userApiService: UserApiService, private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar) {
+  constructor(private userApiService: UserApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private matDialog: MatDialog) {
     this.output = { result: '', message: '' };
     this.username = '';
     this.email = '';
@@ -62,18 +66,45 @@ export class AccountComponent implements OnInit {
     })
   }
 
-  updateUserDetails() {
+  onUpdateDetails() {
     this.userApiService.updateUser(this.authenticationService.getUserName()!, this.first_name, this.last_name, this.age, this.gender, this.country, this.visibility, this.notifications).subscribe({
       next: (data) => {
         this.output.result = 'success';
         this.output.message = data.message;
         this.isFormChanged = false;
-        this.matSnackBar.open(this.output.message, 'Close', { duration: 3500, });
+        this.alertService.showSnackBar(this.output.message);
       },
       error: (error) => {
         console.log(error);
       }
     })
+  }
+
+  onDeleteAccount() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.userApiService.deleteUser(this.authenticationService.getUserName()!).subscribe({
+            next: (response) => {
+              this.authenticationService.logout();
+              this.alertService.showSnackBar("Account deleted successfully!");
+            },
+            error: (error) => {
+              this.alertService.showSnackBar("There was an error deleting the account!");
+            }
+          });
+        } else {
+          this.alertService.showSnackBar("Account deletion was cancelled!");
+        }
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
+      }
+    });
   }
 
   onInputChange() {

@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Account Deletion</h2>
+
+<mat-dialog-content>
+    <p> Deleting your account is an irreversible action and will permanently delete all your data associated with your account.<br><br>
+        Are you sure you want to proceed ?
+    </p> 
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onClose(false)">Cancel</button>
+    <button mat-button (click)="onClose(true)" cdkFocusInitial>Confirm</button>
+  </mat-dialog-actions>

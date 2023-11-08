@@ -1,6 +1,5 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from './../../service/authentication.service';
-import { DataApiService } from 'src/app/service/data-api.service';
 import { Component } from '@angular/core';
 import { AlertService } from 'src/app/service/alert.service';
 
@@ -33,6 +32,7 @@ export class RegisterComponent {
         this.output.message = data.message;
         this.alertService.addAlert(this.username, null, "Welcome user !", "Welcome. Please don't forget to update your profile details!", new Date().toISOString(), 'I', 'N', false);
         this.alertService.showSnackBar(this.output.message, 'Close', 3500)
+        this.authenticationService.notifyRegister();
       },
       error: (error) => {
         console.log(error);
@@ -62,8 +62,6 @@ export class RegisterComponent {
     return this.authenticationService.isAuthenticated();
   }
 }
-
-
 
 interface Output {
   result: string;

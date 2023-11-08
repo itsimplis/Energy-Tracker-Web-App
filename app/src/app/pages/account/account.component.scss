@@ -22,6 +22,12 @@
     align-items: center;
   }
 
+  .mat-card-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+  }
+
   .radio-header {
     margin: 0px;
   }
@@ -29,3 +35,7 @@
   .radio-button {
     margin: 0 10px;
   }
+
+  button {
+    margin-right: 10px;
+}
