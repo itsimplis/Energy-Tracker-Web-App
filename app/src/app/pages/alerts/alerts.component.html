@@ -22,7 +22,7 @@
             <mat-card-subtitle fxFlexAlign="start">
               {{ alert.device_id ? ('[' + alert.device_type +'] - ' + alert.device_name) : 'System - User Account' }} <br> {{ alert.date | date:'dd/MM/yyyy, h:mm a' }}
             </mat-card-subtitle>
-            <mat-card-content fxFlexAlign="start">{{alert.description}}</mat-card-content>
+            <mat-card-content fxFlexAlign="start"><strong>{{alert.description}}</strong></mat-card-content>
         </div>
 
         <!-- Go To Device -->

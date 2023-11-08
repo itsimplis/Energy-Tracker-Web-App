@@ -18,18 +18,18 @@
 }
 
 .device-icon .mat-icon {
-    font-size: 40px; /* Large size icon */
+    font-size: 40px;
     height: 40px;
     width: 40px;
 }
 
 button {
     margin-right: 10px;
-  }
+}
 
-/* Add media query for smaller screens */
+
 @media (max-width: 768px) {
     .device-card {
-        max-width: 100%; /* Full width on smaller screens */
+        max-width: 100%;
     }
 }
