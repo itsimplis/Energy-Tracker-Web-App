@@ -46,6 +46,13 @@ CREATE TABLE p.device_consumption (
     consumption_id INT NOT NULL REFERENCES p.consumption(id)
 );
 
+CREATE TABLE p.power_reading (
+    id SERIAL PRIMARY KEY NOT NULL,
+    consumption_id INT NOT NULL REFERENCES p.consumption(id),
+    reading_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    power NUMERIC(6, 1) NOT NULL
+);
+
 CREATE TABLE p.alert (
     id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR(100) REFERENCES p.user(username) ON DELETE CASCADE,
