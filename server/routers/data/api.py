@@ -39,6 +39,12 @@ class UpdateAlert(BaseModel):
     id: int
     read_status: str
 
+class DeviceData(BaseModel):
+    user_username: str
+    device_type: str
+    device_category: str
+    device_name: str
+
 @contextmanager
 def database_connection():
     try:
@@ -113,7 +119,7 @@ async def update_alert(data: UpdateAlert):
 
 # ===============================================================================================
 # Endpoint to clear all alerts of a user
-@router.post("/removeAlerts")
+@router.delete("/removeAlerts")
 async def clear_alerts(username: str):
     
     with database_connection():
@@ -153,4 +159,46 @@ async def get_devices(username: str):
         return json_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        
+
+# ===============================================================================================
+# Endpoint to add a device to user's devices
+@router.post("/addDevice")
+async def add_device(data: DeviceData):
+    with database_connection():
+        try:
+            connector.execute(
+                "INSERT INTO p.device (user_username, device_type, device_category, device_name) VALUES (%s, %s, %s, %s)",
+                (data.user_username, data.device_type, data.device_category, data.device_name)
+            )
+            connector.commit()
+            return {"message": "Device {data.device_name} added successfully!"}
+        except HTTPException:
+            raise
+        except Exception as e:
+            connector.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint remove a user's device
+@router.delete("/removeDevice/{device_id}")
+async def remove_device(device_id: int):
+    with database_connection():
+        try:
+            result = connector.execute(
+                "SELECT * FROM p.device WHERE p.device.id = %s", (device_id,)
+            )
+            if not result:
+                raise HTTPException(
+                    status_code=404, detail=f"Device with id {device_id} does not exist."
+                )
+            connector.execute(
+                "DELETE FROM p.device WHERE p.device.id = %s", (device_id,)
+            )
+            connector.commit()
+            return {"message": f"Device with id {device_id} removed successfully!"}
+
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            connector.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
