@@ -13,11 +13,29 @@
                 <h3><strong>{{ category.value.length }} devices</strong></h3>
             </mat-panel-description>
         </mat-expansion-panel-header>
+
         <mat-divider></mat-divider>
         <br>
+
         <div class="cards-container">
-            <!-- Loop over each device within the current category -->
             <mat-card *ngFor="let device of category.value" class="device-card">
+                <!-- 3-dot but menu -->
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu"
+                    class="menu-button">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item>
+                        <mat-icon>remove_red_eye</mat-icon><span>View</span>
+                    </button>
+                    <button mat-menu-item>
+                        <mat-icon>edit</mat-icon><span>Edit</span>
+                    </button>
+                    <button mat-menu-item (click)="onDeviceRemove(device.id)">
+                        <mat-icon>delete</mat-icon><span>Remove</span>
+                    </button>
+                </mat-menu>
+                <!-- device header and content -->
                 <mat-card-header>
                     <div mat-card-avatar class="device-icon">
                         <mat-icon>{{ getCategoryIcon(category.key) }}</mat-icon>
@@ -26,11 +44,9 @@
                     <mat-card-subtitle>{{ device.device_type }}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                    <!-- You can add more device details here -->
-                    <p>Some more details about the device...</p>
+                    <!-- To-Do... -->
                 </mat-card-content>
                 <mat-card-actions>
-                    <!-- Add actions if necessary -->
                     <button mat-raised-button color="primary">VIEW DETAILS</button>
                     <button mat-raised-button color="warn">DELETE</button>
                 </mat-card-actions>

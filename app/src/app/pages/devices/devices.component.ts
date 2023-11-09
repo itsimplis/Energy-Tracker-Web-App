@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertService } from 'src/app/service/alert.service';
 import { AuthenticationService } from 'src/app/service/authentication.service';
 import { DataApiService } from 'src/app/service/data-api.service';
 
@@ -7,13 +8,20 @@ import { DataApiService } from 'src/app/service/data-api.service';
   templateUrl: './devices.component.html',
   styleUrls: ['./devices.component.scss']
 })
+
 export class DevicesComponent implements OnInit {
   devices: any[];
   devicesByCategory: { [category: string]: any[] } = {};
   panelOpenState: boolean = false;
+  output: Output;
 
-  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService) {
+  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService) {
     this.devices = [];
+    this.output = { result: '', message: '' };
+  }
+
+  ngOnInit(): void {
+    this.loadDevices();
   }
 
   setPanelOpenState(state: boolean) {
@@ -40,12 +48,12 @@ export class DevicesComponent implements OnInit {
       cooling: 'ac_unit',
       washing: 'local_laundry_service',
       kitchen: 'kitchen',
-      other: 'device_unknown' // Assuming you want to use this for 'other'
+      other: 'device_unknown'
     };
     return categoryIcons[category.toLowerCase()] || 'device_unknown';
   }
 
-  ngOnInit(): void {
+  loadDevices() {
     this.dataApiService.getDevices(this.authenticationService.getUserName()!).subscribe({
       next: (data) => {
         this.devices = data;
@@ -56,4 +64,33 @@ export class DevicesComponent implements OnInit {
       }
     });
   }
+
+  onDeviceView(device_id: number) {
+    // To do...
+  }
+
+  onDeviceEdit(device_id: number) {
+    // To do...
+  }
+
+  onDeviceRemove(device_id: number) {
+    this.dataApiService.removeDevice(device_id).subscribe({
+      next: (data) => {
+        this.output.result = 'success';
+        this.output.message = data.message;
+        this.alertService.showSnackBar(this.output.message);
+        this.loadDevices();
+        this.alertService.loadAlerts();
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+}
+
+interface Output {
+  result: string;
+  message: string;
 }

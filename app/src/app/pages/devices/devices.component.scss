@@ -23,6 +23,13 @@
     width: 40px;
 }
 
+.menu-button {
+    position: absolute;
+    top: 0px; 
+    right: -10px;
+    z-index: 1;
+}
+
 button {
     margin-right: 10px;
 }

@@ -195,7 +195,7 @@ async def remove_device(device_id: int):
                 "DELETE FROM p.device WHERE p.device.id = %s", (device_id,)
             )
             connector.commit()
-            return {"message": f"Device with id {device_id} removed successfully!"}
+            return {"message": f"Device removed successfully!"}
 
         except HTTPException as e:
             raise e
