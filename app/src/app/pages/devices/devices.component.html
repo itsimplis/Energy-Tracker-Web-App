@@ -11,6 +11,7 @@
             </mat-panel-title>
             <mat-panel-description>
                 <h3><strong>{{ category.value.length }} devices</strong></h3>
+                <mat-icon>{{ getCategoryIcon(category.key) }}</mat-icon>
             </mat-panel-description>
         </mat-expansion-panel-header>
 
@@ -20,8 +21,7 @@
         <div class="cards-container">
             <mat-card *ngFor="let device of category.value" class="device-card">
                 <!-- 3-dot but menu -->
-                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu"
-                    class="menu-button">
+                <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -47,8 +47,9 @@
                     <!-- To-Do... -->
                 </mat-card-content>
                 <mat-card-actions>
-                    <button mat-raised-button color="primary">VIEW DETAILS</button>
-                    <button mat-raised-button color="warn">DELETE</button>
+                    <button mat-raised-button color="primary">
+                        <mat-icon>power</mat-icon><span>Log Consumption</span>
+                    </button>
                 </mat-card-actions>
             </mat-card>
         </div>
