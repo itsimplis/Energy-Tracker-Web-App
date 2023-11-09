@@ -14,13 +14,12 @@ export class UserApiService {
 
   // [GET] Get user details
   getUser(username: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/user/get?username=${username}`, { withCredentials: true });
+    return this.http.get<any[]>(`${this.baseUrl}/user/get/${username}`, { withCredentials: true });
   }
 
   // [PATCH] Update user details
   updateUser(username: string, first_name: string, last_name: string, age: string, gender: string, country: string, visibility: string, notifications: string): Observable<any> {
-    return this.http.patch<any>(`${this.baseUrl}/user/update`, {
-      username: username,
+    return this.http.patch<any>(`${this.baseUrl}/user/update/${username}`, {
       first_name: first_name,
       last_name: last_name,
       age: age,
@@ -33,14 +32,7 @@ export class UserApiService {
 
   // [DELETE] Delete user account
   deleteUser(username: string): Observable<any> {
-    const httpOptions = {
-      withCredentials: true,
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      }),
-      params: new HttpParams().set('username', username)
-    };
-
-    return this.http.delete<any>(`${this.baseUrl}/user/delete`, httpOptions);
+    return this.http.delete<any>(`${this.baseUrl}/user/delete/${username}`, { withCredentials: true });
   }
+
 }

@@ -36,8 +36,7 @@ class GetData(BaseModel):
     visibility: str
     notifications: str
 
-class UpdateData(BaseModel):
-    username: str
+class UserUpdateData(BaseModel):
     first_name: str
     last_name: str
     age: str
@@ -61,7 +60,7 @@ def convert_to_json(result, keys):
 
 # ===============================================================================================
 # Endpoint to get the user details
-@router.get("/get")
+@router.get("/get/{username}")
 async def get_user(username: str):
     with database_connection():
         keys = ["username", "email", "first_name", "last_name", "age", "gender", "country", "visibility", "notifications"]
@@ -75,19 +74,19 @@ async def get_user(username: str):
 
 # ===============================================================================================
 # Endpoint to update user data
-@router.patch("/update")
-async def update_user(data: UpdateData):
+@router.patch("/update/{username}")
+async def update_user(username: str, data: UserUpdateData):
     with database_connection():
         try:
             # Case check- User does not exist
             result = connector.execute(
-                "SELECT * FROM p.user WHERE p.user.username = %s", (data.username,)
+                "SELECT * FROM p.user WHERE p.user.username = %s", (username,)
             )
 
             if result:
                 connector.execute(
                     "UPDATE p.user SET first_name = %s, last_name = %s, age = %s, gender = %s, country = %s, visibility = %s, notifications = %s WHERE username = %s",
-                    (data.first_name, data.last_name, data.age, data.gender, data.country, data.visibility, data.notifications, data.username)
+                    (data.first_name, data.last_name, data.age, data.gender, data.country, data.visibility, data.notifications, username)
                 )
                 connector.commit()
                 return {"message": "User details updated successfully!"}
@@ -102,7 +101,7 @@ async def update_user(data: UpdateData):
     
 # ===============================================================================================
 # Endpoint to remove a user
-@router.delete("/delete")
+@router.delete("/delete/{username}")
 async def delete_user(username: str):
     with database_connection():
         try:
