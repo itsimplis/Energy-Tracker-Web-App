@@ -1,8 +1,9 @@
 <div class="fade-in-animation">
     <div class="page-title">
         <h1><strong>MY ALERTS</strong></h1>
-        <mat-divider></mat-divider>
     </div>
+    <mat-divider></mat-divider>
+    <br>
     <mat-card class="alert-mat-card" *ngFor="let alert of alerts" fxLayout="row" fxLayoutGap="10px"
         [ngClass]="{'highlighted': alert.id == highlightedAlertId}"
         [ngStyle]="{'background-color': alert.read_status === 'Y' ? 'lightgrey' : '#d2eafc'}">
@@ -20,7 +21,8 @@
         <div fxFlex="40%" fxLayout="column" fxLayoutAlign="start start">
             <mat-card-title>{{alert.title}}</mat-card-title>
             <mat-card-subtitle fxFlexAlign="start">
-              {{ alert.device_id ? ('[' + alert.device_type +'] - ' + alert.device_name) : 'System - User Account' }} <br> {{ alert.date | date:'dd/MM/yyyy, h:mm a' }}
+                {{ alert.device_id ? ('[' + alert.device_type +'] - ' + alert.device_name) : 'System - User Account' }}
+                <br> {{ alert.date | date:'dd/MM/yyyy, h:mm a' }}
             </mat-card-subtitle>
             <mat-card-content fxFlexAlign="start"><strong>{{alert.description}}</strong></mat-card-content>
         </div>

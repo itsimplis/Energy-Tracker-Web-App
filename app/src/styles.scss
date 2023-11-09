@@ -11,9 +11,17 @@ body {
 
 // Global Page titles
 .page-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 5px;
+    margin-bottom: 15px;
+}
+
+.page-title h1 {
+    flex-grow: 1;
     text-align: center;
-    padding-top: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 0px;
 }
 
 // Global fade-in animation

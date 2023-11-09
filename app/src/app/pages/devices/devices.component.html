@@ -1,8 +1,13 @@
 <div class="page-title">
     <h1><strong>MY DEVICES</strong></h1>
-    <mat-divider></mat-divider>
+    <div class="add-device-button">
+        <button mat-raised-button color="primary">
+            <mat-icon>add</mat-icon><span>Add New Device</span>
+        </button>
+    </div>
 </div>
-
+<mat-divider></mat-divider>
+<br>
 <div *ngFor="let category of devicesByCategory | keyvalue" class="device-category-panel">
     <mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true">
         <mat-expansion-panel-header>
