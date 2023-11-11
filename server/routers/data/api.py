@@ -194,13 +194,12 @@ async def get_device(device_id: int):
 async def get_device_consumption(device_id: int):
     try:
         with database_connection():
-            keys = ["device_id", "device_type", "device_category", "device_name", "consumption_id", "start_date", "end_date", "duration_days", "files_names", "total_power"]
+            keys = ["consumption_id", "start_date", "end_date", "duration_days", "files_names", "total_power"]
             result = connector.execute("""
-            SELECT p.device.id AS device_id, p.device.device_type, p.device.device_category, p.device.device_name, 
-                p.consumption.id AS consumption_id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.total_power
+            SELECT p.consumption.id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.total_power
             FROM p.device
-            LEFT JOIN p.device_consumption ON device_id = p.device_consumption.id
-            LEFT JOIN p.consumption ON p.device_consumption.id = consumption_id
+            LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.id
+            LEFT JOIN p.consumption ON p.device_consumption.id = p.consumption.id
             WHERE p.device.id = %s""", (device_id,))
             json_data = convert_to_json(result, keys)
 
@@ -214,7 +213,7 @@ async def get_device_consumption(device_id: int):
 async def get_device_alerts(device_id: int):
     try:
         with database_connection():
-            keys = ["title", "description", "type", "read_status", "date"]
+            keys = ["title", "description", "date", "type", "read_status"]
             result = connector.execute("""
             SELECT p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status
             FROM p.alert

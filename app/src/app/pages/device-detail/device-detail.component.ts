@@ -1,12 +1,12 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {MatSort, MatSortModule} from '@angular/material/sort';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { DataApiService } from 'src/app/service/data-api.service';
 
 @Component({
@@ -14,36 +14,28 @@ import { DataApiService } from 'src/app/service/data-api.service';
   templateUrl: './device-detail.component.html',
   styleUrls: ['./device-detail.component.scss']
 })
-export class DeviceDetailComponent implements OnInit, AfterViewInit {
+export class DeviceDetailComponent implements OnInit {
 
   private routeSubscription!: Subscription;
   private consumptions: any[];
-  private alerts: any[];
+  alerts: any[];
   panelOpenState: boolean = false;
-  columnsConsumption: string[] = ['id', 'start date', 'end date', 'duration days', 'files names', 'total power'];
-  columnsAlert: string[] = ['id', 'title', 'description', 'date', 'type', 'read'];
-  dataSourceConsumption: MatTableDataSource<ConsumptionData>;
-  dataSourceAlert: MatTableDataSource<AlertData>;
+  columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'files_names', 'total_power'];
+  columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'date'];
+  dataSourceConsumption!: MatTableDataSource<any[]>;
+  dataSourceAlert!: MatTableDataSource<any[]>;
 
-  @ViewChild(MatPaginator) paginatorConsumptions!: MatPaginator;
-  @ViewChild(MatSort) sortConsumptions!: MatSort;
-  @ViewChild(MatPaginator) paginatorAlert!: MatPaginator;
-  @ViewChild(MatSort) sortAlert!: MatSort;
+  @ViewChild('paginatorConsumptions', { static: true }) paginatorConsumptions!: MatPaginator;
+  @ViewChild('sortConsumptions', { static: true }) sortConsumptions!: MatSort;
+  @ViewChild('paginatorAlert', { static: true }) paginatorAlert!: MatPaginator;
+  @ViewChild('sortAlert', { static: true }) sortAlert!: MatSort;
 
-  constructor(private route: ActivatedRoute, private dataApiService: DataApiService) {    
+  constructor(private route: ActivatedRoute, private dataApiService: DataApiService) {
     this.consumptions = [];
     this.alerts = [];
-
-    this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
-    this.dataSourceAlert = new MatTableDataSource(this.alerts);
   }
 
-  ngAfterViewInit() {
-    this.dataSourceConsumption.paginator = this.paginatorConsumptions;
-    this.dataSourceConsumption.sort = this.sortConsumptions;
-    this.dataSourceAlert.paginator = this.paginatorAlert;
-    this.dataSourceAlert.sort = this.sortAlert;
-  }
+
 
   applyFilterInConsumptions(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -77,7 +69,10 @@ export class DeviceDetailComponent implements OnInit, AfterViewInit {
       this.dataApiService.getDeviceConsumption(params['id']).subscribe({
         next: (data) => {
           this.consumptions = data;
+          this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
           this.dataSourceConsumption.data = this.consumptions;
+          this.dataSourceConsumption.paginator = this.paginatorConsumptions;
+          this.dataSourceConsumption.sort = this.sortConsumptions;
         },
         error: (error) => {
           console.log(error);
@@ -87,7 +82,10 @@ export class DeviceDetailComponent implements OnInit, AfterViewInit {
       this.dataApiService.getDeviceAlerts(params['id']).subscribe({
         next: (data) => {
           this.alerts = data;
+          this.dataSourceAlert = new MatTableDataSource(this.alerts);
           this.dataSourceAlert.data = this.alerts;
+          this.dataSourceAlert.paginator = this.paginatorAlert;
+          this.dataSourceAlert.sort = this.sortAlert;
         },
         error: (error) => {
           console.log(error);
@@ -112,19 +110,18 @@ export class DeviceDetailComponent implements OnInit, AfterViewInit {
 }
 
 export interface ConsumptionData {
-  id: string;
-  start_date: string;
-  end_date: string;
-  duration_days: string;
-  files_names: string;
-  total_power: string;
+  consumption_id: number | null;
+  start_date: string | null;
+  end_date: string | null;
+  duration_days: number | null;
+  files_names: string | null;
+  total_power: number | null;
 }
 
 export interface AlertData {
-  id: string;
   title: string;
   description: string;
-  date: string;
+  date: string; 
   type: string;
   read_status: string;
 }

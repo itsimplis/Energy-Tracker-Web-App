@@ -52,18 +52,18 @@ export class DataApiService {
   }
 
   // [GET] Get a user's specific device
-  getDevice(device_id: number): Observable<any[]> {
+  getDevice(device_id: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/data/getDevice/${device_id}`, { withCredentials: true });
   }
 
   // [GET] Get consumption logs for a specific device
-  getDeviceConsumption(device_id: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/data/getDeviceAlerts/${device_id}`, { withCredentials: true });
+  getDeviceConsumption(device_id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/data/getDeviceConsumption/${device_id}`, { withCredentials: true });
   }
 
   // [GET] Get alerts for a specific device
-  getDeviceAlerts(device_id: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/data/getDeviceConsumption/${device_id}`, { withCredentials: true });
+  getDeviceAlerts(device_id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/data/getDeviceAlerts/${device_id}`, { withCredentials: true });
   }
 
   // [POST] Add a device to user's devices
