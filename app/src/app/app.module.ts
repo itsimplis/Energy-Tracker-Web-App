@@ -16,7 +16,7 @@ import { MatToolbarModule} from '@angular/material/toolbar';
 import { MatIconModule} from '@angular/material/icon';
 import { MatListModule} from '@angular/material/list';
 import { MatTabsModule} from '@angular/material/tabs';
-import { MatTableModule, MatTableDataSource} from '@angular/material/table';
+import { MatTableModule} from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -24,7 +24,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule} from '@angular/material/checkbox';
-import { MatDialogModule} from '@angular/material/dialog'
+import { MatDialogModule} from '@angular/material/dialog';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
@@ -41,6 +42,7 @@ import { AlertService } from './service/alert.service';
 import { DevicesComponent } from './pages/devices/devices.component';
 import { BasicDialogComponent } from './dialog/basic-dialog/basic-dialog.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { DeviceDetailComponent } from './pages/device-detail/device-detail.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     LoginComponent,
     RegisterComponent,
     AccountComponent,
-    BasicDialogComponent
+    BasicDialogComponent,
+    DeviceDetailComponent
   ],
   imports: [
     AppRoutingModule,
@@ -79,7 +82,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatRadioModule,
     MatCheckboxModule,
     MatDialogModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   providers: [
     JwtHelperService,

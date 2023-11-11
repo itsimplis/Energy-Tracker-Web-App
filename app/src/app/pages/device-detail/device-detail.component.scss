@@ -1,0 +1,22 @@
+table {
+    width: 100%;
+}
+
+::ng-deep .mat-expansion-panel-header-description {
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+td,
+th {
+    width: 25%;
+}
+
+h3 {
+    margin: 0px;
+}

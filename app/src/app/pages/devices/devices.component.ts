@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Route, Router } from '@angular/router';
 import { AlertService } from 'src/app/service/alert.service';
 import { AuthenticationService } from 'src/app/service/authentication.service';
 import { DataApiService } from 'src/app/service/data-api.service';
@@ -15,7 +16,7 @@ export class DevicesComponent implements OnInit {
   panelOpenState: boolean = false;
   output: Output;
 
-  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService) {
+  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private router: Router) {
     this.devices = [];
     this.output = { result: '', message: '' };
   }
@@ -66,7 +67,7 @@ export class DevicesComponent implements OnInit {
   }
 
   onDeviceView(device_id: number) {
-    // To do...
+      this.router.navigate(['/device-detail', device_id]);
   }
 
   onDeviceEdit(device_id: number) {

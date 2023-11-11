@@ -9,6 +9,7 @@ import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { AccountComponent } from './pages/account/account.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { DeviceDetailComponent } from './pages/device-detail/device-detail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   { path: 'devices', component: DevicesComponent, canActivate: [AuthGuard]},
+  { path: 'device-detail/:id', component: DeviceDetailComponent, canActivate: [AuthGuard]},
   { path: 'alerts', component: AlertsComponent, canActivate: [AuthGuard]},
   { path: 'alerts/:id', component: AlertsComponent, canActivate: [AuthGuard] },
   { path: 'statistics', component: StatisticsComponent, canActivate: [AuthGuard]},
