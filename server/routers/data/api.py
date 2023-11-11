@@ -149,11 +149,76 @@ async def clear_alerts(username: str):
 async def get_devices(username: str):
     try:
         with database_connection():
+            keys = ["id", "user_username", "device_type", "device_category", "device_name", "consumption_logs_count", "unread_alerts_count", "total_alerts_count"]
+            result = connector.execute("""
+            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name,
+                COALESCE(sub_consumption.consumption_count, 0) AS consumption_logs_count,
+                COALESCE(sub_alerts.unread_alerts_count, 0) AS unread_alerts_count,
+                COALESCE(sub_alerts.total_alerts_count, 0) AS total_alerts_count
+            FROM p.device
+            LEFT JOIN (SELECT device_id, COUNT(*) AS consumption_count FROM p.device_consumption GROUP BY device_id) AS sub_consumption
+                ON p.device.id = sub_consumption.device_id
+            LEFT JOIN (SELECT device_id, COUNT(*) AS total_alerts_count, COUNT(*) FILTER (WHERE read_status = 'N') AS unread_alerts_count 
+                FROM p.alert 
+                GROUP BY device_id) AS sub_alerts
+                ON p.device.id = sub_alerts.device_id
+            WHERE 
+                p.device.user_username = %s
+            """, (username,))
+            json_data = convert_to_json(result, keys)
+
+        return json_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint to get user's devices
+@router.get("/getDevice/{device_id}")
+async def get_device(device_id: int):
+    try:
+        with database_connection():
             keys = ["id", "user_username", "device_type", "device_category", "device_name"]
             result = connector.execute("""
             SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name 
             FROM p.device
-            WHERE p.device.user_username = %s""", (username,))
+            WHERE p.device.id = %s""", (device_id,))
+            json_data = convert_to_json(result, keys)
+
+        return json_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint to get all consumptions logs for a specific device
+@router.get("/getDeviceConsumption/{device_id}")
+async def get_device_consumption(device_id: int):
+    try:
+        with database_connection():
+            keys = ["device_id", "device_type", "device_category", "device_name", "consumption_id", "start_date", "end_date", "duration_days", "files_names", "total_power"]
+            result = connector.execute("""
+            SELECT p.device.id AS device_id, p.device.device_type, p.device.device_category, p.device.device_name, 
+                p.consumption.id AS consumption_id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.total_power
+            FROM p.device
+            LEFT JOIN p.device_consumption ON device_id = p.device_consumption.id
+            LEFT JOIN p.consumption ON p.device_consumption.id = consumption_id
+            WHERE p.device.id = %s""", (device_id,))
+            json_data = convert_to_json(result, keys)
+
+        return json_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint to get all alerts for a specific device
+@router.get("/getDeviceAlerts/{device_id}")
+async def get_device_alerts(device_id: int):
+    try:
+        with database_connection():
+            keys = ["title", "description", "type", "read_status", "date"]
+            result = connector.execute("""
+            SELECT p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status
+            FROM p.alert
+            WHERE p.alert.device_id = %s""", (device_id,))
             json_data = convert_to_json(result, keys)
 
         return json_data
