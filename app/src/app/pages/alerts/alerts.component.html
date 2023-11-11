@@ -30,7 +30,7 @@
         <!-- Go To Device -->
         <div fxFlex="30%" fxLayout="column" fxLayoutAlign="center center">
             <mat-card-actions>
-                <button mat-raised-button extended color="primary">
+                <button mat-raised-button extended color="primary" (click)="onButtonClick(alert.device_id)">
                     <mat-icon>developer_board</mat-icon>{{ alert.device_id ? ('VIEW DEVICE') : 'VIEW ACCOUNT' }}
                 </button>
             </mat-card-actions>

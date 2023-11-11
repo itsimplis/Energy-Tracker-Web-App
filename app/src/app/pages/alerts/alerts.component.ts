@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DataApiService } from './../../service/data-api.service';
 import { AuthenticationService } from 'src/app/service/authentication.service';
 import { AlertService } from 'src/app/service/alert.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -19,7 +19,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
   private routeSubscription!: Subscription;
   
 
-  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private route: ActivatedRoute) {}
+  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.alertsSubscription = this.alertService.alerts$.subscribe(
@@ -46,8 +46,13 @@ export class AlertsComponent implements OnInit, OnDestroy {
     this.alertService.updateAlerts(alert.id);
   }
 
-  onGoToDevice() {
-    // Todo:...
+  onButtonClick(device_id: number) {
+    if (device_id) {
+      this.router.navigate(['/device-detail', device_id]);
+    } 
+    else {
+      this.router.navigate(['/account']);
+    }
   }
 }
 
