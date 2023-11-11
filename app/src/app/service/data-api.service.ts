@@ -46,9 +46,24 @@ export class DataApiService {
   // DEVICES API CALLS
   //========================================
 
-  // [GET] Get user's alerts
+  // [GET] Get all user's devices
   getDevices(username: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getDevices?username=${username}`, { withCredentials: true });
+  }
+
+  // [GET] Get a user's specific device
+  getDevice(device_id: number): Observable<any[]> {
+    return this.http.get<any>(`${this.baseUrl}/data/getDevice/${device_id}`, { withCredentials: true });
+  }
+
+  // [GET] Get consumption logs for a specific device
+  getDeviceConsumption(device_id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getDeviceAlerts/${device_id}`, { withCredentials: true });
+  }
+
+  // [GET] Get alerts for a specific device
+  getDeviceAlerts(device_id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getDeviceConsumption/${device_id}`, { withCredentials: true });
   }
 
   // [POST] Add a device to user's devices
