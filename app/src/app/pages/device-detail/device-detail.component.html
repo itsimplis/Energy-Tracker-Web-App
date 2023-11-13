@@ -22,8 +22,8 @@
             <mat-label>Filter</mat-label>
             <input matInput (keyup)="applyFilterInConsumptions($event)" placeholder="Ex. Mia" #input>
         </mat-form-field>
-        <button mat-raised-button color="primary">
-            <mat-icon>add</mat-icon><span>Log New Consumption</span>
+        <button mat-raised-button color="primary" (click)="onAddNewConsumption()">
+            <mat-icon>add</mat-icon><span>Add New Consumption</span>
         </button>
     </div>
 

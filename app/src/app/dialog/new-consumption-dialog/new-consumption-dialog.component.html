@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Add Consumption</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="consumptionForm" class="consumption-form">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" required>
+            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" required>
+            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Duration Days</mat-label>
+            <input matInput formControlName="durationDays" placeholder="Calculated Duration" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Files Names</mat-label>
+            <input matInput formControlName="filesNames" placeholder="Enter File Names">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Total Power (Watt)</mat-label>
+            <input matInput formControlName="totalPower" placeholder="Enter Total Power" type="number">
+            <span matPrefix>W&nbsp;</span>
+        </mat-form-field>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>

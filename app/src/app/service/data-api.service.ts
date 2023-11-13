@@ -67,11 +67,11 @@ export class DataApiService {
   }
 
   // [POST] Add a device to user's devices
-  addDevice(user_username: string, device_type: string, device_category: string, device_name: string): Observable<any> {
+  addDevice(user_username: string, device_category: string, device_type: string, device_name: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/data/addDevice`, {
       user_username: user_username,
-      device_type: device_type,
       device_category: device_category,
+      device_type: device_type,
       device_name: device_name
     });
   }

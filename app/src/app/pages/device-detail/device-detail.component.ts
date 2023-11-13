@@ -5,9 +5,8 @@ import { Subscription } from 'rxjs';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { DataApiService } from 'src/app/service/data-api.service';
+import { DialogService } from 'src/app/service/dialog.service';
 
 @Component({
   selector: 'app-device-detail',
@@ -30,7 +29,7 @@ export class DeviceDetailComponent implements OnInit {
   @ViewChild('paginatorAlert', { static: true }) paginatorAlert!: MatPaginator;
   @ViewChild('sortAlert', { static: true }) sortAlert!: MatSort;
 
-  constructor(private route: ActivatedRoute, private dataApiService: DataApiService) {
+  constructor(private route: ActivatedRoute, private dataApiService: DataApiService, private dialogService: DialogService) {
     this.consumptions = [];
     this.alerts = [];
   }
@@ -98,6 +97,18 @@ export class DeviceDetailComponent implements OnInit {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
+  }
+
+  onAddNewConsumption() {
+    this.dialogService.openNewConsumptionDialog().subscribe(result => {
+      if (result) {
+        console.log("Handling addition of new consumption log!")
+        console.log(result);
+      } else {
+        console.log("Addition of new consumption log cancelled!")
+        console.log(result);
+      }
+    });
   }
 
   setPanelOpenState(state: boolean) {

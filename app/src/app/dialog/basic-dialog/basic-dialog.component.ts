@@ -13,8 +13,12 @@ export class BasicDialogComponent {
       this.dialogRef.close(false);
     });
   }
+  
+  onCancel() {
+    this.dialogRef.close(false);
+  }
 
-  onClose(confirmed: boolean) {
-    this.dialogRef.close(confirmed);
+  onConfirm() {
+    this.dialogRef.close(true);
   }
 }

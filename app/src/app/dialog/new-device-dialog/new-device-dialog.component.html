@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Add a device</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="deviceForm" class="device-form">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Device Category</mat-label>
+            <mat-select formControlName="deviceCategory" required>
+                <mat-option value="Multimedia">Multimedia</mat-option>
+                <mat-option value="Washing">Washing</mat-option>
+                <mat-option value="Kitchen">Kitchen</mat-option>
+                <mat-option value="Cooling">Cooling</mat-option>
+                <mat-option value="Other">Other</mat-option>
+            </mat-select>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill">
+            <mat-label>Device Type</mat-label>
+            <input matInput formControlName="deviceType" placeholder="Enter Device Type" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Device Name</mat-label>
+            <input matInput formControlName="deviceName" placeholder="Enter Device Name" required>
+        </mat-form-field>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>

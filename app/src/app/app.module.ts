@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule} from '@angular/flex-layout'
 
 // Angular Material
@@ -26,6 +26,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule} from '@angular/material/checkbox';
 import { MatDialogModule} from '@angular/material/dialog';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import {MatDatepickerModule } from '@angular/material/datepicker';
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
@@ -43,6 +45,8 @@ import { DevicesComponent } from './pages/devices/devices.component';
 import { BasicDialogComponent } from './dialog/basic-dialog/basic-dialog.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DeviceDetailComponent } from './pages/device-detail/device-detail.component';
+import { NewConsumptionDialogComponent } from './dialog/new-consumption-dialog/new-consumption-dialog.component';
+import { NewDeviceDialogComponent } from './dialog/new-device-dialog/new-device-dialog.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +62,9 @@ import { DeviceDetailComponent } from './pages/device-detail/device-detail.compo
     RegisterComponent,
     AccountComponent,
     BasicDialogComponent,
-    DeviceDetailComponent
+    DeviceDetailComponent,
+    NewConsumptionDialogComponent,
+    NewDeviceDialogComponent
   ],
   imports: [
     AppRoutingModule,
@@ -66,6 +72,7 @@ import { DeviceDetailComponent } from './pages/device-detail/device-detail.compo
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     FlexLayoutModule,
     MatButtonModule,
     MatSidenavModule,
@@ -84,7 +91,9 @@ import { DeviceDetailComponent } from './pages/device-detail/device-detail.compo
     MatDialogModule,
     MatExpansionModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSelectModule,
+    MatDatepickerModule
   ],
   providers: [
     JwtHelperService,

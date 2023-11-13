@@ -41,8 +41,8 @@ class UpdateAlert(BaseModel):
 
 class DeviceData(BaseModel):
     user_username: str
-    device_type: str
     device_category: str
+    device_type: str
     device_name: str
 
 @contextmanager
