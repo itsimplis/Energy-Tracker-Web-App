@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS p.device;
 DROP TABLE IF EXISTS p.user;
 DROP TABLE IF EXISTS p.device_consumption;
 DROP TABLE IF EXISTS p.alerts;
+DROP TABLE IF EXISTS p.power_reading;
 DROP SCHEMA IF EXISTS p;
 
 CREATE SCHEMA p;
