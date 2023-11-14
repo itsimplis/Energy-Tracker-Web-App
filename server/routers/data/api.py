@@ -198,8 +198,8 @@ async def get_device_consumption(device_id: int):
             result = connector.execute("""
             SELECT p.consumption.id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.total_power
             FROM p.device
-            LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.id
-            LEFT JOIN p.consumption ON p.device_consumption.id = p.consumption.id
+            LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+            LEFT JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
             WHERE p.device.id = %s""", (device_id,))
             json_data = convert_to_json(result, keys)
 
@@ -235,7 +235,7 @@ async def add_device(data: DeviceData):
                 (data.user_username, data.device_type, data.device_category, data.device_name)
             )
             connector.commit()
-            return {"message": "Device {data.device_name} added successfully!"}
+            return {"message": f"Device '{data.device_name}' added successfully!"}
         except HTTPException:
             raise
         except Exception as e:
@@ -259,7 +259,7 @@ async def remove_device(device_id: int):
                 "DELETE FROM p.device WHERE p.device.id = %s", (device_id,)
             )
             connector.commit()
-            return {"message": f"Device removed successfully!"}
+            return {"message": "Device removed successfully!"}
 
         except HTTPException as e:
             raise e

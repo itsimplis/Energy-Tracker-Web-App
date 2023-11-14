@@ -1,13 +1,10 @@
-DROP TABLE IF EXISTS p.consumption;
-DROP TABLE IF EXISTS p.device;
-DROP TABLE IF EXISTS p.user;
-DROP TABLE IF EXISTS p.device_consumption;
-DROP TABLE IF EXISTS p.alerts;
-DROP TABLE IF EXISTS p.power_reading;
-DROP SCHEMA IF EXISTS p;
+-- Drop Schema --
+DROP SCHEMA IF EXISTS p CASCADE;
 
+-- Create Schema --
 CREATE SCHEMA p;
 
+-- Create Tables --
 CREATE TABLE p.consumption (
     id INT PRIMARY KEY NOT NULL,
     start_date TIMESTAMP WITH TIME ZONE,
@@ -64,3 +61,9 @@ CREATE TABLE p.alert (
     type CHAR(1),
     read_status CHAR(1)
 );
+
+-- Reset Sequences --
+ALTER SEQUENCE p.device_id_seq RESTART WITH 1;
+ALTER SEQUENCE p.device_consumption_id_seq RESTART WITH 1;
+ALTER SEQUENCE p.power_reading_id_seq RESTART WITH 1;
+ALTER SEQUENCE p.alert_id_seq RESTART WITH 1;
