@@ -11,8 +11,16 @@ Run `pip install uvicorn fastapi psycopg2 jwt bcrypt` to install necessary pytho
 ## Database initiliazation
 
 Make sure 'consumption.csv' file is present and placed under: `server\database\` folder.  
-Create a database named 'postgres'.  
-Run `python -m server.database.init` to create the database schema, and start loading it with data.   
+Create a database with the following configuration:
+
+    host="localhost",
+    port=5432,
+    database="postgres",
+    user="postgres",
+    password="password"
+
+* Run `python -m server.database.init` to create the database schema, and start loading it with data.   
+* Otherwise, run `python -m server.database.init --no-data` to simply create the database schema without pre-loaded data.
 
 ## Python FastAPI server
 
