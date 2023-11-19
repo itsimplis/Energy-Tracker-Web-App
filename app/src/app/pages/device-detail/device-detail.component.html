@@ -49,9 +49,9 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Files Names </th>
                 <td mat-cell *matCellDef="let row"> {{row.files_names}} </td>
             </ng-container>
-            <ng-container matColumnDef="total_power">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Power </th>
-                <td mat-cell *matCellDef="let row"> {{row.total_power}} </td>
+            <ng-container matColumnDef="power_max">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Max Power </th>
+                <td mat-cell *matCellDef="let row"> {{row.power_max}} </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="columnsConsumption"></tr>
