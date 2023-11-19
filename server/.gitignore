@@ -3,3 +3,4 @@
 # Pycache
 **/__pycache__
 __pycache__/
+/database/*.csv
