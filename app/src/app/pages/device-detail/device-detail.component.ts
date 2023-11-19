@@ -19,7 +19,7 @@ export class DeviceDetailComponent implements OnInit {
   private consumptions: any[];
   alerts: any[];
   panelOpenState: boolean = false;
-  columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'files_names', 'total_power'];
+  columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
   columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
@@ -126,7 +126,7 @@ export interface ConsumptionData {
   end_date: string | null;
   duration_days: number | null;
   files_names: string | null;
-  total_power: number | null;
+  power_max: number | null;
 }
 
 export interface AlertData {
