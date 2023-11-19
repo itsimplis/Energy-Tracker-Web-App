@@ -1,9 +1,14 @@
-<h2 mat-dialog-title>Add a device</h2>
+<h2 mat-dialog-title align="center">New Device
+    <span>
+        <h4 class="dialog-subtitle"> Add a new device to your list</h4>
+        <mat-divider></mat-divider>
+    </span>
+</h2>
 
 <mat-dialog-content>
     <form [formGroup]="deviceForm" class="device-form">
 
-        <mat-form-field appearance="fill">
+        <mat-form-field class="form-field" appearance="fill">
             <mat-label>Device Category</mat-label>
             <mat-select formControlName="deviceCategory" required>
                 <mat-option value="multimedia">Multimedia</mat-option>
@@ -12,16 +17,17 @@
                 <mat-option value="cooling">Cooling</mat-option>
                 <mat-option value="other">Other</mat-option>
             </mat-select>
+            <mat-hint align="start"><strong>Choose the device category that fits best your device</strong></mat-hint>
         </mat-form-field>
-        
-        <mat-form-field appearance="fill">
+        <mat-form-field class="form-field" appearance="fill">
             <mat-label>Device Type</mat-label>
             <input matInput formControlName="deviceType" placeholder="Enter Device Type" required>
+            <mat-hint align="start"><strong>Enter the type of your device (ex: 'Television')</strong></mat-hint>
         </mat-form-field>
-
-        <mat-form-field appearance="fill">
+        <mat-form-field class="form-field" appearance="fill">
             <mat-label>Device Name</mat-label>
             <input matInput formControlName="deviceName" placeholder="Enter Device Name" required>
+            <mat-hint align="start"><strong>Enter the name of your device (ex: 'Samsung 4K TV')</strong></mat-hint>
         </mat-form-field>
 
     </form>

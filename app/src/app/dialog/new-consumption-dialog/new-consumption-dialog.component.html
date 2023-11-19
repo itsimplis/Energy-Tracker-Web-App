@@ -1,4 +1,10 @@
-<h2 mat-dialog-title>Add Consumption</h2>
+<h2 mat-dialog-title align="center">New Consumption Record
+    <span>
+        <h4 class="dialog-subtitle"> Save the consumption over a time period for your device</h4>
+        <mat-divider></mat-divider>
+    </span>
+</h2>
+
 
 <mat-dialog-content>
     <form [formGroup]="consumptionForm" class="consumption-form">
@@ -6,31 +12,33 @@
         <mat-form-field appearance="fill">
             <mat-label>Start Date</mat-label>
             <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" required>
+            <mat-hint align="start"><strong>Enter the date the consumption recording started</strong></mat-hint>
             <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #startDatePicker></mat-datepicker>
         </mat-form-field>
-
+        <br>
         <mat-form-field appearance="fill">
             <mat-label>End Date</mat-label>
             <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" required>
+            <mat-hint align="start"><strong>Enter the date the consumption recording ended</strong></mat-hint>
             <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #endDatePicker></mat-datepicker>
         </mat-form-field>
-
+        <br>
         <mat-form-field appearance="fill">
             <mat-label>Duration Days</mat-label>
             <input matInput formControlName="durationDays" placeholder="Calculated Duration" [disabled]="true">
         </mat-form-field>
-
+        <br>
         <mat-form-field appearance="fill">
             <mat-label>Files Names</mat-label>
             <input matInput formControlName="filesNames" placeholder="Enter File Names">
         </mat-form-field>
-
+        <br>
         <mat-form-field appearance="fill">
-            <mat-label>Total Power (Watt)</mat-label>
+            <mat-label>Peak Power (Watt)</mat-label>
             <input matInput formControlName="totalPower" placeholder="Enter Total Power" type="number">
-            <span matPrefix>W&nbsp;</span>
+            <mat-hint align="start"><strong>Enter the peak power recorded, in Watts</strong></mat-hint>
         </mat-form-field>
 
     </form>
