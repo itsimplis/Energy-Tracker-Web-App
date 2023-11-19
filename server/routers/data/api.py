@@ -194,9 +194,9 @@ async def get_device(device_id: int):
 async def get_device_consumption(device_id: int):
     try:
         with database_connection():
-            keys = ["consumption_id", "start_date", "end_date", "duration_days", "files_names", "total_power"]
+            keys = ["consumption_id", "start_date", "end_date", "duration_days", "files_names", "power_max"]
             result = connector.execute("""
-            SELECT p.consumption.id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.total_power
+            SELECT p.consumption.id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.power_max
             FROM p.device
             LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
             LEFT JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id

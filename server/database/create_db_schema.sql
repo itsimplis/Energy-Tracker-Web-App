@@ -14,7 +14,7 @@ CREATE TABLE p.consumption (
     device_category VARCHAR(255),
     device_name TEXT,
     files_names VARCHAR(255),
-    total_power NUMERIC(6, 1)
+    power_max NUMERIC(6, 1)
 );
 
 CREATE TABLE p.user (

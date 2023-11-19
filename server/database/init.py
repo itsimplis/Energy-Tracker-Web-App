@@ -102,7 +102,7 @@ def populate_consumption_table(data_file, conn):
                 if '' in values:
                     continue
                 conn.execute("""
-                    INSERT INTO p.consumption (id,start_date,end_date,duration_days,device_type,device_category,device_name,files_names,total_power)
+                    INSERT INTO p.consumption (id,start_date,end_date,duration_days,device_type,device_category,device_name,files_names,power_max)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
                 """, values)
 
