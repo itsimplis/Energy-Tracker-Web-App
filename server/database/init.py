@@ -208,7 +208,7 @@ def populate_device_consumption_table(data_file, conn):
     finally:
         conn.disconnect()
 
-# [RE-SAMPLING] Resample the readings per second to readings per minutes, due to data size for performance reasons
+# [RE-SAMPLING] Resample the readings per second to readings per day, due to data size for performance reasons
 #-----------------------------------------------------------------------------------------------
 def process_csv_file(file_path):
     df = pd.read_csv(file_path)
@@ -218,7 +218,7 @@ def process_csv_file(file_path):
     df.set_index('timestamp', inplace=True)
 
     # Resample and sum (or use .mean() for average)
-    resampled_df = df.resample('1T').sum() 
+    resampled_df = df.resample('1D').sum() 
 
     resampled_df.reset_index(inplace=True)
     readings = resampled_df.values.tolist()
@@ -256,7 +256,7 @@ def populate_power_reading_table(connector):
                     extras.execute_values(cur, query, insert_data, page_size=1000)
                 connector.commit()
 
-                print(f"---- Inserted aggregated readings for consumption ID {consumption_id}")
+                print(f"---- Inserted hourly power readings for consumption ID {consumption_id}")
 
             except FileNotFoundError:
                 print(f"File not found: '{data_file_path}'. Skipping.")

@@ -266,3 +266,26 @@ async def remove_device(device_id: int):
         except Exception as e:
             connector.rollback()
             raise HTTPException(status_code=500, detail=str(e))
+        
+# ********************* #
+# CONSUMPTION ENDPOINTS #
+# ********************* #
+
+# ===============================================================================================
+# Endpoint to get all power reading logs for a specific consumption
+@router.get("/getConsumptionPowerReadings/{consumption_id}")
+async def get_consumption_power_readings(consumption_id: int):
+    with database_connection():
+        try:
+            keys = ["reading_timestamp", "power"]
+            result = connector.execute("""
+            SELECT p.power_reading.reading_timestamp, p.power_reading.power
+            FROM p.power_reading
+            WHERE p.power_reading.consumption_id = %s""", (consumption_id,))
+            json_data = convert_to_json(result, keys)
+            
+            return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
