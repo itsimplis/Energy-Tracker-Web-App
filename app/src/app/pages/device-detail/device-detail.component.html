@@ -8,15 +8,17 @@
 <mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true">
     <mat-expansion-panel-header>
         <mat-panel-title>
-            <h3 class="header-round"><strong>CONSUMPTION LOG</strong></h3> <!-- Device Category -->
+            <h3 class="header-round"><strong>DEVICE CONSUMPTION</strong></h3> <!-- Device Category -->
         </mat-panel-title>
         <mat-panel-description>
-            <h3><strong>3 logs</strong></h3>
+            <h3><strong>logs: {{this.consumptions.length}}</strong></h3>
             <mat-icon>list</mat-icon>
         </mat-panel-description>
     </mat-expansion-panel-header>
+
     <mat-divider></mat-divider>
     <br>
+
     <div class="table-toolbar">
         <mat-form-field>
             <mat-label>Filter</mat-label>
@@ -27,6 +29,7 @@
         </button>
     </div>
 
+    <!-- Consumption Table -->
     <mat-card class="mat-card-table">
         <table mat-table [dataSource]="dataSourceConsumption" matSort>>
             <ng-container matColumnDef="consumption_id">
@@ -54,6 +57,7 @@
                 <td mat-cell *matCellDef="let row"> {{row.power_max}} </td>
             </ng-container>
 
+            <!-- Row -->
             <tr mat-header-row *matHeaderRowDef="columnsConsumption"></tr>
             <tr mat-row *matRowDef="let row; columns: columnsConsumption;" (click)="onConsumptionRowClick(row)"></tr>
 
@@ -63,9 +67,24 @@
             </tr>
         </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
-            aria-label="Select page of consumption logs"></mat-paginator>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of consumption logs">
+        </mat-paginator>
     </mat-card>
+
+    <br>
+    <mat-divider></mat-divider>
+    <br>
+
+    <!-- Consumption Chart -->
+    <div *ngIf="readings && readings.length > 0; else noDataContent">
+        <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="readings" [xAxis]="true"
+            [yAxis]="true" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            [legend]="false" xAxisLabel="Day" yAxisLabel="Consumption (Watts)">
+        </ngx-charts-line-chart>
+    </div>
+    <ng-template #noDataContent>
+        <h3 align="center"><strong>Select a consumption record from the table</strong></h3>
+    </ng-template>
 </mat-expansion-panel>
 
 <br>
@@ -83,18 +102,7 @@
     </mat-expansion-panel-header>
     <mat-divider></mat-divider>
     <br>
-    <ngx-charts-line-chart
-    [view]="[1400, 300]"
-    [scheme]="colorScheme"
-    [results]="data"
-    [xAxis]="true"
-    [yAxis]="true"
-    [legend]="true"
-    [showXAxisLabel]="true"
-    [showYAxisLabel]="true"
-    xAxisLabel="Month"
-    yAxisLabel="Consumption (Watts)">
-</ngx-charts-line-chart>
+
 </mat-expansion-panel>
 
 <br>

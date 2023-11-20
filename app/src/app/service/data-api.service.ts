@@ -80,4 +80,13 @@ export class DataApiService {
   removeDevice(device_id: number): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/data/removeDevice/${device_id}`, { withCredentials: true });
   }
+
+  //========================================
+  // CONSUMPTIONS API CALLS
+  //========================================
+
+  // [GET] Get consumption logs for a specific device
+  getConsumptionPowerReadings(consumption_id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/data/getConsumptionPowerReadings/${consumption_id}`, { withCredentials: true });
+  }
 }

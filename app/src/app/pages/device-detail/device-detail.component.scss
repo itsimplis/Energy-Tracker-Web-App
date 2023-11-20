@@ -73,3 +73,9 @@ h3 {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+::ng-deep .chart-container {
+    .line-highlight {
+       display: block !important;
+     }
+}
