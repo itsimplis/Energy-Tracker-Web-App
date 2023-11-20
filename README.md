@@ -9,7 +9,7 @@ Run `npm install -g @angular/cli` to install angular cli.
 Run `pip install uvicorn fastapi psycopg2 jwt bcrypt` to install necessary python modules.  
 Run `cd app` to navigate to the app directory.  
 Run `npm install @swimlane/ngx-charts d3` to install ngx-charts and D3.  
-Run `npm install --save-dev @types/d3-shape @types/d3-scale @types/d3-selection` to install D3 Typescript definitions.  
+Run `npm install @types/d3-shape @types/d3-scale @types/d3-selection` to install D3 Typescript definitions.  
 
 ## Database initiliazation
 
