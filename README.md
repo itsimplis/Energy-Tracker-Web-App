@@ -5,8 +5,10 @@ Dissertation Project
 ## Preparation
 Install node.js  
 Install python.  
-Run `npm install -g @angular/cli` to install angular cli.  
+Run `npm install -g @angular/cli` to install angular cli.    
 Run `pip install uvicorn fastapi psycopg2 jwt bcrypt` to install necessary python modules.  
+Run `cd app` to navigate to the app directory. 
+Run `npm install @swimlane/ngx-charts d3` to install ngx-charts and D3.  
 
 ## Database initiliazation
 
