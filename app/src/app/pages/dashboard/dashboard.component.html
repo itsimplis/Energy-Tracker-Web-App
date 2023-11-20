@@ -1,5 +1,83 @@
 <div class="page-title">
-    <h1><strong>DASHBOARD</strong></h1>
+  <h1><strong>DASHBOARD</strong></h1>
+  <div class="add-device-button">
+    <button mat-raised-button color="primary">
+      <mat-icon>refresh</mat-icon><span>Refresh</span>
+    </button>
+  </div>
 </div>
 <mat-divider></mat-divider>
 <br>
+
+<div class="cards-container">
+  <!-- Card for User Device Count -->
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Devices</mat-card-title>
+      <mat-card-subtitle>Your total devices registered</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <h1 class="numeric-data-big">15</h1>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Card for Total Consumption Count -->
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Consumption</mat-card-title>
+      <mat-card-subtitle>Your total consumption recordings</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <h1 class="numeric-data-big">8</h1>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Card for Total Alert Count -->
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Alerts</mat-card-title>
+      <mat-card-subtitle>Your total alerts issued</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <h1 class="numeric-data-big">49</h1>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- PANEL 2 -->
+<div class="cards-container">
+  <!-- Card for Chart 1 -->
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Card Title 1</mat-card-title>
+      <mat-card-subtitle>Subtitle</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <h1 class="numeric-data-big">Some content...</h1>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Card for Chart 2 -->
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Card Title 2</mat-card-title>
+      <mat-card-subtitle>Subtitle</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <h1 class="numeric-data-big">Some content...</h1>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- PANEL 3 -->
+<div class="cards-container">
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Card Title 1</mat-card-title>
+      <mat-card-subtitle>Subtitle</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <h1 class="numeric-data-big">Some content...</h1>
+    </mat-card-content>
+  </mat-card>
+</div>
