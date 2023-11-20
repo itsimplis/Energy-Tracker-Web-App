@@ -66,6 +66,18 @@ h3 {
     text-align: center;
 }
 
+.rounded-label {
+    width: fit-content;
+    margin: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    border: 1px solid rgb(227, 241, 246);
+    background-color: rgb(227, 241, 246);
+    border-radius: 8px;
+    color: black;
+    font-weight: 500;
+}
+
 .header-round-border {
     border: 1px solid rgb(227, 241, 246);
     background-color: rgb(227, 241, 246);
