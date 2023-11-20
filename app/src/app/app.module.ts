@@ -4,11 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule} from '@angular/flex-layout'
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 // Angular Material
 import { MatButtonModule} from '@angular/material/button';
@@ -72,9 +72,9 @@ import { NewDeviceDialogComponent } from './dialog/new-device-dialog/new-device-
   ],
   imports: [
     AppRoutingModule,
-    NgxChartsModule,
     BrowserModule,
     BrowserAnimationsModule,
+    NgxChartsModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
