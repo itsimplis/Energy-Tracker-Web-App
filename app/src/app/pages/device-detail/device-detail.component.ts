@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-
+import { Color,ScaleType  } from '@swimlane/ngx-charts';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -126,6 +126,77 @@ export class DeviceDetailComponent implements OnInit {
   getPanelOpenState(): boolean {
     return this.panelOpenState;
   }
+
+  colorScheme: Color = {
+    name: 'custom',
+    selectable: true,
+    group: ScaleType.Ordinal, // Correct usage
+    domain: ['#5AA454', '#E44D25', '#7aa3e5', '#a8385d', '#aae3f5']
+  };
+
+  data: any[] = [
+    {
+      "name": "Air-Condition",
+      "series": [
+        {
+          "name": "January",
+          "value": 3500
+        },
+        {
+          "name": "February",
+          "value": 2000
+        },
+        {
+          "name": "March",
+          "value": 4000
+        },
+        {
+          "name": "April",
+          "value": 1500
+        },
+        {
+          "name": "May",
+          "value": 900
+        },
+        {
+          "name": "June",
+          "value": 7000
+        },
+        {
+          "name": "July",
+          "value": 9500
+        },
+        {
+          "name": "August",
+          "value": 12000
+        },
+        {
+          "name": "September",
+          "value": 11000
+        },
+        {
+          "name": "October",
+          "value": 5000
+        },
+        {
+          "name": "November",
+          "value": 4000
+        },
+        {
+          "name": "December",
+          "value": 2000
+        },
+        // more data points...
+      ]
+    },
+    {
+      "name": "Device 2",
+      "series": [
+        // data points for Device 2...
+      ]
+    }
+    // more data series...
+  ];
 }
 
 export interface ConsumptionData {

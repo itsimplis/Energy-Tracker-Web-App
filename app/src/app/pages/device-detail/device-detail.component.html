@@ -83,14 +83,18 @@
     </mat-expansion-panel-header>
     <mat-divider></mat-divider>
     <br>
-    <div class="cards-container">
-        <img mat-card-image class="test-img"
-            src="https://cdn2.iconfinder.com/data/icons/power-energy-5/512/Energy_Consumption_consumption_energy_graph_use-512.png">
-        <img mat-card-image class="test-img"
-            src="https://cdn2.iconfinder.com/data/icons/power-energy-5/512/Energy_Consumption_consumption_energy_graph_use-512.png">
-        <img mat-card-image class="test-img"
-            src="https://cdn2.iconfinder.com/data/icons/power-energy-5/512/Energy_Consumption_consumption_energy_graph_use-512.png">
-    </div>
+    <ngx-charts-line-chart
+    [view]="[1400, 300]"
+    [scheme]="colorScheme"
+    [results]="data"
+    [xAxis]="true"
+    [yAxis]="true"
+    [legend]="true"
+    [showXAxisLabel]="true"
+    [showYAxisLabel]="true"
+    xAxisLabel="Month"
+    yAxisLabel="Consumption (Watts)">
+</ngx-charts-line-chart>
 </mat-expansion-panel>
 
 <br>
