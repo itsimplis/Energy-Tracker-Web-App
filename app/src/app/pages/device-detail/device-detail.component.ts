@@ -111,6 +111,14 @@ export class DeviceDetailComponent implements OnInit {
     });
   }
 
+  onConsumptionRowClick(row: any) {
+    console.log(row);
+  }
+
+  onAlertRowClick(row: any) {
+    console.log(row);
+  }
+
   setPanelOpenState(state: boolean) {
     this.panelOpenState = state;
   }

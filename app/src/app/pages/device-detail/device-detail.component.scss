@@ -15,6 +15,19 @@ th {
     align-items: center;
 }
 
+.mat-row:nth-child(even) {
+    background-color: #f7f7f7; /* Light color for even rows */
+}
+
+.mat-row:nth-child(odd) {
+    background-color: #ffffff; /* Keep white or set a different color for odd rows */
+}
+
+.mat-mdc-row:hover {
+    background-color: whitesmoke !important;
+    cursor: pointer !important;
+}
+
 ::ng-deep .mat-expansion-panel-header-description {
     justify-content: space-between !important;
     align-items: center !important;
