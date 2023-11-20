@@ -48,7 +48,7 @@ CREATE TABLE p.power_reading (
     id SERIAL PRIMARY KEY NOT NULL,
     consumption_id INT NOT NULL REFERENCES p.consumption(id),
     reading_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
-    power NUMERIC(6, 1) NOT NULL
+    power NUMERIC(10, 1) NOT NULL
 );
 
 CREATE TABLE p.alert (

@@ -3,6 +3,8 @@ import random
 import bcrypt
 import psycopg2
 import os
+import pandas as pd
+from psycopg2 import extras
 from ..model.dbconnector import PostgresConnector
 
 # define the connector
@@ -31,6 +33,7 @@ def init(no_data: bool):
             populate_consumption_table('consumption.csv', connector)
             populate_device_table('consumption.csv', connector)
             populate_device_consumption_table('consumption.csv', connector)
+            populate_power_reading_table(connector)
             generate_alert_table(connector, 'athtech')
             print("-- Data loaded successfully!")
             print("-- Database initialization finished!\n")
@@ -60,6 +63,7 @@ def create_database_schema(sql_file, conn):
 
 
 # [TEST USER] Create a test user
+#-----------------------------------------------------------------------------------------------
 def create_test_user(conn):
     try:
         conn.connect()
@@ -82,6 +86,7 @@ def create_test_user(conn):
 
 
 # [CONSUMPTION] Populate the consumption table (p.consumption)
+#-----------------------------------------------------------------------------------------------
 def populate_consumption_table(data_file, conn):
     try:
         conn.connect()
@@ -124,6 +129,7 @@ def populate_consumption_table(data_file, conn):
 
 
 # [DEVICES] Populate the devices table (p.device)
+#-----------------------------------------------------------------------------------------------
 def populate_device_table(data_file, conn):
     try:
         conn.connect()
@@ -163,6 +169,7 @@ def populate_device_table(data_file, conn):
 
 
 # [DEVICE - CONSUMPTION] Populate the device-consumption linking table (p.device_consumption)
+#-----------------------------------------------------------------------------------------------
 def populate_device_consumption_table(data_file, conn):
     try:
         conn.connect()
@@ -201,6 +208,72 @@ def populate_device_consumption_table(data_file, conn):
     finally:
         conn.disconnect()
 
+# [RE-SAMPLING] Resample the readings per second to readings per minutes, due to data size for performance reasons
+#-----------------------------------------------------------------------------------------------
+def process_csv_file(file_path):
+    df = pd.read_csv(file_path)
+    
+    # Ensure column names match those in your CSV
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df.set_index('timestamp', inplace=True)
+
+    # Resample and sum (or use .mean() for average)
+    resampled_df = df.resample('1T').sum() 
+
+    resampled_df.reset_index(inplace=True)
+    readings = resampled_df.values.tolist()
+    return readings
+
+
+# [POWER READINGS] Populate the power_reading table from csv files (p.power_reading)
+#-----------------------------------------------------------------------------------------------
+def populate_power_reading_table(connector):
+    try:
+        connector.connect()
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Fetch consumption data with file names
+        consumption_data = connector.execute("SELECT id, files_names FROM p.consumption")
+
+        print("-- Populating power_reading table...")
+
+        for consumption_id, file_name in consumption_data:
+            if not file_name:
+                continue
+
+            data_file_path = os.path.join(current_dir, file_name)
+            
+            try:
+                # Process the CSV file and get aggregated readings
+                readings = process_csv_file(data_file_path)
+
+                # Prepare data for insertion
+                insert_data = [(consumption_id, reading[0], reading[1]) for reading in readings]
+
+                # Batch insert into power_reading table
+                query = "INSERT INTO p.power_reading (consumption_id, reading_timestamp, power) VALUES %s"
+                with connector.conn.cursor() as cur:
+                    extras.execute_values(cur, query, insert_data, page_size=1000)
+                connector.commit()
+
+                print(f"---- Inserted aggregated readings for consumption ID {consumption_id}")
+
+            except FileNotFoundError:
+                print(f"File not found: '{data_file_path}'. Skipping.")
+                continue
+            except psycopg2.Error as e:
+                connector.conn.rollback()
+                print(f"Error executing query: {e}")
+
+    except psycopg2.Error as e:
+        print(f"Database error: {e}")
+    finally:
+        connector.disconnect()
+
+
+
+# [ALERTS] Populate the alert table (p.alert)
+#-----------------------------------------------------------------------------------------------
 def generate_alert_table(conn, username):
     try:
         conn.connect()
@@ -235,6 +308,7 @@ def generate_alert_table(conn, username):
 
     finally:
         conn.disconnect()
+
 
 # Call initialization
 init(args.no_data)
