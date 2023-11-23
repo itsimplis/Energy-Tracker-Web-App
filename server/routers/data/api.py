@@ -177,9 +177,9 @@ async def get_devices(username: str):
 async def get_device(device_id: int):
     try:
         with database_connection():
-            keys = ["id", "user_username", "device_type", "device_category", "device_name"]
+            keys = ["id", "user_username", "device_type", "device_category", "device_name", "alert_threshold_high", "alert_threshold_low"]
             result = connector.execute("""
-            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name 
+            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name, p.device.alert_threshold_high, p.device.alert_threshold_low 
             FROM p.device
             WHERE p.device.id = %s""", (device_id,))
             json_data = convert_to_json(result, keys)
