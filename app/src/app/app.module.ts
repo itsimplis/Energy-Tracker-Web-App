@@ -32,6 +32,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatGridListModule} from '@angular/material/grid-list';
+import {MatSliderModule} from '@angular/material/slider';
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
@@ -101,7 +102,8 @@ import { NewDeviceDialogComponent } from './dialog/new-device-dialog/new-device-
     MatDatepickerModule,
     MatNativeDateModule,
     MatTooltipModule,
-    MatGridListModule
+    MatGridListModule,
+    MatSliderModule
   ],
   providers: [
     JwtHelperService,

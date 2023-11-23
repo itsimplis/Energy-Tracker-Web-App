@@ -1,5 +1,5 @@
 <div class="page-title">
-    <h1><strong>DEVICE DETAIL</strong></h1>
+    <h1><strong>{{details[0]?.device_name | uppercase}}</strong></h1>
 </div>
 
 <mat-divider></mat-divider>
@@ -77,32 +77,17 @@
 
     <!-- Consumption Chart -->
     <div *ngIf="readings && readings.length > 0; else noDataContent">
-        <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="readings" [xAxis]="true"
+        <h3 align="left" class="rounded-label"> <strong>Device consumption for period: </strong> {{ selectedStartDate | date:'dd/MM/yyyy' }} - {{ selectedEndDate | date:'dd/MM/yyyy' }}</h3>
+        <div>
+            <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="readings" [xAxis]="true"
             [yAxis]="true" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
             [legend]="false" xAxisLabel="Day" yAxisLabel="Consumption (Watts)">
         </ngx-charts-line-chart>
+        </div>
     </div>
     <ng-template #noDataContent>
         <h3 align="center" class="rounded-label">Select a consumption record from the table</h3>
     </ng-template>
-</mat-expansion-panel>
-
-<br>
-<br>
-
-<mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true">
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            <h3><strong>CONSUMPTION CHARTS</strong></h3> <!-- Device Category -->
-        </mat-panel-title>
-        <mat-panel-description>
-            <h3><strong>3 charts</strong></h3>
-            <mat-icon>bar_chart</mat-icon>
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-    <mat-divider></mat-divider>
-    <br>
-
 </mat-expansion-panel>
 
 <br>

@@ -16,9 +16,12 @@ import { DialogService } from 'src/app/service/dialog.service';
 export class DeviceDetailComponent implements OnInit {
 
   private routeSubscription!: Subscription;
+  details: any[];
   consumptions: any[];
   readings: any[];
   alerts: any[];
+  selectedStartDate: string | null = null;
+  selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
   columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
   columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'date'];
@@ -31,6 +34,7 @@ export class DeviceDetailComponent implements OnInit {
   @ViewChild('sortAlert', { static: true }) sortAlert!: MatSort;
 
   constructor(private route: ActivatedRoute, private dataApiService: DataApiService, private dialogService: DialogService) {
+    this.details = [];
     this.consumptions = [];
     this.readings = [];
     this.alerts = [];
@@ -60,7 +64,7 @@ export class DeviceDetailComponent implements OnInit {
     this.routeSubscription = this.route.params.subscribe(params => {
       this.dataApiService.getDevice(params['id']).subscribe({
         next: (data) => {
-
+          this.details = data;
         },
         error: (error) => {
           console.log(error);
@@ -114,6 +118,10 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   onConsumptionRowClick(row: any) {
+
+    this.selectedStartDate = row.start_date;
+    this.selectedEndDate = row.end_date;
+
     this.dataApiService.getConsumptionPowerReadings(row.consumption_id).subscribe({
       next: (data: any[]) => {
         this.readings = [
