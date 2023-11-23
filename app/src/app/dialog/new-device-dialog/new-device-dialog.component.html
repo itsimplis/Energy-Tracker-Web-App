@@ -8,28 +8,39 @@
 <mat-dialog-content>
     <form [formGroup]="deviceForm" class="device-form">
 
-        <mat-form-field class="form-field" appearance="fill">
+        <mat-form-field class="form-field" appearance="fill" floatLabel="always">
             <mat-label>Device Category</mat-label>
-            <mat-select formControlName="deviceCategory" required>
+            <mat-select formControlName="deviceCategory" placeholder="Select device category" required>
                 <mat-option value="multimedia">Multimedia</mat-option>
                 <mat-option value="washing">Washing</mat-option>
                 <mat-option value="kitchen">Kitchen</mat-option>
                 <mat-option value="cooling">Cooling</mat-option>
                 <mat-option value="other">Other</mat-option>
             </mat-select>
-            <mat-hint align="start"><strong>Choose the device category that fits best your device</strong></mat-hint>
+            <mat-hint align="start"><strong>The general category that best fits your device (ex: 'Multimedia')</strong></mat-hint>
         </mat-form-field>
-        <mat-form-field class="form-field" appearance="fill">
+        <mat-form-field class="form-field" appearance="fill" floatLabel="always">
             <mat-label>Device Type</mat-label>
-            <input matInput formControlName="deviceType" placeholder="Enter Device Type" required>
-            <mat-hint align="start"><strong>Enter the type of your device (ex: 'Television')</strong></mat-hint>
+            <input matInput formControlName="deviceType" placeholder="Enter device type" required>
+            <mat-hint align="start"><strong>The type of your device (ex: 'Television')</strong></mat-hint>
         </mat-form-field>
-        <mat-form-field class="form-field" appearance="fill">
+        <mat-form-field class="form-field" appearance="fill" floatLabel="always">
             <mat-label>Device Name</mat-label>
-            <input matInput formControlName="deviceName" placeholder="Enter Device Name" required>
-            <mat-hint align="start"><strong>Enter the name of your device (ex: 'Samsung 4K TV')</strong></mat-hint>
+            <input matInput formControlName="deviceName" placeholder="Enter device name" required>
+            <mat-hint align="start"><strong>The name of your device (ex: 'Samsung 4K TV')</strong></mat-hint>
         </mat-form-field>
-
+        <mat-form-field class="form-field" appearance="fill" floatLabel="always">
+            <mat-label>Alert High Threshold (%)</mat-label>
+            <input matInput formControlName="alertThresholdHigh" placeholder="Enter alert high threshold" type="number">
+            <span matSuffix class="numeric-percentage">%</span>
+            <mat-hint align="start"><strong>The high consumption threshold for alerts (default: '130%')</strong></mat-hint>
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" floatLabel="always">
+            <mat-label>Alert Low Threshold (%)</mat-label>
+            <input matInput formControlName="alertThresholdLow" placeholder="Enter alert low threshold" type="number">
+            <span matSuffix class="numeric-percentage">%</span>
+            <mat-hint align="start"><strong>The low consumption threshold for alerts (default: '0%')</strong></mat-hint>
+        </mat-form-field>
     </form>
 </mat-dialog-content>
 

@@ -15,7 +15,9 @@ export class NewDeviceDialogComponent {
     this.deviceForm = this.fb.group({
       deviceCategory: ['', Validators.required],
       deviceType: ['', Validators.required],
-      deviceName: ['', Validators.required]
+      deviceName: ['', Validators.required],
+      alertThresholdHigh:['130', Validators.required],
+      alertThresholdLow:['0', Validators.required]
     });
 
     this.dialogRef.backdropClick().subscribe(() => {
@@ -38,4 +40,6 @@ export interface DeviceData {
   deviceCategory: string;
   deviceType: string;
   deviceName: string;
+  alertThresholdHigh: number;
+  alertThresholdLow: number;
 }
