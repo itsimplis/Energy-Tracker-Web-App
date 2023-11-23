@@ -35,7 +35,9 @@ CREATE TABLE p.device (
     user_username VARCHAR(100) NOT NULL REFERENCES p.user(username) ON DELETE CASCADE,
     device_type VARCHAR(100),
     device_category VARCHAR(50),
-    device_name TEXT
+    device_name TEXT,
+    alert_threshold_high NUMERIC(3, 1) DEFAULT 1.3
+    alert_threshold_low NUMERIC(3, 1) DEFAULT 0.0
 );
 
 CREATE TABLE p.device_consumption (
