@@ -36,7 +36,7 @@ CREATE TABLE p.device (
     device_type VARCHAR(100),
     device_category VARCHAR(50),
     device_name TEXT,
-    alert_threshold_high NUMERIC(3, 1) DEFAULT 1.3
+    alert_threshold_high NUMERIC(3, 1) DEFAULT 1.3,
     alert_threshold_low NUMERIC(3, 1) DEFAULT 0.0
 );
 
