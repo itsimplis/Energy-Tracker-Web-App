@@ -2,7 +2,7 @@
 // Global height
 html, body { 
     height: 100%;
-    background-color: black;
+    background-color: black !important;
 }
 
 // Global fonts
@@ -23,6 +23,19 @@ body {
     flex-grow: 1;
     text-align: center;
     margin-bottom: 0px;
+}
+
+// Global rounded-label
+.rounded-label {
+    width: fit-content;
+    margin: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    border: 1px solid rgb(227, 241, 246);
+    background-color: rgb(227, 241, 246);
+    border-radius: 8px;
+    color: black;
+    font-weight: 500;
 }
 
 // Global fade-in animation
@@ -56,6 +69,6 @@ body {
 
 ::-webkit-scrollbar-thumb {
     border-radius: 8px;
-    border: 2px solid white; /* should match background, can't be transparent */
+    border: 2px solid white;
     background-color: rgba(0, 0, 0, .5);
 }
