@@ -131,7 +131,7 @@ h3 {
 .info-group {
     display: flex;
     flex-direction: column;
-    justify-content: left;
+    align-items: flex-start;
 }
 
 .info-label {
@@ -140,6 +140,13 @@ h3 {
 
 .info-value {
     font-weight: 500;
+    border: 1px solid lightblue;
+    background-color: lightblue;
+    border-radius: 8px;
+    display: inline-flex;
+    padding-left: 10px;
+    padding-right: 10px;
+    
 }
 
 .device-icon .mat-icon {
