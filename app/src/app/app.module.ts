@@ -27,6 +27,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule} from '@angular/material/checkbox';
 import { MatDialogModule} from '@angular/material/dialog';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -98,6 +99,7 @@ import { NewDeviceDialogComponent } from './dialog/new-device-dialog/new-device-
     MatExpansionModule,
     MatTableModule,
     MatPaginatorModule,
+    MatSortModule,
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,

@@ -1,6 +1,27 @@
-.alert-mat-card {
-    margin-bottom: 10px;
-    width: 100%;
+.table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+}
+
+.mat-card-table {
+    border: 10px solid rgb(227, 241, 246);
+    box-shadow: 0px 0px 8px rgba(52, 52, 108, 0.99);
+    overflow-x: auto;
+}
+
+.mat-row:nth-child(even) {
+    background-color: #f7f7f7; /* Light color for even rows */
+}
+
+.mat-row:nth-child(odd) {
+    background-color: #ffffff; /* Keep white or set a different color for odd rows */
+}
+
+.mat-mdc-row:hover {
+    background-color: whitesmoke !important;
+    cursor: pointer !important;
 }
 
 .highlighted {
