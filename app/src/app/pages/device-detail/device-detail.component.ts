@@ -28,10 +28,10 @@ export class DeviceDetailComponent implements OnInit {
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
 
-  @ViewChild('paginatorConsumptions', { static: true }) paginatorConsumptions!: MatPaginator;
-  @ViewChild('sortConsumptions', { static: true }) sortConsumptions!: MatSort;
-  @ViewChild('paginatorAlert', { static: true }) paginatorAlert!: MatPaginator;
-  @ViewChild('sortAlert', { static: true }) sortAlert!: MatSort;
+  @ViewChild('paginatorConsumptions') paginatorConsumptions!: MatPaginator;
+  @ViewChild(MatSort) sortConsumptions!: MatSort;
+  @ViewChild('paginatorAlerts') paginatorAlert!: MatPaginator;
+  @ViewChild(MatSort) sortAlert!: MatSort;
 
   constructor(private route: ActivatedRoute, private dataApiService: DataApiService, private dialogService: DialogService) {
     this.details = [];

@@ -173,7 +173,7 @@
             </tr>
         </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of consumption logs">
+        <mat-paginator #paginatorConsumptions [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of consumption logs">
         </mat-paginator>
     </mat-card>
 
@@ -254,6 +254,6 @@
             </tr>
         </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of alert logs"></mat-paginator>
+        <mat-paginator #paginatorAlerts [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of alert logs"></mat-paginator>
     </mat-card>
 </mat-expansion-panel>
