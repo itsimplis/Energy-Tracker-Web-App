@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs'
@@ -57,6 +57,11 @@ export class AuthenticationService {
   isAuthenticated(): boolean {
     const token = this.getAuthToken();
     return token !== null && !this.jwtHelper.isTokenExpired(token);
+  }
+
+  getAuthHeaders(): HttpHeaders {
+    const token = this.getAuthToken();
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 
   logout(): void {

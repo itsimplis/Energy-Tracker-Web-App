@@ -48,7 +48,7 @@ export class AccountComponent implements OnInit {
   }
 
   loadUserDetails() {
-    this.userApiService.getUser(this.authenticationService.getUserName()!).subscribe({
+    this.userApiService.getUser().subscribe({
       next: (data) => {
         this.username = data[0].username;
         this.email = data[0].email;
@@ -67,7 +67,7 @@ export class AccountComponent implements OnInit {
   }
 
   onUpdateDetails() {
-    this.userApiService.updateUser(this.authenticationService.getUserName()!, this.first_name, this.last_name, this.age, this.gender, this.country, this.visibility, this.notifications).subscribe({
+    this.userApiService.updateUser(this.first_name, this.last_name, this.age, this.gender, this.country, this.visibility, this.notifications).subscribe({
       next: (data) => {
         this.output.result = 'success';
         this.output.message = data.message;

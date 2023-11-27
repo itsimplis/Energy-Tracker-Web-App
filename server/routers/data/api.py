@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException
 from contextlib import contextmanager
 from ...model.dbconnector import PostgresConnector
+from ..users.authentication import get_current_user
 
 router = APIRouter()
 
@@ -27,7 +28,6 @@ class ExtendedEncoder(json.JSONEncoder):
         return super().default(o)
     
 class AddAlert(BaseModel):
-    username: str
     device_id: Optional[int] = None
     title: str
     description: str
@@ -40,7 +40,6 @@ class UpdateAlert(BaseModel):
     read_status: str
 
 class DeviceData(BaseModel):
-    user_username: str
     device_category: str
     device_type: str
     device_name: str
@@ -65,7 +64,7 @@ def convert_to_json(result, keys):
 # ===============================================================================================
 # Endpoint to get user's alerts, with basic info
 @router.get("/getAlerts")
-async def get_alerts(username: str, unreadAlertsOnly: bool):
+async def get_alerts(unreadAlertsOnly: bool, username: str = Depends(get_current_user)):
     try:
         with database_connection():
             keys = ["id", "title", "username", "device_id", "device_type", "device_name", "description", "date", "type", "read_status"]
@@ -89,13 +88,13 @@ async def get_alerts(username: str, unreadAlertsOnly: bool):
 # ===============================================================================================
 # Endpoint to add an alert for a user
 @router.post("/addAlert")
-async def add_alert(data: AddAlert):
+async def add_alert(data: AddAlert, username: str = Depends(get_current_user)):
     
     with database_connection():
         connector.execute(f"""
             INSERT INTO p.alert (username, device_id, title, description, date, type, read_status) 
             VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-            (data.username, data.device_id, data.title, data.description, data.date, data.type, data.read_status)
+            (username, data.device_id, data.title, data.description, data.date, data.type, data.read_status)
         )
         connector.commit()
 
@@ -104,7 +103,7 @@ async def add_alert(data: AddAlert):
 # ===============================================================================================
 # Endpoint to update an alert for a user (alert read status)
 @router.patch("/updateAlert")
-async def update_alert(data: UpdateAlert):
+async def update_alert(data: UpdateAlert, username: str = Depends(get_current_user)):
     
     with database_connection():
         connector.execute(f"""
@@ -120,7 +119,7 @@ async def update_alert(data: UpdateAlert):
 # ===============================================================================================
 # Endpoint to clear all alerts of a user
 @router.delete("/removeAlerts")
-async def clear_alerts(username: str):
+async def clear_alerts(username: str = Depends(get_current_user)):
     
     with database_connection():
 
@@ -132,7 +131,7 @@ async def clear_alerts(username: str):
 
         if (result):
             connector.execute(f"""
-                "DELETE FROM p.alert WHERE p.alert.username = %s""", (
+                DELETE FROM p.alert WHERE p.alert.username = %s""", (
                     username))
             connector.commit()
             return {"message": f"All alerts have been cleared!"}
@@ -146,7 +145,7 @@ async def clear_alerts(username: str):
 # ===============================================================================================
 # Endpoint to get user's devices
 @router.get("/getDevices")
-async def get_devices(username: str):
+async def get_devices(username: str = Depends(get_current_user)):
     try:
         with database_connection():
             keys = ["id", "user_username", "device_type", "device_category", "device_name", "consumption_logs_count", "unread_alerts_count", "total_alerts_count"]
@@ -174,14 +173,14 @@ async def get_devices(username: str):
 # ===============================================================================================
 # Endpoint to get user's devices
 @router.get("/getDevice/{device_id}")
-async def get_device(device_id: int):
+async def get_device(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
             keys = ["id", "user_username", "device_type", "device_category", "device_name", "alert_threshold_high", "alert_threshold_low"]
             result = connector.execute("""
             SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name, p.device.alert_threshold_high, p.device.alert_threshold_low 
             FROM p.device
-            WHERE p.device.id = %s""", (device_id,))
+            WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
             json_data = convert_to_json(result, keys)
 
         return json_data
@@ -191,7 +190,7 @@ async def get_device(device_id: int):
 # ===============================================================================================
 # Endpoint to get all consumptions logs for a specific device
 @router.get("/getDeviceConsumption/{device_id}")
-async def get_device_consumption(device_id: int):
+async def get_device_consumption(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
             keys = ["consumption_id", "start_date", "end_date", "duration_days", "files_names", "power_max"]
@@ -200,7 +199,7 @@ async def get_device_consumption(device_id: int):
             FROM p.device
             LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
             LEFT JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
-            WHERE p.device.id = %s""", (device_id,))
+            WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
             json_data = convert_to_json(result, keys)
 
         return json_data
@@ -210,14 +209,15 @@ async def get_device_consumption(device_id: int):
 # ===============================================================================================
 # Endpoint to get all alerts for a specific device
 @router.get("/getDeviceAlerts/{device_id}")
-async def get_device_alerts(device_id: int):
+async def get_device_alerts(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
             keys = ["title", "description", "date", "type", "read_status"]
             result = connector.execute("""
             SELECT p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status
             FROM p.alert
-            WHERE p.alert.device_id = %s""", (device_id,))
+            JOIN p.device ON p.alert.device_id = p.device.id
+            WHERE p.alert.device_id = %s AND p.device.user_username = %s""", (device_id, username))
             json_data = convert_to_json(result, keys)
 
         return json_data
@@ -227,12 +227,12 @@ async def get_device_alerts(device_id: int):
 # ===============================================================================================
 # Endpoint to add a device to user's devices
 @router.post("/addDevice")
-async def add_device(data: DeviceData):
+async def add_device(data: DeviceData, username: str = Depends(get_current_user)):
     with database_connection():
         try:
             connector.execute(
                 "INSERT INTO p.device (user_username, device_type, device_category, device_name) VALUES (%s, %s, %s, %s)",
-                (data.user_username, data.device_type, data.device_category, data.device_name)
+                (username, data.device_type, data.device_category, data.device_name)
             )
             connector.commit()
             return {"message": f"Device '{data.device_name}' added successfully!"}
@@ -245,11 +245,11 @@ async def add_device(data: DeviceData):
 # ===============================================================================================
 # Endpoint remove a user's device
 @router.delete("/removeDevice/{device_id}")
-async def remove_device(device_id: int):
+async def remove_device(device_id: int, username: str = Depends(get_current_user)):
     with database_connection():
         try:
             result = connector.execute(
-                "SELECT * FROM p.device WHERE p.device.id = %s", (device_id,)
+                """SELECT * FROM p.device WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username)
             )
             if not result:
                 raise HTTPException(
@@ -274,14 +274,25 @@ async def remove_device(device_id: int):
 # ===============================================================================================
 # Endpoint to get all power reading logs for a specific consumption
 @router.get("/getConsumptionPowerReadings/{consumption_id}")
-async def get_consumption_power_readings(consumption_id: int):
+async def get_consumption_power_readings(consumption_id: int, username: str = Depends(get_current_user)):
     with database_connection():
         try:
             keys = ["reading_timestamp", "power"]
+
+            ownership_check = connector.execute("""
+                SELECT 1 FROM p.consumption
+                JOIN p.device_consumption ON p.consumption.id = p.device_consumption.consumption_id
+                JOIN p.device ON p.device_consumption.device_id = p.device.id
+                WHERE p.consumption.id = %s AND p.device.user_username = %s""",
+                (consumption_id, username)
+            )
+            if not ownership_check:
+                raise HTTPException(status_code=404, detail="Consumption data not found or not owned by user")
+
             result = connector.execute("""
-            SELECT p.power_reading.reading_timestamp, p.power_reading.power
-            FROM p.power_reading
-            WHERE p.power_reading.consumption_id = %s""", (consumption_id,))
+                SELECT p.power_reading.reading_timestamp, p.power_reading.power
+                FROM p.power_reading
+                WHERE p.power_reading.consumption_id = %s""", (consumption_id,))
             json_data = convert_to_json(result, keys)
             
             return json_data

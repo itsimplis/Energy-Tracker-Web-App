@@ -61,7 +61,7 @@ export class DevicesComponent implements OnInit {
   }
 
   loadDevices() {
-    this.dataApiService.getDevices(this.authenticationService.getUserName()!).subscribe({
+    this.dataApiService.getDevices().subscribe({
       next: (data) => {
         this.devices = data;
         this.groupDevicesByCategory();
@@ -75,7 +75,7 @@ export class DevicesComponent implements OnInit {
   onAddNewDevice() {
     this.dialogService.openNewDeviceDialog().subscribe(result => {
       if (result) {
-        this.dataApiService.addDevice(this.authenticationService.getUserName()!, result.deviceCategory, result.deviceType, result.deviceName).subscribe({
+        this.dataApiService.addDevice(result.deviceCategory, result.deviceType, result.deviceName).subscribe({
           next: (data) => {
             this.output.result = 'success';
             this.output.message = data.message;

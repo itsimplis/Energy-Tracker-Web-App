@@ -23,7 +23,7 @@ export class AlertService {
 
   // Load all alerts
   loadAlerts() {
-    this.dataApiService.getAlerts(this.authenticationService.getUserName()!, false).subscribe({
+    this.dataApiService.getAlerts(false).subscribe({
       next: (data) => {
         this.alertsSubject.next(data);
       },
@@ -35,7 +35,7 @@ export class AlertService {
 
   // Add an alert
   addAlert(username: string, device_id: number | null, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
-    this.dataApiService.addAlert(username, device_id, title, description, date, type, read_status).subscribe({
+    this.dataApiService.addAlert(device_id, title, description, date, type, read_status).subscribe({
       next: (data) => {
         if (force_refresh) {
           this.loadAlerts();
