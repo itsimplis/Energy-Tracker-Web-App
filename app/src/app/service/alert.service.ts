@@ -30,7 +30,7 @@ export class AlertService {
       error: (error) => {
         console.log(error);
       }
-    })
+    });
   }
 
   // Add an alert
@@ -57,6 +57,20 @@ export class AlertService {
       },
       error: (error) => {
         console.error(error);
+      }
+    });
+  }
+
+  // Remove all alerts (for a user)
+  removeAlerts() {
+    this.dataApiService.removeAlerts().subscribe({
+      next: (data) => {
+          this.loadAlerts();
+          this.showSnackBar(data.message);
+      },
+      error: (error) => {
+        console.error(error);
+        this.showSnackBar(error.error.detail)
       }
     });
   }

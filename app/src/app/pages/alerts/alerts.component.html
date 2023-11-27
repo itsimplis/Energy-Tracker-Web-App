@@ -9,7 +9,7 @@
             <mat-label>Filter</mat-label>
             <input matInput (keyup)="applyFilterInAlerts($event)" placeholder="Search..." #input>
         </mat-form-field>
-        <button mat-raised-button color="primary">
+        <button mat-raised-button color="primary" (click)="onClearAllAlerts()">
             <mat-icon>delete_sweep</mat-icon><span>Clear All Alerts</span>
         </button>
     </div>

@@ -69,12 +69,12 @@ async def get_alerts(unreadAlertsOnly: bool, username: str = Depends(get_current
         with database_connection():
             keys = ["id", "title", "username", "device_id", "device_type", "device_name", "description", "date", "type", "read_status"]
             if (unreadAlertsOnly):
-                result = connector.execute(f"""
+                result = connector.execute("""
                 SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
                 FROM p.alert
                 WHERE p.alert.username = %s AND p.alert.read_status = %s ORDER BY date DESC""", (username, 'N'))
             else:
-                result = connector.execute(f"""
+                result = connector.execute("""
                 SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.device.device_type, p.device.device_name, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
                 FROM p.alert
                 LEFT JOIN p.device ON p.alert.device_id = p.device.id
@@ -119,20 +119,20 @@ async def update_alert(data: UpdateAlert, username: str = Depends(get_current_us
 # ===============================================================================================
 # Endpoint to clear all alerts of a user
 @router.delete("/removeAlerts")
-async def clear_alerts(username: str = Depends(get_current_user)):
+async def remove_alerts(username: str = Depends(get_current_user)):
     
     with database_connection():
 
         # Case check - alerts exist for a user
-        result = connector.execute(f"""
+        result = connector.execute("""
         SELECT p.alert.id, p.alert.username
         FROM p.alert
-        WHERE p.alert.username = %s""", (username))
+        WHERE p.alert.username = %s""", (username,))
 
         if (result):
             connector.execute(f"""
                 DELETE FROM p.alert WHERE p.alert.username = %s""", (
-                    username))
+                    username,))
             connector.commit()
             return {"message": f"All alerts have been cleared!"}
         else:

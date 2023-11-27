@@ -13,6 +13,7 @@ export class DataApiService {
 
   constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
 
+
   //========================================
   // ALERTS API CALLS
   //========================================
@@ -20,6 +21,11 @@ export class DataApiService {
   // [GET] Get user's alerts
   getAlerts(unreadAlertsOnly: boolean): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getAlerts?unreadAlertsOnly=${unreadAlertsOnly}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  // [DELETE] Remove all user's alerts
+  removeAlerts(): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/data/removeAlerts`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
   // [POST] Add an alert for the user
@@ -31,7 +37,7 @@ export class DataApiService {
       date: date,
       type: type,
       read_status: read_status
-    }, {headers: this.authenticationService.getAuthHeaders()});
+    }, { headers: this.authenticationService.getAuthHeaders() });
   }
 
   // [POST] Update the read status of an Alert
@@ -39,8 +45,9 @@ export class DataApiService {
     return this.http.patch<any>(`${this.baseUrl}/data/updateAlert`, {
       id: id,
       read_status: read_status
-    }, {headers: this.authenticationService.getAuthHeaders()});
+    }, { headers: this.authenticationService.getAuthHeaders() });
   }
+
 
   //========================================
   // DEVICES API CALLS
@@ -72,13 +79,14 @@ export class DataApiService {
       device_category: device_category,
       device_type: device_type,
       device_name: device_name
-    }, {headers: this.authenticationService.getAuthHeaders()});
+    }, { headers: this.authenticationService.getAuthHeaders() });
   }
 
   // [DELETE] Remove a user's device by device_id
   removeDevice(device_id: number): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/data/removeDevice/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
+
 
   //========================================
   // CONSUMPTIONS API CALLS

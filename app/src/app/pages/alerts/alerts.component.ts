@@ -107,6 +107,10 @@ export class AlertsComponent implements OnInit, OnDestroy {
     }
   }
 
+  onClearAllAlerts() {
+    this.alertService.removeAlerts();
+  }
+
   onAlertRowClick(row: any) {
     console.log(row);
   }
