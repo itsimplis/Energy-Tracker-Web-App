@@ -3,7 +3,7 @@ import collections
 import jwt
 import bcrypt
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from decimal import Decimal
 from ...model.dbconnector import PostgresConnector
@@ -117,6 +117,18 @@ async def login_user(data: LoginData):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail="Something went wrong!")
+
+# ===============================================================================================
+# Validate token / user
+async def get_current_user(request: Request):
+    try:
+        token = request.headers.get('Authorization').split(" ")[1]  # Extract the token
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
+        return payload.get('username')
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="JWT token has expired")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 # ===============================================================================================
 # Define JWT payload and generate JWT token (token expiration days: 1)
