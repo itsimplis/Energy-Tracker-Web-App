@@ -30,7 +30,7 @@ export class RegisterComponent {
       next: (data) => {
         this.output.result = 'success';
         this.output.message = data.message;
-        this.alertService.addAlert(this.username, null, "Welcome user !", "Welcome. Please don't forget to update your profile details!", new Date().toISOString(), 'U', 'N', false);
+        this.alertService.addRegistrationAlert(this.username, null, "Welcome user !", "Welcome. Please don't forget to update your profile details!", new Date().toISOString(), 'U', 'N', false);
         this.alertService.showSnackBar(this.output.message, 'Close', 3500)
         this.authenticationService.notifyRegister();
       },

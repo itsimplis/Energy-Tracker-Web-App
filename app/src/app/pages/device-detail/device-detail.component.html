@@ -217,7 +217,7 @@
             <mat-label>Filter</mat-label>
             <input matInput (keyup)="applyFilterInAlerts($event)" placeholder="Search..." #input>
         </mat-form-field>
-        <button mat-raised-button color="primary">
+        <button mat-raised-button color="primary" (click)="onClearDeviceAlerts(details[0]!.id)">
             <mat-icon>delete_sweep</mat-icon><span>Clear Device Alerts</span>
         </button>
     </div>

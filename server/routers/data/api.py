@@ -35,6 +35,15 @@ class AddAlert(BaseModel):
     type: str
     read_status: str
 
+class AddRegistrationAlert(BaseModel):
+    username: str
+    device_id: Optional[int] = None
+    title: str
+    description: str
+    date: str
+    type: str
+    read_status: str
+
 class UpdateAlert(BaseModel):
     id: int
     read_status: str
@@ -95,6 +104,21 @@ async def add_alert(data: AddAlert, username: str = Depends(get_current_user)):
             INSERT INTO p.alert (username, device_id, title, description, date, type, read_status) 
             VALUES (%s, %s, %s, %s, %s, %s, %s)""",
             (username, data.device_id, data.title, data.description, data.date, data.type, data.read_status)
+        )
+        connector.commit()
+
+    return {"message": f"You have a new alert!"}
+
+# ===============================================================================================
+# Endpoint to add an alert specifically for user registration
+@router.post("/addRegistrationAlert")
+async def add_registration_alert(data: AddRegistrationAlert):
+    
+    with database_connection():
+        connector.execute(f"""
+            INSERT INTO p.alert (username, device_id, title, description, date, type, read_status) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+            (data.username, data.device_id, data.title, data.description, data.date, data.type, data.read_status)
         )
         connector.commit()
 
@@ -184,6 +208,8 @@ async def get_device(device_id: int, username: str = Depends(get_current_user)):
             json_data = convert_to_json(result, keys)
 
         return json_data
+    except HTTPException:
+        raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -203,6 +229,8 @@ async def get_device_consumption(device_id: int, username: str = Depends(get_cur
             json_data = convert_to_json(result, keys)
 
         return json_data
+    except HTTPException:
+        raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -221,8 +249,38 @@ async def get_device_alerts(device_id: int, username: str = Depends(get_current_
             json_data = convert_to_json(result, keys)
 
         return json_data
+    
+    except HTTPException:
+        raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint to remove all alerts for a specific device
+@router.delete("/removeDeviceAlerts/{device_id}")
+async def remove_device_alerts(device_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            ownership_check = connector.execute("""
+                SELECT 1 FROM p.device
+                WHERE p.device.id = %s AND p.device.user_username = %s""",
+                (device_id, username)
+            )
+            if not ownership_check:
+                raise HTTPException(status_code=404, detail="Device not found or not owned by user")
+
+            connector.execute("""
+                DELETE FROM p.alert WHERE p.alert.device_id = %s""",
+                (device_id,)
+            )
+            connector.commit()
+            return {"message": "Device alerts have been cleared!"}
+        
+        except HTTPException:
+            raise e
+        except Exception as e:
+            connector.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
 # Endpoint to add a device to user's devices

@@ -7,6 +7,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DataApiService } from 'src/app/service/data-api.service';
 import { DialogService } from 'src/app/service/dialog.service';
+import { AlertService } from 'src/app/service/alert.service';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
+import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-device-detail',
@@ -33,7 +37,7 @@ export class DeviceDetailComponent implements OnInit {
   @ViewChild('paginatorAlerts') paginatorAlert!: MatPaginator;
   @ViewChild(MatSort) sortAlert!: MatSort;
 
-  constructor(private route: ActivatedRoute, private dataApiService: DataApiService, private dialogService: DialogService) {
+  constructor(private route: ActivatedRoute, private dataApiService: DataApiService, private dialogService: DialogService, private alertService: AlertService, private matDialog: MatDialog) {
     this.details = [];
     this.consumptions = [];
     this.readings = [];
@@ -104,7 +108,7 @@ export class DeviceDetailComponent implements OnInit {
       this.routeSubscription.unsubscribe();
     }
   }
-
+  
   onAddNewConsumption() {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
@@ -136,6 +140,26 @@ export class DeviceDetailComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
+      }
+    });
+  }
+
+  onClearDeviceAlerts(device_id: number) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    dialogConfig.data = {title: 'Device Alerts Deletion', content: 'This will clear all alerts associated with your device only.'}
+    const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.alertService.removeDeviceAlerts(device_id);
+        } else {
+          this.alertService.showSnackBar("Device alerts deletion was cancelled!");
+        }
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
       }
     });
   }

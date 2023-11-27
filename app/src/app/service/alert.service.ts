@@ -34,7 +34,7 @@ export class AlertService {
   }
 
   // Add an alert
-  addAlert(username: string, device_id: number | null, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
+  addAlert(device_id: number | null, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
     this.dataApiService.addAlert(device_id, title, description, date, type, read_status).subscribe({
       next: (data) => {
         if (force_refresh) {
@@ -47,6 +47,17 @@ export class AlertService {
       }
     });
   }
+
+    // Add a registration alert
+    addRegistrationAlert(username: string, device_id: number | null, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
+      this.dataApiService.addRegistrationAlert(device_id, username, title, description, date, type, read_status).subscribe({
+        next: (data) => {
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
 
   // Update an alert
   updateAlerts(alertId: any) {
@@ -64,6 +75,20 @@ export class AlertService {
   // Remove all alerts (for a user)
   removeAlerts() {
     this.dataApiService.removeAlerts().subscribe({
+      next: (data) => {
+          this.loadAlerts();
+          this.showSnackBar(data.message);
+      },
+      error: (error) => {
+        console.error(error);
+        this.showSnackBar(error.error.detail)
+      }
+    });
+  }
+
+  // Remove all device alerts (for a user's device)
+  removeDeviceAlerts(device_id: number) {
+    this.dataApiService.removeDeviceAlerts(device_id).subscribe({
       next: (data) => {
           this.loadAlerts();
           this.showSnackBar(data.message);

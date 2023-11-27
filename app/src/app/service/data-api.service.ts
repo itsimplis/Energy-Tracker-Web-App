@@ -40,6 +40,19 @@ export class DataApiService {
     }, { headers: this.authenticationService.getAuthHeaders() });
   }
 
+    // [POST] Add an alert for the user
+    addRegistrationAlert(device_id: number | null, username: string, title: string, description: string, date: string, type: string, read_status: string): Observable<any> {
+      return this.http.post<any>(`${this.baseUrl}/data/addRegistrationAlert`, {
+        device_id: device_id,
+        username: username,
+        title: title,
+        description: description,
+        date: date,
+        type: type,
+        read_status: read_status
+      });
+    }
+
   // [POST] Update the read status of an Alert
   updateAlert(id: string, read_status: string): Observable<any> {
     return this.http.patch<any>(`${this.baseUrl}/data/updateAlert`, {
@@ -85,6 +98,11 @@ export class DataApiService {
   // [DELETE] Remove a user's device by device_id
   removeDevice(device_id: number): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/data/removeDevice/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  // [DELETE] Remove all alerts for a device of the user
+  removeDeviceAlerts(device_id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/data/removeDeviceAlerts/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
 

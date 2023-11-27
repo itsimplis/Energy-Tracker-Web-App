@@ -7,6 +7,9 @@ import { Subscription } from 'rxjs';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort} from '@angular/material/sort';
 import { MatTableDataSource} from '@angular/material/table';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
+import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'alerts',
@@ -22,10 +25,11 @@ export class AlertsComponent implements OnInit, OnDestroy {
   columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'date', 'actions'];
   @ViewChild(MatPaginator) paginatorAlert!: MatPaginator;
   @ViewChild(MatSort) sortAlert!: MatSort;
+  dialogRef!: DialogRef;
   private alertsSubscription!: Subscription;
   private routeSubscription!: Subscription;
 
-  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private route: ActivatedRoute, private router: Router) {}
+  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private route: ActivatedRoute, private router: Router, private matDialog: MatDialog) {}
 
   ngOnInit(): void {
     this.alertsSubscription = this.alertService.alerts$.subscribe(
@@ -108,7 +112,23 @@ export class AlertsComponent implements OnInit, OnDestroy {
   }
 
   onClearAllAlerts() {
-    this.alertService.removeAlerts();
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    dialogConfig.data = {title: 'Alerts Deletion', content: 'This will clear all alerts associated with your account.'}
+    const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.alertService.removeAlerts();
+        } else {
+          this.alertService.showSnackBar("Alerts deletion was cancelled!");
+        }
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
+      }
+    });
   }
 
   onAlertRowClick(row: any) {

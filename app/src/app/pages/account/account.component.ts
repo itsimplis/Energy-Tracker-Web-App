@@ -83,6 +83,7 @@ export class AccountComponent implements OnInit {
   onDeleteAccount() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '600px';
+    dialogConfig.data = {title: 'Account Deletion', content: 'Deleting your account is an irreversible action and will permanently delete all your data associated with your account.'}
     const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe({
