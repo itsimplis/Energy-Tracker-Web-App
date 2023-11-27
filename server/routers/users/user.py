@@ -6,6 +6,7 @@ from decimal import Decimal
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException
 from ...model.dbconnector import PostgresConnector
+from ..users.authentication import get_current_user
 
 router = APIRouter()
 
@@ -60,8 +61,8 @@ def convert_to_json(result, keys):
 
 # ===============================================================================================
 # Endpoint to get the user details
-@router.get("/get/{username}")
-async def get_user(username: str):
+@router.get("/get/")
+async def get_user(username: str = Depends(get_current_user)):
     with database_connection():
         keys = ["username", "email", "first_name", "last_name", "age", "gender", "country", "visibility", "notifications"]
         result = connector.execute(f"""
@@ -74,8 +75,8 @@ async def get_user(username: str):
 
 # ===============================================================================================
 # Endpoint to update user data
-@router.patch("/update/{username}")
-async def update_user(username: str, data: UserUpdateData):
+@router.patch("/update/")
+async def update_user(data: UserUpdateData, username: str = Depends(get_current_user)):
     with database_connection():
         try:
             # Case check- User does not exist
@@ -101,8 +102,8 @@ async def update_user(username: str, data: UserUpdateData):
     
 # ===============================================================================================
 # Endpoint to remove a user
-@router.delete("/delete/{username}")
-async def delete_user(username: str):
+@router.delete("/delete/")
+async def delete_user(username: str = Depends(get_current_user)):
     with database_connection():
         try:
             # Case check- User does not exist
