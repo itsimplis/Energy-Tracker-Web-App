@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Color,ScaleType, LegendPosition  } from '@swimlane/ngx-charts';
+import { Color, ScaleType, LegendPosition } from '@swimlane/ngx-charts';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,6 +20,8 @@ import { DialogRef } from '@angular/cdk/dialog';
 export class DeviceDetailComponent implements OnInit {
 
   private routeSubscription!: Subscription;
+  private alertsSubscription!: Subscription;
+
   details: any[];
   consumptions: any[];
   readings: any[];
@@ -44,7 +46,60 @@ export class DeviceDetailComponent implements OnInit {
     this.alerts = [];
   }
 
+  ngOnInit() {
+    this.routeSubscription = this.route.params.subscribe(params => {
+      this.loadDeviceDetail(Number(params['id']));
+      this.loadDeviceConsumption(Number(params['id']));
+      this.loadDeviceAlerts(Number(params['id']));
+    });
+  }
 
+  ngOnDestroy() {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+
+  loadDeviceDetail(device_id: number) {
+    this.dataApiService.getDevice(device_id).subscribe({
+      next: (data) => {
+        this.details = data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  loadDeviceAlerts(device_id: number) {
+    this.dataApiService.getDeviceAlerts(device_id).subscribe({
+      next: (data) => {
+        this.alerts = data;
+        this.dataSourceAlert = new MatTableDataSource(this.alerts);
+        this.dataSourceAlert.data = this.alerts;
+        this.dataSourceAlert.paginator = this.paginatorAlert;
+        this.dataSourceAlert.sort = this.sortAlert;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  loadDeviceConsumption(device_id: number) {
+    this.dataApiService.getDeviceConsumption(device_id).subscribe({
+      next: (data) => {
+        this.consumptions = data;
+        this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
+        this.dataSourceConsumption.data = this.consumptions;
+        this.dataSourceConsumption.paginator = this.paginatorConsumptions;
+        this.dataSourceConsumption.sort = this.sortConsumptions;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
 
   applyFilterInConsumptions(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -64,51 +119,6 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.routeSubscription = this.route.params.subscribe(params => {
-      this.dataApiService.getDevice(params['id']).subscribe({
-        next: (data) => {
-          this.details = data;
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      });
-
-      this.dataApiService.getDeviceConsumption(params['id']).subscribe({
-        next: (data) => {
-          this.consumptions = data;
-          this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
-          this.dataSourceConsumption.data = this.consumptions;
-          this.dataSourceConsumption.paginator = this.paginatorConsumptions;
-          this.dataSourceConsumption.sort = this.sortConsumptions;
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      });
-
-      this.dataApiService.getDeviceAlerts(params['id']).subscribe({
-        next: (data) => {
-          this.alerts = data;
-          this.dataSourceAlert = new MatTableDataSource(this.alerts);
-          this.dataSourceAlert.data = this.alerts;
-          this.dataSourceAlert.paginator = this.paginatorAlert;
-          this.dataSourceAlert.sort = this.sortAlert;
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      });
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
-  }
-  
   onAddNewConsumption() {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
@@ -147,13 +157,14 @@ export class DeviceDetailComponent implements OnInit {
   onClearDeviceAlerts(device_id: number) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '600px';
-    dialogConfig.data = {title: 'Device Alerts Deletion', content: 'This will clear all alerts associated with your device only.'}
+    dialogConfig.data = { title: 'Device Alerts Deletion', content: 'This will clear all alerts associated with your device only.' }
     const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe({
       next: (result) => {
         if (result === true) {
           this.alertService.removeDeviceAlerts(device_id);
+          this.loadDeviceAlerts(device_id);
         } else {
           this.alertService.showSnackBar("Device alerts deletion was cancelled!");
         }
@@ -197,7 +208,7 @@ export interface ConsumptionData {
 export interface AlertData {
   title: string;
   description: string;
-  date: string; 
+  date: string;
   type: string;
   read_status: string;
 }
