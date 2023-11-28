@@ -10,15 +10,21 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 export class SidenavComponent {
   @Output() sidenavClose = new EventEmitter();
 
-  constructor(private authenticationService: AuthenticationService) {}
+  constructor(private authenticationService: AuthenticationService) { }
 
   onSidenavClose() {
-    this.sidenavClose.emit();
+    if (this.isMobileView()) {
+      this.sidenavClose.emit();
+    }
   }
 
   onSidenavLogout() {
     this.logout();
     this.sidenavClose.emit();
+  }
+
+  isMobileView(): boolean {
+    return window.innerWidth <= 768;
   }
 
   // Check if user got authenticated

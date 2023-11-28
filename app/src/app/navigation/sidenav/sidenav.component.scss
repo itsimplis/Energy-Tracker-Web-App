@@ -13,3 +13,14 @@ a:hover, a:active{
     display: inline-block;
     padding-left: 6px;
 }
+
+.sidenav-footer {
+    padding: 10px 0px 10px 0px !important;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8em;
+    color: #333;
+}

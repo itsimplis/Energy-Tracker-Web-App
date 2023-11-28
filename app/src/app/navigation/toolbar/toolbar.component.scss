@@ -7,6 +7,10 @@ a:hover, a:active{
     color: lightgray;
 }
 
+.menu-button {
+    display: none;
+}
+
 .navigation-items{
     list-style-type: none;
     padding: 0;
@@ -51,5 +55,11 @@ mat-toolbar{
 @media(max-width: 959px){
     mat-toolbar{
         border-radius: 0px;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-button {
+        display: block;
     }
 }
