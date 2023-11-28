@@ -30,7 +30,7 @@ export class DeviceDetailComponent implements OnInit {
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
   columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
-  columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'date'];
+  columnsAlert: string[] = ['title', 'description', 'suggestion', 'type', 'read_status', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
 
@@ -176,7 +176,17 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   onAlertRowClick(row: any) {
-    console.log(row);
+    this.dialogService.openViewAlertDialog(row).subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.alertService.updateAlerts(row.id);
+          this.loadDeviceAlerts(row.device_id);
+        }
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
+      }
+    })
   }
 
   setPanelOpenState(state: boolean) {
@@ -185,6 +195,52 @@ export class DeviceDetailComponent implements OnInit {
 
   getPanelOpenState(): boolean {
     return this.panelOpenState;
+  }
+
+  getTypeDisplayText(type: string): string {
+    switch (type) {
+      case 'I': return 'Information';
+      case 'W': return 'Warning';
+      case 'C': return 'Critical';
+      case 'U': return 'System';
+      default: return type;
+    }
+  }
+
+  getTypeClass(type: string): string {
+    switch (type) {
+      case 'I': return 'informational-type';
+      case 'W': return 'warning-type';
+      case 'C': return 'critical-type';
+      case 'U': return 'system-type';
+      default: return '';
+    }
+  }
+
+  getTypeIcon(type: string): string {
+    switch (type) {
+      case 'I': return 'info';
+      case 'W': return 'warning';
+      case 'C': return 'cancel';
+      case 'U': return 'person_pin';
+      default: return type;
+    }
+  }
+
+  getReadStatusDisplayText(read_status: string): string {
+    switch (read_status) {
+      case 'Y': return 'Read';
+      case 'N': return 'Unread';
+      default: return read_status;
+    }
+  }
+
+  getReadStatusClass(read_status: string): string {
+    switch (read_status) {
+      case 'Y': return 'read-type';
+      case 'N': return 'unread-type';
+      default: return '';
+    }
   }
 
   colorScheme: Color = {

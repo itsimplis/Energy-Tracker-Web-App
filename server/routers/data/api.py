@@ -31,6 +31,7 @@ class AddAlert(BaseModel):
     device_id: Optional[int] = None
     title: str
     description: str
+    suggestion: str
     date: str
     type: str
     read_status: str
@@ -40,6 +41,7 @@ class AddRegistrationAlert(BaseModel):
     device_id: Optional[int] = None
     title: str
     description: str
+    suggestion: str
     date: str
     type: str
     read_status: str
@@ -76,15 +78,15 @@ def convert_to_json(result, keys):
 async def get_alerts(unreadAlertsOnly: bool, username: str = Depends(get_current_user)):
     try:
         with database_connection():
-            keys = ["id", "title", "username", "device_id", "device_type", "device_name", "description", "date", "type", "read_status"]
+            keys = ["id", "title", "username", "device_id", "device_type", "device_name", "description", "suggestion", "date", "type", "read_status"]
             if (unreadAlertsOnly):
                 result = connector.execute("""
-                SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
+                SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.alert.description, p.alert.suggestion, p.alert.date, p.alert.type, p.alert.read_status 
                 FROM p.alert
                 WHERE p.alert.username = %s AND p.alert.read_status = %s ORDER BY date DESC""", (username, 'N'))
             else:
                 result = connector.execute("""
-                SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.device.device_type, p.device.device_name, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status 
+                SELECT p.alert.id, p.alert.title, p.alert.username, p.alert.device_id, p.device.device_type, p.device.device_name, p.alert.description, p.alert.suggestion, p.alert.date, p.alert.type, p.alert.read_status 
                 FROM p.alert
                 LEFT JOIN p.device ON p.alert.device_id = p.device.id
                 WHERE p.alert.username = %s ORDER BY (read_status='N') DESC, date DESC""", (username,))
@@ -101,9 +103,9 @@ async def add_alert(data: AddAlert, username: str = Depends(get_current_user)):
     
     with database_connection():
         connector.execute(f"""
-            INSERT INTO p.alert (username, device_id, title, description, date, type, read_status) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-            (username, data.device_id, data.title, data.description, data.date, data.type, data.read_status)
+            INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+            (username, data.device_id, data.title, data.description, data.suggestion, data.date, data.type, data.read_status)
         )
         connector.commit()
 
@@ -116,9 +118,9 @@ async def add_registration_alert(data: AddRegistrationAlert):
     
     with database_connection():
         connector.execute(f"""
-            INSERT INTO p.alert (username, device_id, title, description, date, type, read_status) 
+            INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status) 
             VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-            (data.username, data.device_id, data.title, data.description, data.date, data.type, data.read_status)
+            (data.username, data.device_id, data.title, data.description, data.suggestion, data.date, data.type, data.read_status)
         )
         connector.commit()
 
@@ -240,9 +242,9 @@ async def get_device_consumption(device_id: int, username: str = Depends(get_cur
 async def get_device_alerts(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
-            keys = ["title", "description", "date", "type", "read_status"]
+            keys = ["id", "title", "description", "device_id", "device_type", "device_name", "suggestion", "date", "type", "read_status"]
             result = connector.execute("""
-            SELECT p.alert.title, p.alert.description, p.alert.date, p.alert.type, p.alert.read_status
+            SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.device_id, p.device.device_type, p.device.device_name, p.alert.suggestion, p.alert.date, p.alert.type, p.alert.read_status
             FROM p.alert
             JOIN p.device ON p.alert.device_id = p.device.id
             WHERE p.alert.device_id = %s AND p.device.user_username = %s""", (device_id, username))

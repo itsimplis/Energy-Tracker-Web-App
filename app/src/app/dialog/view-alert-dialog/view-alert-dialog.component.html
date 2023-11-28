@@ -34,9 +34,7 @@
                 </div>
                 <mat-divider></mat-divider>
                 <div class="info-container-group">
-                    <h4>"It is suggested to turn off the device for a while, to protect it from potential damage.It is
-                        suggested to turn off the device for a while, to protect it from potential damage.It is
-                        suggested to turn off the device for a while, to protect it from potential damage."</h4>
+                    <h4>{{data.suggestion}}</h4>
                 </div>
             </div>
         </div>
@@ -44,6 +42,6 @@
     <br>
     <mat-dialog-actions align="end">
         <button mat-button (click)="onBack()">Back</button>
-        <button mat-button (click)="onMarkAsRead()" cdkFocusInitial>Mark as Read</button>
+        <button mat-button *ngIf="data.read_status == 'N'" (click)="onMarkAsRead()" cdkFocusInitial>Mark as Read</button>
       </mat-dialog-actions>
 </mat-card>

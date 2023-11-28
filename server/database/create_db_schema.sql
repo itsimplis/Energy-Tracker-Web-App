@@ -59,6 +59,7 @@ CREATE TABLE p.alert (
     device_id INT NULL REFERENCES p.device(id) ON DELETE CASCADE,
     title VARCHAR(100),
     description VARCHAR(250),
+    suggestion VARCHAR (300),
     date TIMESTAMP WITH TIME ZONE,
     type CHAR(1),
     read_status CHAR(1)

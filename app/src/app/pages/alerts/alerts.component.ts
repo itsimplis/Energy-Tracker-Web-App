@@ -23,7 +23,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
   alerts: any[] = [];
   highlightedAlertId: number | null = null;
   dataSourceAlert!: MatTableDataSource<any[]>;
-  columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'date', 'actions'];
+  columnsAlert: string[] = ['title', 'description', 'suggestion', 'type', 'read_status', 'date', 'actions'];
   @ViewChild(MatPaginator) paginatorAlert!: MatPaginator;
   @ViewChild(MatSort) sortAlert!: MatSort;
   dialogRef!: DialogRef;

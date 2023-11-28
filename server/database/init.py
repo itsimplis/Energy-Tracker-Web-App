@@ -288,16 +288,17 @@ def generate_alert_table(conn, username):
                 'device_id': device_id[0],
                 'title': 'Test Alert'+str(device_id[0]),
                 'description': 'This is a test alert for device '+str(device_id[0]),
+                'suggestion' : 'It is advised to use the ECO mode which will result in lower consumption overall',
                 'date': 'NOW()',
                 'type': random.choice(['W', 'I']),  
                 'read_status': random.choice(['Y', 'N']) 
             }
 
             conn.execute("""
-                INSERT INTO p.alert (username, device_id, title, description, date, type, read_status)
-                VALUES (%s, %s, %s, %s, %s, %s, %s);
+                INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
             """, (alert_data['username'], alert_data['device_id'], alert_data['title'], 
-                  alert_data['description'], alert_data['date'], alert_data['type'], 
+                  alert_data['description'], alert_data['suggestion'], alert_data['date'], alert_data['type'], 
                   alert_data['read_status']))
 
         conn.commit()
