@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { NewDeviceDialogComponent } from '../dialog/new-device-dialog/new-device-dialog.component';
 import { BasicDialogComponent } from '../dialog/basic-dialog/basic-dialog.component';
 import { NewConsumptionDialogComponent } from '../dialog/new-consumption-dialog/new-consumption-dialog.component';
+import { ViewAlertDialogComponent } from '../dialog/view-alert-dialog/view-alert-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -33,5 +34,12 @@ export class DialogService {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '500px';
     return this.openDialog(NewConsumptionDialogComponent, dialogConfig);
+  }
+
+  openViewAlertDialog(data: any[]): Observable<any> {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    dialogConfig.data = data;
+    return this.openDialog(ViewAlertDialogComponent, dialogConfig);
   }
 }

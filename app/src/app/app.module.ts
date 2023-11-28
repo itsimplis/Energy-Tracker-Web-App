@@ -53,6 +53,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { DeviceDetailComponent } from './pages/device-detail/device-detail.component';
 import { NewConsumptionDialogComponent } from './dialog/new-consumption-dialog/new-consumption-dialog.component';
 import { NewDeviceDialogComponent } from './dialog/new-device-dialog/new-device-dialog.component';
+import { ViewAlertDialogComponent } from './dialog/view-alert-dialog/view-alert-dialog.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { NewDeviceDialogComponent } from './dialog/new-device-dialog/new-device-
     BasicDialogComponent,
     DeviceDetailComponent,
     NewConsumptionDialogComponent,
-    NewDeviceDialogComponent
+    NewDeviceDialogComponent,
+    ViewAlertDialogComponent
   ],
   imports: [
     AppRoutingModule,

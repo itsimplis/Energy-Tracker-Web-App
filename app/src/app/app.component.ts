@@ -21,12 +21,14 @@ export class AppComponent {
   }
 
   adjustSidenav() {
-    if (window.innerWidth > 768) {
-      this.sidenav.mode = 'side';
-      this.sidenav.opened = true;
-    } else {
-      this.sidenav.mode = 'over';
-      this.sidenav.opened = false;
+    if (this.sidenav) {
+      if (window.innerWidth > 768) {
+        this.sidenav.mode = 'side';
+        this.sidenav.opened = true;
+      } else {
+        this.sidenav.mode = 'over';
+        this.sidenav.opened = false;
+      }
     }
   }
 

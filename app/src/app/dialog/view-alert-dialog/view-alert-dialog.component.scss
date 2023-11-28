@@ -1,0 +1,119 @@
+.alert-info {
+    position: absolute;
+}
+
+h3 {
+    margin: 0px;
+}
+
+.device-icon .mat-icon {
+    font-size: 40px;
+    height: 40px;
+    width: 40px;
+}
+
+.device-detail-container {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.info-container-header {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    border: lightblue 1px solid;
+    border-radius: 8px;
+    background-color: rgb(227, 241, 246);
+    box-shadow: 0px 0px 4px rgba(52, 52, 108, 0.2);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.info-container-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.info-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.info-label {
+    font-weight: 600;
+}
+
+.informational-type, .warning-type, .critical-type, .system-type, .read-type, .unread-type, .date-type {
+    border: 1px solid;
+    border-radius: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.informational-type {
+    border-color: rgba(0, 0, 255, 0.1);
+    background-color: rgba(0, 0, 255, 0.1);
+    color: blue;
+  }
+  
+  .warning-type {
+    border-color: rgba(255, 99, 71, 0.1);
+    background-color: rgba(255, 99, 71, 0.1);
+    color: tomato;
+  }
+
+  .critical-type {
+    border-color: rgba(255, 0, 0, 0.1);
+    background-color: rgba(255, 0, 0, 0.1);
+    color: red;
+  }
+  
+  .system-type {
+    border-color: rgba(128, 128, 128, 0.1);
+    background-color: rgba(128, 128, 128, 0.1);;
+    color: gray;
+  }
+
+  .read-type {
+    border-color: rgba(128, 128, 128, 0.1);
+    background-color: rgba(128, 128, 128, 0.1);;
+    color: gray;
+  }
+
+  .date-type {
+    border-color: rgba(128, 128, 128, 0.1);
+    background-color: rgba(128, 128, 128, 0.1);;
+    color: darkslategrey;
+  }
+  
+  .unread-type {
+    border-color: rgba(100, 148, 237, 0.1);
+    background-color: rgba(100, 148, 237, 0.1);
+    color: cornflowerblue;
+  }
+
+  .secondary-subtitle {
+    margin-top: 4px;
+  }
+
+:host ::ng-deep .mat-mdc-card-content {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+}

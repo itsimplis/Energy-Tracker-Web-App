@@ -1,0 +1,49 @@
+<mat-card>
+    <!-- device header and content -->
+    <mat-card-header>
+        <div mat-card-avatar class="device-icon">
+            <mat-icon>{{getTypeIcon(data.type)}}</mat-icon>
+        </div>
+        <mat-card-title>{{ data.title }}</mat-card-title>
+        <mat-card-subtitle>[{{ data.device_type }}] - {{data.device_name}}</mat-card-subtitle>
+        <mat-card-subtitle class="secondary-subtitle">
+            <span ngClass="date-type">{{data.date | date:'dd/MM/yyyy, h:mm a' }}</span> |
+            <span [ngClass]="getTypeClass(data.type)">{{getTypeDisplayText(data.type)}}</span> |
+            <span [ngClass]="getReadStatusClass(data.read_status)">{{getReadStatusDisplayText(data.read_status)}}</span>
+        </mat-card-subtitle>
+
+    </mat-card-header>
+    <br>
+    <mat-card-content>
+        <div class="device-detail-container">
+            <div class="info-container">
+                <div class="info-container-header">
+                    <mat-icon class="category-icon">info</mat-icon>
+                    <h3><strong> Description</strong></h3>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="info-container-group">
+                    <h4>{{data.description}}</h4>
+                </div>
+            </div>
+
+            <div class="info-container">
+                <div class="info-container-header">
+                    <mat-icon class="category-icon">check_circle</mat-icon>
+                    <h3><strong> Suggested Action</strong></h3>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="info-container-group">
+                    <h4>"It is suggested to turn off the device for a while, to protect it from potential damage.It is
+                        suggested to turn off the device for a while, to protect it from potential damage.It is
+                        suggested to turn off the device for a while, to protect it from potential damage."</h4>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+    <br>
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="onBack()">Back</button>
+        <button mat-button (click)="onMarkAsRead()" cdkFocusInitial>Mark as Read</button>
+      </mat-dialog-actions>
+</mat-card>

@@ -7,9 +7,10 @@ import { Subscription } from 'rxjs';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort} from '@angular/material/sort';
 import { MatTableDataSource} from '@angular/material/table';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
 import { DialogRef } from '@angular/cdk/dialog';
+import { DialogService } from 'src/app/service/dialog.service';
 
 @Component({
   selector: 'alerts',
@@ -29,7 +30,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
   private alertsSubscription!: Subscription;
   private routeSubscription!: Subscription;
 
-  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private route: ActivatedRoute, private router: Router, private matDialog: MatDialog) {}
+  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private route: ActivatedRoute, private router: Router, private dialogService: DialogService) {}
 
   ngOnInit(): void {
     this.alertsSubscription = this.alertService.alerts$.subscribe(
@@ -79,7 +80,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'I': return 'informational-type';
       case 'W': return 'warning-type';
-      case 'U': return 'critical-type';
+      case 'C': return 'critical-type';
       case 'U': return 'system-type';
       default: return '';
     }
@@ -115,9 +116,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '600px';
     dialogConfig.data = {title: 'Alerts Deletion', content: 'This will clear all alerts associated with your account.'}
-    const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe({
+    this.dialogService.openDialog(BasicDialogComponent, dialogConfig).subscribe({
       next: (result) => {
         if (result === true) {
           this.alertService.removeAlerts();
@@ -132,7 +131,16 @@ export class AlertsComponent implements OnInit, OnDestroy {
   }
 
   onAlertRowClick(row: any) {
-    console.log(row);
+    this.dialogService.openViewAlertDialog(row).subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.alertService.updateAlerts(row.id);
+        }
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
+      }
+    })
   }
 
   onMarkAsRead(alert: any) {
