@@ -138,10 +138,6 @@
     <!-- Consumption Table -->
     <mat-card class="mat-card-table">
         <table mat-table [dataSource]="dataSourceConsumption" matSort>>
-            <ng-container matColumnDef="consumption_id">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Consumption ID </th>
-                <td mat-cell *matCellDef="let row"> {{row.consumption_id}} </td>
-            </ng-container>
             <ng-container matColumnDef="start_date">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
                 <td mat-cell *matCellDef="let row"> {{row.start_date | date:'dd/MM/yyyy, h:mm a'}} </td>

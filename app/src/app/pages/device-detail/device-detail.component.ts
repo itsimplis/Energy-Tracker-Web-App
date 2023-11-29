@@ -29,7 +29,7 @@ export class DeviceDetailComponent implements OnInit {
   selectedStartDate: string | null = null;
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
-  columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
+  columnsConsumption: string[] = ['start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
   columnsAlert: string[] = ['title', 'description', 'suggestion', 'type', 'read_status', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
