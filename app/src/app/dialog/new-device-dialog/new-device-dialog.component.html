@@ -30,6 +30,15 @@
             <mat-hint align="start"><strong>The name of your device (ex: 'Samsung 4K TV')</strong></mat-hint>
         </mat-form-field>
         <mat-form-field class="form-field" appearance="fill" floatLabel="always">
+            <mat-label>Usage Frequency</mat-label>
+            <mat-select formControlName="usageFrequency" placeholder="Select usage frequency" required>
+                <mat-option value="L">Low</mat-option>
+                <mat-option value="N">Normal</mat-option>
+                <mat-option value="H">High</mat-option>
+            </mat-select>
+            <mat-hint align="start"><strong>How frequently your device is being used (default: 'Normal')</strong></mat-hint>
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" floatLabel="always">
             <mat-label>Alert High Threshold (%)</mat-label>
             <input matInput formControlName="alertThresholdHigh" placeholder="Enter alert high threshold" type="number">
             <span matSuffix class="numeric-percentage">%</span>

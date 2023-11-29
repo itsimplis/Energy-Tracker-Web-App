@@ -10,7 +10,6 @@ import { DialogService } from 'src/app/service/dialog.service';
 import { AlertService } from 'src/app/service/alert.service';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
-import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-device-detail',
@@ -20,7 +19,6 @@ import { DialogRef } from '@angular/cdk/dialog';
 export class DeviceDetailComponent implements OnInit {
 
   private routeSubscription!: Subscription;
-  private alertsSubscription!: Subscription;
 
   details: any[];
   consumptions: any[];
@@ -30,7 +28,7 @@ export class DeviceDetailComponent implements OnInit {
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
   columnsConsumption: string[] = ['start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
-  columnsAlert: string[] = ['title', 'description', 'suggestion', 'type', 'read_status', 'date'];
+  columnsAlert: string[] = ['title', 'description', 'suggestion', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
 
@@ -44,6 +42,8 @@ export class DeviceDetailComponent implements OnInit {
     this.consumptions = [];
     this.readings = [];
     this.alerts = [];
+    this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
+    this.dataSourceAlert = new MatTableDataSource(this.alerts);
   }
 
   ngOnInit() {
@@ -91,9 +91,9 @@ export class DeviceDetailComponent implements OnInit {
       next: (data) => {
         this.consumptions = data;
         this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
-        this.dataSourceConsumption.data = this.consumptions;
-        this.dataSourceConsumption.paginator = this.paginatorConsumptions;
-        this.dataSourceConsumption.sort = this.sortConsumptions;
+          this.dataSourceConsumption.data = this.consumptions;
+          this.dataSourceConsumption.paginator = this.paginatorConsumptions;
+          this.dataSourceConsumption.sort = this.sortConsumptions;
       },
       error: (error) => {
         console.log(error);
@@ -102,8 +102,8 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   applyFilterInConsumptions(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceConsumption.filter = filterValue.trim().toLowerCase();
+    const filterValueConsumption = (event.target as HTMLInputElement).value;
+    this.dataSourceConsumption.filter = filterValueConsumption.trim().toLowerCase();
 
     if (this.dataSourceConsumption.paginator) {
       this.dataSourceConsumption.paginator.firstPage();
@@ -111,8 +111,8 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   applyFilterInAlerts(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceAlert.filter = filterValue.trim().toLowerCase();
+    const filterValueAlert = (event.target as HTMLInputElement).value;
+    this.dataSourceAlert.filter = filterValueAlert.trim().toLowerCase();
 
     if (this.dataSourceAlert.paginator) {
       this.dataSourceAlert.paginator.firstPage();
@@ -250,21 +250,4 @@ export class DeviceDetailComponent implements OnInit {
     domain: ['#009dff', '#00d089', '#00b8e5']
   };
 
-}
-
-export interface ConsumptionData {
-  consumption_id: number | null;
-  start_date: string | null;
-  end_date: string | null;
-  duration_days: number | null;
-  files_names: string | null;
-  power_max: number | null;
-}
-
-export interface AlertData {
-  title: string;
-  description: string;
-  date: string;
-  type: string;
-  read_status: string;
 }

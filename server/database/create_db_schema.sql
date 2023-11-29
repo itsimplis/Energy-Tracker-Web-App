@@ -37,7 +37,8 @@ CREATE TABLE p.device (
     device_category VARCHAR(50),
     device_name TEXT,
     alert_threshold_high NUMERIC(3, 1) DEFAULT 1.3,
-    alert_threshold_low NUMERIC(3, 1) DEFAULT 0.0
+    alert_threshold_low NUMERIC(3, 1) DEFAULT 0.0,
+    usage_frequency CHAR(1) DEFAULT('N')
 );
 
 CREATE TABLE p.device_consumption (

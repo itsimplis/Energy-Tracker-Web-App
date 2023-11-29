@@ -87,11 +87,14 @@ export class DataApiService {
   }
 
   // [POST] Add a device to user's devices
-  addDevice(device_category: string, device_type: string, device_name: string): Observable<any> {
+  addDevice(device_category: string, device_type: string, device_name: string, alert_threshold_high: number, alert_threshold_low: number, usage_frequency: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/data/addDevice`, {
       device_category: device_category,
       device_type: device_type,
-      device_name: device_name
+      device_name: device_name,
+      alert_threshold_high: alert_threshold_high,
+      alert_threshold_low: alert_threshold_low,
+      usage_frequency: usage_frequency
     }, { headers: this.authenticationService.getAuthHeaders() });
   }
 

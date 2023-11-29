@@ -54,6 +54,10 @@ class DeviceData(BaseModel):
     device_category: str
     device_type: str
     device_name: str
+    alert_threshold_high: float
+    alert_threshold_low: float
+    usage_frequency: str
+
 
 @contextmanager
 def database_connection():
@@ -202,9 +206,9 @@ async def get_devices(username: str = Depends(get_current_user)):
 async def get_device(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
-            keys = ["id", "user_username", "device_type", "device_category", "device_name", "alert_threshold_high", "alert_threshold_low"]
+            keys = ["id", "user_username", "device_type", "device_category", "device_name", "alert_threshold_high", "alert_threshold_low", "usage_frequency"]
             result = connector.execute("""
-            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name, p.device.alert_threshold_high, p.device.alert_threshold_low 
+            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name, p.device.alert_threshold_high, p.device.alert_threshold_low, p.device.usage_frequency 
             FROM p.device
             WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
             json_data = convert_to_json(result, keys)
@@ -225,8 +229,8 @@ async def get_device_consumption(device_id: int, username: str = Depends(get_cur
             result = connector.execute("""
             SELECT p.consumption.id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.power_max
             FROM p.device
-            LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
-            LEFT JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
+            JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+            JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
             WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
             json_data = convert_to_json(result, keys)
 
@@ -291,8 +295,8 @@ async def add_device(data: DeviceData, username: str = Depends(get_current_user)
     with database_connection():
         try:
             connector.execute(
-                "INSERT INTO p.device (user_username, device_type, device_category, device_name) VALUES (%s, %s, %s, %s)",
-                (username, data.device_type, data.device_category, data.device_name)
+                "INSERT INTO p.device (user_username, device_type, device_category, device_name, alert_threshold_high, alert_threshold_low, usage_frequency) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (username, data.device_type, data.device_category, data.device_name, data.alert_threshold_high, data.alert_threshold_low, data.usage_frequency)
             )
             connector.commit()
             return {"message": f"Device '{data.device_name}' added successfully!"}

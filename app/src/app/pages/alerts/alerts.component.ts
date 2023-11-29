@@ -4,9 +4,9 @@ import { AuthenticationService } from 'src/app/service/authentication.service';
 import { AlertService } from 'src/app/service/alert.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { MatPaginator} from '@angular/material/paginator';
-import { MatSort} from '@angular/material/sort';
-import { MatTableDataSource} from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
 import { DialogRef } from '@angular/cdk/dialog';
@@ -30,16 +30,16 @@ export class AlertsComponent implements OnInit, OnDestroy {
   private alertsSubscription!: Subscription;
   private routeSubscription!: Subscription;
 
-  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private route: ActivatedRoute, private router: Router, private dialogService: DialogService) {}
+  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private route: ActivatedRoute, private router: Router, private dialogService: DialogService) { }
 
   ngOnInit(): void {
     this.alertsSubscription = this.alertService.alerts$.subscribe(
       data => {
         this.alerts = data;
-          this.dataSourceAlert = new MatTableDataSource(this.alerts);
-          this.dataSourceAlert.data = this.alerts;
-          this.dataSourceAlert.paginator = this.paginatorAlert;
-          this.dataSourceAlert.sort = this.sortAlert;
+        this.dataSourceAlert = new MatTableDataSource(this.alerts);
+        this.dataSourceAlert.data = this.alerts;
+        this.dataSourceAlert.paginator = this.paginatorAlert;
+        this.dataSourceAlert.sort = this.sortAlert;
       });
 
     this.routeSubscription = this.route.params.subscribe(params => {
@@ -115,7 +115,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
   onClearAllAlerts() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '600px';
-    dialogConfig.data = {title: 'Alerts Deletion', content: 'This will clear all alerts associated with your account.'}
+    dialogConfig.data = { title: 'Alerts Deletion', content: 'This will clear all alerts associated with your account.' }
     this.dialogService.openDialog(BasicDialogComponent, dialogConfig).subscribe({
       next: (result) => {
         if (result === true) {
@@ -150,7 +150,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
   onButtonClick(device_id: number) {
     if (device_id) {
       this.router.navigate(['/device-detail', device_id]);
-    } 
+    }
     else {
       this.router.navigate(['/account']);
     }

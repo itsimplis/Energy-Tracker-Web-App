@@ -75,7 +75,7 @@ export class DevicesComponent implements OnInit {
   onAddNewDevice() {
     this.dialogService.openNewDeviceDialog().subscribe(result => {
       if (result) {
-        this.dataApiService.addDevice(result.deviceCategory, result.deviceType, result.deviceName).subscribe({
+        this.dataApiService.addDevice(result.deviceCategory, result.deviceType, result.deviceName, result.alertThresholdHigh / 100, result.alertThresholdLow / 100, result.usageFrequency).subscribe({
           next: (data) => {
             this.output.result = 'success';
             this.output.message = data.message;

@@ -17,7 +17,8 @@ export class NewDeviceDialogComponent {
       deviceType: ['', Validators.required],
       deviceName: ['', Validators.required],
       alertThresholdHigh:['130', Validators.required],
-      alertThresholdLow:['0', Validators.required]
+      alertThresholdLow:['0', Validators.required],
+      usageFrequency:['N', Validators.required]
     });
 
     this.dialogRef.backdropClick().subscribe(() => {
@@ -42,4 +43,5 @@ export interface DeviceData {
   deviceName: string;
   alertThresholdHigh: number;
   alertThresholdLow: number;
+  usageFrequency: string;
 }
