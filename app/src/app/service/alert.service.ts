@@ -10,7 +10,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 export class AlertService {
   private alertsSubject = new BehaviorSubject<any[]>([]);
+  private deviceAlertsSubject = new BehaviorSubject<any[]>([]);
+
   public alerts$ = this.alertsSubject.asObservable();
+  public deviceAlerts$ = this.deviceAlertsSubject.asObservable();
+
 
   constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar) {
     this.authenticationService.userLoggedIn.subscribe(() => {
@@ -32,6 +36,17 @@ export class AlertService {
       }
     });
   }
+
+  loadDeviceAlerts(device_id: number) {
+    this.dataApiService.getDeviceAlerts(device_id).subscribe({
+        next: (data) => {
+            this.deviceAlertsSubject.next(data);
+        },
+        error: (error) => {
+            console.error(error);
+        }
+    });
+}
 
   // Add an alert
   addAlert(device_id: number | null, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
@@ -90,8 +105,9 @@ export class AlertService {
   removeDeviceAlerts(device_id: number) {
     this.dataApiService.removeDeviceAlerts(device_id).subscribe({
       next: (data) => {
-          this.loadAlerts();
-          this.showSnackBar(data.message);
+        this.loadAlerts();
+        this.loadDeviceAlerts(device_id);
+        this.showSnackBar(data.message);
       },
       error: (error) => {
         console.error(error);

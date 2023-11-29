@@ -19,6 +19,7 @@ import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.c
 export class DeviceDetailComponent implements OnInit {
 
   private routeSubscription!: Subscription;
+  private deviceAlertsSubscription!: Subscription;
 
   details: any[];
   consumptions: any[];
@@ -46,15 +47,29 @@ export class DeviceDetailComponent implements OnInit {
 
   ngOnInit() {
     this.routeSubscription = this.route.params.subscribe(params => {
-      this.loadDeviceDetail(Number(params['id']));
-      this.loadDeviceConsumption(Number(params['id']));
-      this.loadDeviceAlerts(Number(params['id']));
+      const deviceId = Number(params['id']);
+  
+      this.deviceAlertsSubscription = this.alertService.deviceAlerts$.subscribe(
+        deviceAlerts => {
+          this.alerts = deviceAlerts;
+          this.dataSourceAlert = new MatTableDataSource(this.alerts);
+          this.dataSourceAlert.data = this.alerts;
+          this.dataSourceAlert.paginator = this.paginatorAlert;
+          this.dataSourceAlert.sort = this.sortAlert;
+        });
+  
+      this.loadDeviceDetail(deviceId);
+      this.loadDeviceConsumption(deviceId);
+      this.alertService.loadDeviceAlerts(deviceId);
     });
   }
 
   ngOnDestroy() {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
+    }
+    if (this.deviceAlertsSubscription) {
+      this.deviceAlertsSubscription.unsubscribe();
     }
   }
 
@@ -70,25 +85,7 @@ export class DeviceDetailComponent implements OnInit {
     });
   }
 
-  loadDeviceAlerts(device_id: number) {
-    this.alerts = [];
-    this.dataApiService.getDeviceAlerts(device_id).subscribe({
-      next: (data) => {
-        this.alerts = data;
-        this.dataSourceAlert = new MatTableDataSource(this.alerts);
-        this.dataSourceAlert.data = this.alerts;
-        this.dataSourceAlert.paginator = this.paginatorAlert;
-        this.dataSourceAlert.sort = this.sortAlert;
-        this.changeDetectorRef.detectChanges();
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
-  }
-
   loadDeviceConsumption(device_id: number) {
-    this.consumptions = [];
     this.dataApiService.getDeviceConsumption(device_id).subscribe({
       next: (data) => {
         this.consumptions = data;
@@ -96,7 +93,6 @@ export class DeviceDetailComponent implements OnInit {
         this.dataSourceConsumption.data = this.consumptions;
         this.dataSourceConsumption.paginator = this.paginatorConsumptions;
         this.dataSourceConsumption.sort = this.sortConsumptions;
-        this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
         console.log(error);
@@ -167,7 +163,6 @@ export class DeviceDetailComponent implements OnInit {
       next: (result) => {
         if (result === true) {
           this.alertService.removeDeviceAlerts(device_id);
-          this.loadDeviceAlerts(device_id);
         } else {
           this.alertService.showSnackBar("Device alerts deletion was cancelled!");
         }
@@ -183,7 +178,7 @@ export class DeviceDetailComponent implements OnInit {
       next: (result) => {
         if (result === true) {
           this.alertService.updateAlerts(row.id);
-          this.loadDeviceAlerts(row.device_id);
+          this.alertService.loadDeviceAlerts(row.device_id);
         }
       },
       error: (error) => {
