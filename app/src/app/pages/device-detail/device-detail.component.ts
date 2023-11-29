@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Color, ScaleType, LegendPosition } from '@swimlane/ngx-charts';
@@ -37,13 +37,11 @@ export class DeviceDetailComponent implements OnInit {
   @ViewChild('paginatorAlerts') paginatorAlert!: MatPaginator;
   @ViewChild(MatSort) sortAlert!: MatSort;
 
-  constructor(private route: ActivatedRoute, private dataApiService: DataApiService, private dialogService: DialogService, private alertService: AlertService, private matDialog: MatDialog) {
+  constructor(private route: ActivatedRoute, private dataApiService: DataApiService, private dialogService: DialogService, private alertService: AlertService, private matDialog: MatDialog, private changeDetectorRef: ChangeDetectorRef) {
     this.details = [];
     this.consumptions = [];
     this.readings = [];
     this.alerts = [];
-    this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
-    this.dataSourceAlert = new MatTableDataSource(this.alerts);
   }
 
   ngOnInit() {
@@ -61,6 +59,7 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   loadDeviceDetail(device_id: number) {
+    this.details = [];
     this.dataApiService.getDevice(device_id).subscribe({
       next: (data) => {
         this.details = data;
@@ -72,13 +71,15 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   loadDeviceAlerts(device_id: number) {
-    console.log("Device id: " + device_id);
+    this.alerts = [];
     this.dataApiService.getDeviceAlerts(device_id).subscribe({
       next: (data) => {
         this.alerts = data;
+        this.dataSourceAlert = new MatTableDataSource(this.alerts);
         this.dataSourceAlert.data = this.alerts;
         this.dataSourceAlert.paginator = this.paginatorAlert;
         this.dataSourceAlert.sort = this.sortAlert;
+        this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
         console.log(error);
@@ -87,12 +88,15 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   loadDeviceConsumption(device_id: number) {
+    this.consumptions = [];
     this.dataApiService.getDeviceConsumption(device_id).subscribe({
       next: (data) => {
         this.consumptions = data;
-          this.dataSourceConsumption.data = this.consumptions;
-          this.dataSourceConsumption.paginator = this.paginatorConsumptions;
-          this.dataSourceConsumption.sort = this.sortConsumptions;
+        this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
+        this.dataSourceConsumption.data = this.consumptions;
+        this.dataSourceConsumption.paginator = this.paginatorConsumptions;
+        this.dataSourceConsumption.sort = this.sortConsumptions;
+        this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
         console.log(error);
