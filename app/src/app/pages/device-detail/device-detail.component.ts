@@ -28,7 +28,7 @@ export class DeviceDetailComponent implements OnInit {
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
   columnsConsumption: string[] = ['start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
-  columnsAlert: string[] = ['title', 'description', 'suggestion', 'date'];
+  columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'suggestion', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
 
@@ -72,10 +72,10 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   loadDeviceAlerts(device_id: number) {
+    console.log("Device id: " + device_id);
     this.dataApiService.getDeviceAlerts(device_id).subscribe({
       next: (data) => {
         this.alerts = data;
-        this.dataSourceAlert = new MatTableDataSource(this.alerts);
         this.dataSourceAlert.data = this.alerts;
         this.dataSourceAlert.paginator = this.paginatorAlert;
         this.dataSourceAlert.sort = this.sortAlert;
@@ -90,7 +90,6 @@ export class DeviceDetailComponent implements OnInit {
     this.dataApiService.getDeviceConsumption(device_id).subscribe({
       next: (data) => {
         this.consumptions = data;
-        this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
           this.dataSourceConsumption.data = this.consumptions;
           this.dataSourceConsumption.paginator = this.paginatorConsumptions;
           this.dataSourceConsumption.sort = this.sortConsumptions;

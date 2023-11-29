@@ -1,5 +1,5 @@
 table {
-   width: 100%;
+    width: 100%;
 }
 
 th {
@@ -16,11 +16,13 @@ th {
 }
 
 .mat-row:nth-child(even) {
-    background-color: #f7f7f7; /* Light color for even rows */
+    background-color: #f7f7f7;
+    /* Light color for even rows */
 }
 
 .mat-row:nth-child(odd) {
-    background-color: #ffffff; /* Keep white or set a different color for odd rows */
+    background-color: #ffffff;
+    /* Keep white or set a different color for odd rows */
 }
 
 .mat-mdc-row:hover {
@@ -75,8 +77,8 @@ h3 {
 
 ::ng-deep .chart-container {
     .line-highlight {
-       display: block !important;
-     }
+        display: block !important;
+    }
 }
 
 
@@ -89,7 +91,7 @@ h3 {
     overflow-x: auto;
 }
 
-:host ::ng-deep .mat-expansion-panel-body{
+:host ::ng-deep .mat-expansion-panel-body {
     margin-bottom: 10px !important;
 }
 
@@ -146,7 +148,7 @@ h3 {
     display: inline-flex;
     padding-left: 10px;
     padding-right: 10px;
-    
+
 }
 
 .device-icon .mat-icon {
@@ -163,7 +165,12 @@ h3 {
 
 // Table Cell styling for alert types
 
-.informational-type, .warning-type, .critical-type, .system-type, .read-type, .unread-type {
+.informational-type,
+.warning-type,
+.critical-type,
+.system-type,
+.read-type,
+.unread-type {
     border: 1px solid;
     border-radius: 6px;
     padding-left: 10px;
@@ -177,48 +184,53 @@ h3 {
     border-color: rgba(0, 0, 255, 0.1);
     background-color: rgba(0, 0, 255, 0.1);
     color: blue;
-  }
-  
-  .warning-type {
+}
+
+.warning-type {
     border-color: rgba(255, 99, 71, 0.1);
     background-color: rgba(255, 99, 71, 0.1);
     color: tomato;
-  }
+}
 
-  .critical-type {
+.critical-type {
     border-color: rgba(255, 0, 0, 0.1);
     background-color: rgba(255, 0, 0, 0.1);
     color: red;
-  }
-  
-  .system-type {
-    border-color: rgba(128, 128, 128, 0.1);
-    background-color: rgba(128, 128, 128, 0.1);;
-    color: gray;
-  }
+}
 
-  .read-type {
+.system-type {
     border-color: rgba(128, 128, 128, 0.1);
-    background-color: rgba(128, 128, 128, 0.1);;
+    background-color: rgba(128, 128, 128, 0.1);
+    ;
     color: gray;
-  }
-  
-  .unread-type {
+}
+
+.read-type {
+    border-color: rgba(128, 128, 128, 0.1);
+    background-color: rgba(128, 128, 128, 0.1);
+    ;
+    color: gray;
+}
+
+.unread-type {
     border-color: rgba(100, 148, 237, 0.1);
     background-color: rgba(100, 148, 237, 0.1);
     color: cornflowerblue;
-  }
+}
 
-  .cell-container {
+.cell-container {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-  }
+}
 
-  .cell-icon {
+.cell-icon {
     font-size: medium;
     height: fit-content;
     width: fit-content;
     margin-right: 5px;
 }
-  
+
+.filter-no-data-cell {
+   // margin-left: 20px;
+}
