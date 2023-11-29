@@ -11,14 +11,11 @@ export class NewConsumptionDialogComponent {
 
   consumptionForm: FormGroup;
 
-  constructor(
-    private dialogRef: MatDialogRef<NewConsumptionDialogComponent>,
-    private fb: FormBuilder
-  ) {
+  constructor(private dialogRef: MatDialogRef<NewConsumptionDialogComponent>, private fb: FormBuilder) {
     this.consumptionForm = this.fb.group({
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
-      durationDays: [{ value: '', disabled: true }],
+      durationDays: [''],
       filesNames: [''],
       totalPower: ['', Validators.required]
     });
