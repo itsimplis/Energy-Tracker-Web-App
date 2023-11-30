@@ -23,7 +23,9 @@ export class ToolbarComponent {
         this.alerts = data.filter(alert => alert.read_status === 'N');
     });
 
-    this.alertService.loadAlerts();
+    if (this.authenticationService.isAuthenticated()) {
+      this.alertService.loadAlerts();
+    }
   }
 
   ngOnDestroy() {
