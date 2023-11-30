@@ -74,7 +74,6 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   loadDeviceDetail(device_id: number) {
-    this.details = [];
     this.dataApiService.getDevice(device_id).subscribe({
       next: (data) => {
         this.details = data;

@@ -14,10 +14,13 @@
   <mat-card class="dashboard-card">
     <mat-card-header>
       <mat-card-title>Devices</mat-card-title>
-      <mat-card-subtitle>Your total devices registered</mat-card-subtitle>
+      <mat-card-subtitle>Total devices registered</mat-card-subtitle>
+      <div class="dashboard-card-data-container">
+        <mat-icon class="dashboard-card-data-icon">screenshot</mat-icon>
+        <h1 class="dashboard-card-data-number">{{counters[0]?.total_devices}}</h1>
+      </div>
     </mat-card-header>
     <mat-card-content>
-      <h1 class="numeric-data-big">15</h1>
     </mat-card-content>
   </mat-card>
 
@@ -25,10 +28,13 @@
   <mat-card class="dashboard-card">
     <mat-card-header>
       <mat-card-title>Consumption</mat-card-title>
-      <mat-card-subtitle>Your total consumption recordings</mat-card-subtitle>
+      <mat-card-subtitle>Total consumption recorded</mat-card-subtitle>
+      <div class="dashboard-card-data-container">
+        <mat-icon class="dashboard-card-data-icon">power</mat-icon>
+        <h1 class="dashboard-card-data-number">{{counters[0]?.total_consumptions}}</h1>
+      </div>
     </mat-card-header>
     <mat-card-content>
-      <h1 class="numeric-data-big">8</h1>
     </mat-card-content>
   </mat-card>
 
@@ -36,48 +42,57 @@
   <mat-card class="dashboard-card">
     <mat-card-header>
       <mat-card-title>Alerts</mat-card-title>
-      <mat-card-subtitle>Your total alerts issued</mat-card-subtitle>
+      <mat-card-subtitle>Total alerts issued</mat-card-subtitle>
+      <div class="dashboard-card-data-container">
+        <mat-icon class="dashboard-card-data-icon">notifications</mat-icon>
+        <h1 class="dashboard-card-data-number">{{counters[0]?.total_alerts}}</h1>
+      </div>
     </mat-card-header>
     <mat-card-content>
-      <h1 class="numeric-data-big">49</h1>
     </mat-card-content>
   </mat-card>
 </div>
 
 <!-- PANEL 2 -->
-<div class="cards-container">
+<div class="cards-container-charts">
   <!-- Card for Chart 1 -->
-  <mat-card class="dashboard-card">
+  <mat-card class="dashboard-card-chart">
     <mat-card-header>
-      <mat-card-title>Card Title 1</mat-card-title>
-      <mat-card-subtitle>Subtitle</mat-card-subtitle>
+      <mat-card-title>Total Power</mat-card-title>
+      <mat-card-subtitle>Total power consumed per device</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <h1 class="numeric-data-big">Some content...</h1>
+      <br>
+      <!-- Consumption Chart -->
+      <div *ngIf="totalPower && totalPower.length > 0; else noPowerReadingsContent">
+        <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
+          [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Device"
+          yAxisLabel="Total Power (Watts)">
+        </ngx-charts-bar-vertical>
+      </div>
+      <ng-template #noPowerReadingsContent>
+        <h3 align="center" class="rounded-label">No data available</h3>
+      </ng-template>
     </mat-card-content>
   </mat-card>
 
   <!-- Card for Chart 2 -->
-  <mat-card class="dashboard-card">
+  <mat-card class="dashboard-card-chart">
     <mat-card-header>
       <mat-card-title>Card Title 2</mat-card-title>
       <mat-card-subtitle>Subtitle</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <h1 class="numeric-data-big">Some content...</h1>
     </mat-card-content>
   </mat-card>
-</div>
 
-<!-- PANEL 3 -->
-<div class="cards-container">
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Card Title 1</mat-card-title>
-      <mat-card-subtitle>Subtitle</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <h1 class="numeric-data-big">Some content...</h1>
-    </mat-card-content>
-  </mat-card>
+  <!-- PANEL 3 -->
+    <mat-card class="dashboard-card-chart">
+      <mat-card-header>
+        <mat-card-title>Card Title 1</mat-card-title>
+        <mat-card-subtitle>Subtitle</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
 </div>
