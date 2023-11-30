@@ -117,4 +117,19 @@ export class DataApiService {
   getConsumptionPowerReadings(consumption_id: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/data/getConsumptionPowerReadings/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
+
+  
+  //========================================
+  // DASHBOARD API CALLS
+  //========================================
+
+  // [GET] Get device, consumptions and alerts counters for Dashboard's cards
+  getDashboardCounters(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getDashboardCounters`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  // [GET] GET total power per device
+  getTotalPowerPerDevice(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getTotalPowerPerDevice`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
 }
