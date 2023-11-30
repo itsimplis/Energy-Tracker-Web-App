@@ -364,3 +364,32 @@ async def get_consumption_power_readings(consumption_id: int, username: str = De
             raise e
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+# ******************* #
+# DASHBOARD ENDPOINTS #
+# ******************* #
+
+# ===============================================================================================
+# Endpoint to get counts of total devices, total alerts, and total consumptions for current user        
+@router.get("/getDashboardCounters")
+async def get_dashboard_counters(username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            keys = ["total_devices", "total_consumptions", "total_alerts"]
+            result = connector.execute("""
+                SELECT
+                    (SELECT COUNT(*) FROM p.device WHERE p.device.user_username = %s) AS total_devices,
+                    (SELECT COUNT(*) FROM p.consumption 
+                        JOIN p.device_consumption ON p.consumption.id = p.device_consumption.consumption_id
+                        JOIN p.device ON p.device_consumption.device_id = p.device.id
+                        WHERE p.device.user_username = %s) AS total_consumptions,
+                    (SELECT COUNT(*) FROM p.alert WHERE p.alert.username = %s) AS total_alerts
+                """, (username, username, username))
+            
+            json_data = convert_to_json(result, keys)
+
+            return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
