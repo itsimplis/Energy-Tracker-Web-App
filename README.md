@@ -22,7 +22,8 @@ Create a database with the following configuration:
     user="postgres",
     password="password"
 
-* Run `python -m server.database.init` to create the database schema, and start loading it with data.   
+* Run `python -m server.database.init` to create the database schema, and start loading it with data.  
+  ( this process may take ~ 5-10 minutes depending on your machine )  
 * Otherwise, run `python -m server.database.init --no-data` to simply create the database schema without pre-loaded data.
 
 ## Python FastAPI server
