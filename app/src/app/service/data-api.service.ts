@@ -110,12 +110,17 @@ export class DataApiService {
 
 
   //========================================
-  // CONSUMPTIONS API CALLS
+  // POWER READINGS API CALLS
   //========================================
 
-  // [GET] Get consumption logs for a specific device
-  getConsumptionPowerReadings(consumption_id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/data/getConsumptionPowerReadings/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  // [GET] Get power readings for a specific consumption of a Device
+  getConsumptionPowerReadings(consumption_id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getConsumptionPowerReadings/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  // [GET] Get power readings for all consumptions of a Device
+  getDevicePowerReadings(consumption_id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getDevicePowerReadings/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
   
