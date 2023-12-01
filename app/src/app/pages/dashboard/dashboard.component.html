@@ -65,10 +65,12 @@
       <button mat-menu-item (click)="setChartType(false)">
         <mat-icon>speaker</mat-icon><span>Per Device</span>
       </button>
-      <button mat-menu-item (click)="setChartType(true)">
+      <button mat-menu-item (click)="setChartType(true, 'type')">
+        <mat-icon>workspaces</mat-icon><span>Per Device Type</span>
+      </button>
+      <button mat-menu-item (click)="setChartType(true, 'category')">
         <mat-icon>category</mat-icon><span>Per Device Category</span>
       </button>
-
     </mat-menu>
     <mat-card-header>
       <mat-card-title>Total Power</mat-card-title>
@@ -89,7 +91,7 @@
       <div *ngIf="showGroupedChart">
         <div *ngIf="totalPowerGrouped && totalPowerGrouped.length > 0; else noPowerReadingsContent">
           <ngx-charts-bar-vertical-stacked [results]="totalPowerGrouped" [xAxis]="true" [yAxis]="true"
-            [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+            [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
             [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)">
           </ngx-charts-bar-vertical-stacked>
         </div>
