@@ -12,12 +12,14 @@ export class DashboardComponent implements OnInit {
   counters: any[];
   totalPower: any[];
   totalPowerGrouped: any[];
+  highestReadings: any[];
   showGroupedChart: boolean = false;
 
   constructor(private dataApiService: DataApiService) {
     this.counters = [];
     this.totalPower = [];
     this.totalPowerGrouped = [];
+    this.highestReadings = [];
   }
 
   ngOnInit() {
@@ -54,6 +56,12 @@ export class DashboardComponent implements OnInit {
             }
           }));
         }
+
+        const maxPowerDevice = this.findMaxPowerDevice(data);
+        if (maxPowerDevice) {
+          this.loadPowerReadingsOfHighestDevice(maxPowerDevice);
+        }
+
       },
       error: (error) => {
         console.log(error);
@@ -61,10 +69,30 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  private groupDataBy(groupBy: string ,data: DeviceData[]): Record<string, { name: string; value: number; extra: { code: number } }[]> {
+  loadPowerReadingsOfHighestDevice(device: DeviceData) {
+    this.dataApiService.getDevicePowerReadings(device.device_id).subscribe({
+      next: (data: any[]) => {
+        this.highestReadings = [
+          {
+            name: device.device_name,
+            series: data.map(item => ({
+              name: new Date(item.reading_timestamp as string),
+              value: item.power as number
+            }))
+          }
+        ];
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  // Group data by either device category or device type
+  private groupDataBy(groupBy: string, data: DeviceData[]): Record<string, { name: string; value: number; extra: { code: number } }[]> {
     const groupedData: Record<string, { name: string; value: number; extra: { code: number } }[]> = {};
     var group = '';
-    
+
     data.forEach(device => {
       if (groupBy == 'category') {
         group = device.device_category;
@@ -72,7 +100,7 @@ export class DashboardComponent implements OnInit {
       if (groupBy == 'type') {
         group = device.device_type;
       }
-        
+
       if (!groupedData[group]) {
         groupedData[group] = [];
       }
@@ -84,6 +112,15 @@ export class DashboardComponent implements OnInit {
     });
 
     return groupedData;
+  }
+
+  // Find the device with the highest total power consumption
+  findMaxPowerDevice(data: DeviceData[]) {
+    if (data.length === 0) return null;
+
+    return data.reduce((prev: DeviceData, current: DeviceData) =>
+      (prev.total_power > current.total_power) ? prev : current
+    );
   }
 
   setChartType(grouped: boolean, groupBy: string = '') {

@@ -62,3 +62,9 @@
 ::ng-deep .mat-mdc-menu-panel {
     width: 250px !important;
   }
+
+  ::ng-deep .line-chart-container {
+    .line-highlight {
+        display: block !important;
+    }
+}

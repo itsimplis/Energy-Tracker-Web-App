@@ -1,12 +1,13 @@
-
 // Global height
-html, body { 
+html,
+body {
     height: 100%;
 }
 
 // Global fonts
-body { 
-    margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 // Global Page titles
@@ -22,6 +23,10 @@ body {
     flex-grow: 1;
     text-align: center;
     margin-bottom: 0px;
+}
+
+ngx-charts-bar-vertical .x.axis text {
+    font-weight: bold !important;
 }
 
 // Global rounded-label
@@ -40,18 +45,21 @@ body {
 // Global fade-in animation
 .fade-in-animation {
     animation-name: fadeIn;
-    animation-duration: 0.5s; /* or however long you want the animation to be */
-    animation-fill-mode: both; /* This makes sure that the final styles are retained after the animation completes */
-  }
+    animation-duration: 0.5s;
+    /* or however long you want the animation to be */
+    animation-fill-mode: both;
+    /* This makes sure that the final styles are retained after the animation completes */
+}
 
 @keyframes fadeIn {
     from {
-      opacity: 0;
+        opacity: 0;
     }
+
     to {
-      opacity: 1;
+        opacity: 1;
     }
-  }
+}
 
 // Global custom scroll style
 ::-webkit-scrollbar {

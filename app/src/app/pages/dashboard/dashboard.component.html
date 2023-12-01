@@ -73,33 +73,47 @@
       </button>
     </mat-menu>
     <mat-card-header>
-      <mat-card-title>Total Power</mat-card-title>
+      <mat-card-title>Total Power Consumption</mat-card-title>
       <mat-card-subtitle>Total power consumed per device</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <br>
-      <!-- Consumption Chart -->
+
+      <!-- Total Power Consumption Chart -->
       <div *ngIf="!showGroupedChart">
         <div *ngIf="totalPower && totalPower.length > 0 && !showGroupedChart ; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true"
-            [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-            [gradient]="true" xAxisLabel="Device" yAxisLabel="Total Power (Watts)">
+          <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
+            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            xAxisLabel="Device" yAxisLabel="Total Power (Watts)">
           </ngx-charts-bar-vertical>
         </div>
       </div>
-      
+
       <div *ngIf="showGroupedChart">
         <div *ngIf="totalPowerGrouped && totalPowerGrouped.length > 0; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical-stacked [results]="totalPowerGrouped" [xAxis]="true" [yAxis]="true"
-            [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-            [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)">
+          <ngx-charts-bar-vertical-stacked [results]="totalPowerGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
+            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            xAxisLabel="Category" yAxisLabel="Total Power (Watts)">
           </ngx-charts-bar-vertical-stacked>
         </div>
       </div>
-      
-      <ng-template #noPowerReadingsContent>
-        <h3 align="center" class="rounded-label">No data available</h3>
-      </ng-template>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Highest Power Consumption Chart -->
+  <mat-card class="dashboard-card-chart">
+    <mat-card-header>
+      <mat-card-title>Highest Power Consumption</mat-card-title>
+      <mat-card-subtitle>Device with highest power consumption</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <br>
+      <div *ngIf="highestReadings && highestReadings.length > 0; else noPowerReadingsContent">
+        <ngx-charts-line-chart class="line-chart-container" [results]="highestReadings" [xAxis]="true" [yAxis]="true"
+          [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+          xAxisLabel="Day" yAxisLabel="Consumption (Watts)">
+        </ngx-charts-line-chart>
+      </div>
     </mat-card-content>
   </mat-card>
 
@@ -113,13 +127,8 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- PANEL 3 -->
-  <mat-card class="dashboard-card-chart">
-    <mat-card-header>
-      <mat-card-title>Card Title 1</mat-card-title>
-      <mat-card-subtitle>Subtitle</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-    </mat-card-content>
-  </mat-card>
+  <ng-template #noPowerReadingsContent>
+    <h3 align="center" class="rounded-label">No data available</h3>
+  </ng-template>
+
 </div>
