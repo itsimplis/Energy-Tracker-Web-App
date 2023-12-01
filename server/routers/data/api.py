@@ -331,12 +331,38 @@ async def remove_device(device_id: int, username: str = Depends(get_current_user
             connector.rollback()
             raise HTTPException(status_code=500, detail=str(e))
         
-# ********************* #
-# CONSUMPTION ENDPOINTS #
-# ********************* #
+
+# ********************** #
+# POWER REDING ENDPOINTS #
+# ********************** #
 
 # ===============================================================================================
-# Endpoint to get all power reading logs for a specific consumption
+# Endpoint to get all power readings for all consumptions of a device
+@router.get("/getDevicePowerReadings/{device_id}")
+async def get_device_power_readings(device_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            keys = ["reading_timestamp", "power"]
+
+            result = connector.execute("""
+                SELECT p.power_reading.reading_timestamp, p.power_reading.power
+                FROM p.power_reading
+                JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
+                JOIN p.device ON p.device_consumption.device_id = p.device.id
+                WHERE p.device_consumption.device_id = %s AND p.device.user_username = %s
+                ORDER BY p.power_reading.reading_timestamp ASC
+                """, (device_id, username))
+            
+            json_data = convert_to_json(result, keys)
+
+            return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint to get all power readings for a specific consumption
 @router.get("/getConsumptionPowerReadings/{consumption_id}")
 async def get_consumption_power_readings(consumption_id: int, username: str = Depends(get_current_user)):
     with database_connection():
@@ -364,6 +390,9 @@ async def get_consumption_power_readings(consumption_id: int, username: str = De
             raise e
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+
+
 
 # ******************* #
 # DASHBOARD ENDPOINTS #
