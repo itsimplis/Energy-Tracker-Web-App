@@ -62,10 +62,10 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #totalPowerChartMenu class="chart-menu">
-      <button mat-menu-item (click)="onPerDeviceClick()">
+      <button mat-menu-item (click)="setChartType(false)">
         <mat-icon>speaker</mat-icon><span>Per Device</span>
       </button>
-      <button mat-menu-item (click)="onPerDeviceCategoryClick()">
+      <button mat-menu-item (click)="setChartType(true)">
         <mat-icon>category</mat-icon><span>Per Device Category</span>
       </button>
 
@@ -77,16 +77,24 @@
     <mat-card-content>
       <br>
       <!-- Consumption Chart -->
-      <div *ngIf="totalPower && totalPower.length > 0; else noPowerReadingsContent">
-        <ngx-charts-bar-vertical *ngIf="!showGroupedChart" [results]="totalPower" [xAxis]="true" [yAxis]="true"
-          [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-          [gradient]="true" xAxisLabel="Device" yAxisLabel="Total Power (Watts)">
-        </ngx-charts-bar-vertical>
-        <!--<ngx-charts-bar-vertical-2d *ngIf="showGroupedChart" [results]="totalPower" [xAxis]="true" [yAxis]="true"
-          [legend]="true" [legendTitle]="'Device Categories'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-          [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)">
-        </ngx-charts-bar-vertical-2d> -->
+      <div *ngIf="!showGroupedChart">
+        <div *ngIf="totalPower && totalPower.length > 0 && !showGroupedChart ; else noPowerReadingsContent">
+          <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true"
+            [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+            [gradient]="true" xAxisLabel="Device" yAxisLabel="Total Power (Watts)">
+          </ngx-charts-bar-vertical>
+        </div>
       </div>
+      
+      <div *ngIf="showGroupedChart">
+        <div *ngIf="totalPowerGrouped && totalPowerGrouped.length > 0; else noPowerReadingsContent">
+          <ngx-charts-bar-vertical-stacked [results]="totalPowerGrouped" [xAxis]="true" [yAxis]="true"
+            [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+            [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)">
+          </ngx-charts-bar-vertical-stacked>
+        </div>
+      </div>
+      
       <ng-template #noPowerReadingsContent>
         <h3 align="center" class="rounded-label">No data available</h3>
       </ng-template>
