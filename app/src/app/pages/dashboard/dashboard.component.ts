@@ -11,6 +11,7 @@ export class DashboardComponent implements OnInit {
 
   counters: any[];
   totalPower: any[];
+  showGroupedChart: boolean = false;
 
   constructor(private dataApiService: DataApiService) {
     this.counters = [];
@@ -19,7 +20,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loadDashboardCounters();
-    this.loadTotalPowerPerDevice();
+    this.loadTotalPowerPerDevice(false);
   }
 
   loadDashboardCounters() {
@@ -33,21 +34,59 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  loadTotalPowerPerDevice() {
+  loadTotalPowerPerDevice(grouped: boolean) {
     this.dataApiService.getTotalPowerPerDevice().subscribe({
-      next: (data) => {
-        this.totalPower = data.map(device => ({
-          name: device.device_name,
-          value: device.total_power,
-          extra: {
-            code: device.device_id
-          }
-        }));
+      next: (data: DeviceData[]) => { // Assuming DeviceData is an interface representing your device data
+        if (grouped) {
+          //const groupedData = this.groupDataByCategory(data);
+          //console.log('Grouped Data:', groupedData);
+          //this.totalPower = groupedData;
+        }
+        else {
+          this.totalPower = data.map(device => ({
+            name: device.device_name,
+            value: device.total_power,
+            extra: {
+              code: device.device_id
+            }
+          }));
+        }
       },
       error: (error) => {
         console.log(error);
       }
     });
+  }
+
+  private groupDataByCategory(data: DeviceData[]): GroupedData[] {
+    const groupedData: { [key: string]: ChartData[] } = {};
+  
+    data.forEach(device => {
+      if (!groupedData[device.device_category]) {
+        groupedData[device.device_category] = [];
+      }
+      groupedData[device.device_category].push({
+        name: device.device_name,
+        value: device.total_power,
+        extra: { code: device.device_id }
+      });
+    });
+  
+    return Object.keys(groupedData).map(category => ({
+      name: category,
+      series: groupedData[category]
+    }));
+  }
+
+  onPerDeviceClick() {
+    this.showGroupedChart = false;
+    this.loadTotalPowerPerDevice(this.showGroupedChart);
+  }
+
+  onPerDeviceCategoryClick() {
+    this.showGroupedChart = true;
+    this.loadTotalPowerPerDevice(this.showGroupedChart);
+
   }
 
   colorScheme: Color = {
@@ -56,4 +95,25 @@ export class DashboardComponent implements OnInit {
     group: ScaleType.Ordinal,
     domain: ['#009dff', '#00d089', '#00b8e5']
   };
+}
+
+interface DeviceData {
+  device_id: number;
+  device_name: string;
+  device_category: string;
+  device_type: string;
+  total_power: number;
+}
+
+interface ChartData {
+  name: string;
+  value: number;
+  extra: {
+    code: number;
+  };
+}
+
+interface GroupedData {
+  name: string;
+  series: ChartData[];
 }

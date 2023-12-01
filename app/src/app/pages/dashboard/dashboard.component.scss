@@ -51,3 +51,14 @@
     font-weight: 600;
     margin: 0px;
 }
+
+.menu-button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 1;
+}
+
+::ng-deep .mat-mdc-menu-panel {
+    width: 250px !important;
+  }

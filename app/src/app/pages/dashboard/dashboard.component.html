@@ -57,6 +57,19 @@
 <div class="cards-container-charts">
   <!-- Card for Chart 1 -->
   <mat-card class="dashboard-card-chart">
+    <button mat-icon-button [matMenuTriggerFor]="totalPowerChartMenu" class="menu-button"
+      (click)="$event.stopPropagation()">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #totalPowerChartMenu class="chart-menu">
+      <button mat-menu-item (click)="onPerDeviceClick()">
+        <mat-icon>speaker</mat-icon><span>Per Device</span>
+      </button>
+      <button mat-menu-item (click)="onPerDeviceCategoryClick()">
+        <mat-icon>category</mat-icon><span>Per Device Category</span>
+      </button>
+
+    </mat-menu>
     <mat-card-header>
       <mat-card-title>Total Power</mat-card-title>
       <mat-card-subtitle>Total power consumed per device</mat-card-subtitle>
@@ -65,10 +78,14 @@
       <br>
       <!-- Consumption Chart -->
       <div *ngIf="totalPower && totalPower.length > 0; else noPowerReadingsContent">
-        <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
-          [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Device"
-          yAxisLabel="Total Power (Watts)">
+        <ngx-charts-bar-vertical *ngIf="!showGroupedChart" [results]="totalPower" [xAxis]="true" [yAxis]="true"
+          [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+          [gradient]="true" xAxisLabel="Device" yAxisLabel="Total Power (Watts)">
         </ngx-charts-bar-vertical>
+        <!--<ngx-charts-bar-vertical-2d *ngIf="showGroupedChart" [results]="totalPower" [xAxis]="true" [yAxis]="true"
+          [legend]="true" [legendTitle]="'Device Categories'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+          [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)">
+        </ngx-charts-bar-vertical-2d> -->
       </div>
       <ng-template #noPowerReadingsContent>
         <h3 align="center" class="rounded-label">No data available</h3>
@@ -87,12 +104,12 @@
   </mat-card>
 
   <!-- PANEL 3 -->
-    <mat-card class="dashboard-card-chart">
-      <mat-card-header>
-        <mat-card-title>Card Title 1</mat-card-title>
-        <mat-card-subtitle>Subtitle</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-      </mat-card-content>
-    </mat-card>
+  <mat-card class="dashboard-card-chart">
+    <mat-card-header>
+      <mat-card-title>Card Title 1</mat-card-title>
+      <mat-card-subtitle>Subtitle</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+    </mat-card-content>
+  </mat-card>
 </div>
