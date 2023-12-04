@@ -14,7 +14,8 @@
     margin-bottom: 30px;
 }
 
-.dashboard-card, .dashboard-card-chart {
+.dashboard-card,
+.dashboard-card-chart {
     flex: 1;
     min-width: 350px;
     box-shadow: 0px 0px 8px rgba(52, 52, 108, 0.5);
@@ -61,9 +62,9 @@
 
 ::ng-deep .mat-mdc-menu-panel {
     width: 250px !important;
-  }
+}
 
-  ::ng-deep .line-chart-container {
+::ng-deep .line-chart-container {
     .line-highlight {
         display: block !important;
     }

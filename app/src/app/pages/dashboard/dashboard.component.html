@@ -55,7 +55,24 @@
 
 <!-- PANEL 2 -->
 <div class="cards-container-charts">
-  <!-- Card for Chart 1 -->
+
+  <!-- Power Distribution -->
+  <mat-card class="dashboard-card-chart">
+    <mat-card-header>
+      <mat-card-title>Power Distribution</mat-card-title>
+      <mat-card-subtitle>Total power distribution per category</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <br>
+      <div *ngIf="distribution && distribution.length > 0; else noPowerReadingsContent">
+        <ngx-charts-tree-map class="line-chart-container" [results]="distribution"
+          xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
+        </ngx-charts-tree-map>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Total Power Consumption Chart -->
   <mat-card class="dashboard-card-chart">
     <button mat-icon-button [matMenuTriggerFor]="totalPowerChartMenu" class="menu-button"
       (click)="$event.stopPropagation()">
@@ -79,7 +96,6 @@
     <mat-card-content>
       <br>
 
-      <!-- Total Power Consumption Chart -->
       <div *ngIf="!showGroupedChart">
         <div *ngIf="totalPower && totalPower.length > 0 && !showGroupedChart ; else noPowerReadingsContent">
           <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
