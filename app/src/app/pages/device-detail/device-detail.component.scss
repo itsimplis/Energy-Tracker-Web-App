@@ -30,7 +30,7 @@ th {
     cursor: pointer !important;
 }
 
-::ng-deep .mat-expansion-panel-header-description {
+:host ::ng-deep .mat-expansion-panel-header-description {
     justify-content: space-between !important;
     align-items: center !important;
 }
@@ -75,7 +75,7 @@ h3 {
     padding-right: 10px;
 }
 
-::ng-deep .chart-container {
+:host ::ng-deep .chart-container {
     .line-highlight {
         display: block !important;
     }

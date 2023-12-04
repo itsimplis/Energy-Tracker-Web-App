@@ -30,12 +30,12 @@
     background-color: #f9f9f9;
 }
 
-::ng-deep.mat-mdc-card-content {
+:host ::ng-deep.mat-mdc-card-content {
     padding-left: 0px !important;
     padding-bottom: 5px !important;
 }
 
-::ng-deep.alert-icon .mat-icon {
+:host ::ng-deep.alert-icon .mat-icon {
     height: 40px !important;
     width: 40px !important;
     margin-left: 10px !important;
