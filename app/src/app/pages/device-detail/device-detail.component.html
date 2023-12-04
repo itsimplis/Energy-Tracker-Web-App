@@ -5,113 +5,98 @@
 <mat-divider></mat-divider>
 <br>
 
-<mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true">
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            <h3><strong>DEVICE DETAILS</strong></h3>
-        </mat-panel-title>
-        <mat-panel-description>
-            <h3><strong>{{ details[0]?.device_name }}</strong></h3>
+<!-- Device Detail Card -->
+<mat-card class="mat-card-details">
+    <mat-card-header>
+        <div mat-card-avatar class="device-icon">
             <mat-icon>perm_device_information</mat-icon>
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <mat-divider></mat-divider>
+        </div>
+        <mat-card-title>{{ details[0]?.device_name }}</mat-card-title>
+        <mat-card-subtitle>{{ details[0]?.device_type }}</mat-card-subtitle>
+    </mat-card-header>
     <br>
-    <!-- Device Detail Card -->
-    <mat-card class="mat-card-details">
-        <mat-card-header>
-            <div mat-card-avatar class="device-icon">
-                <mat-icon>perm_device_information</mat-icon>
-            </div>
-            <mat-card-title>{{ details[0]?.device_name }}</mat-card-title>
-            <mat-card-subtitle>{{ details[0]?.device_type }}</mat-card-subtitle>
-        </mat-card-header>
-        <br>
-        <mat-card-content>
-            <div class="device-detail-container">
-                <div class="info-container">
-                    <div class="info-container-header">
-                        <mat-icon class="category-icon">perm_device_information</mat-icon>
-                        <h3><strong> Information</strong></h3>
-                    </div>
-                    <mat-divider></mat-divider>
-                    <div class="info-container-group">
-                        <div class="info-group">
-                            <label class="info-label">Device Category</label>
-                            <label class="info-value">{{details[0]?.device_category}}</label>
-                        </div>
-                        <div class="info-group">
-                            <label class="info-label">Device Type</label>
-                            <label class="info-value">{{details[0]?.device_type}}</label>
-                        </div>
-                    </div>
+    <mat-card-content>
+        <div class="device-detail-container">
+            <div class="info-container">
+                <div class="info-container-header">
+                    <mat-icon class="category-icon">perm_device_information</mat-icon>
+                    <h3><strong> Information</strong></h3>
                 </div>
-
-
-                <div class="info-container">
-                    <div class="info-container-header">
-                        <mat-icon class="category-icon">power</mat-icon>
-                        <h3><strong> Consumption</strong></h3>
+                <mat-divider></mat-divider>
+                <div class="info-container-group">
+                    <div class="info-group">
+                        <label class="info-label">Device Category</label>
+                        <label class="info-value">{{details[0]?.device_category}}</label>
                     </div>
-                    <mat-divider></mat-divider>
-                    <div class="info-container-group">
-                        <div class="info-group">
-                            <label class="info-label">Consumption Logs</label>
-                            <label class="info-value">1</label>
-                        </div>
-                        <div class="info-group">
-                            <label class="info-label">Power Peak</label>
-                            <label class="info-value">1650 W</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-container">
-                    <div class="info-container-header">
-                        <mat-icon class="category-icon">notifications</mat-icon>
-                        <h3><strong> Notifications</strong></h3>
-                    </div>
-                    <mat-divider></mat-divider>
-                    <div class="info-container-group">
-                        <div class="info-group">
-                            <label class="info-label">Total Alerts</label>
-                            <label class="info-value">16</label>
-                        </div>
-                        <div class="info-group">
-                            <label class="info-label">New Alerts</label>
-                            <label class="info-value">3</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-container">
-                    <div class="info-container-header">
-                        <mat-icon class="category-icon">power_settings_new</mat-icon>
-                        <h3><strong> Power Thresholds</strong></h3>
-                    </div>
-                    <mat-divider></mat-divider>
-                    <div class="info-container-group">
-                        <div class="info-group">
-                            <label class="info-label">High Threshold</label>
-                            <label class="info-value">130 %</label>
-                        </div>
-                        <div class="info-group">
-                            <label class="info-label">Low Threshold</label>
-                            <label class="info-value">10 %</label>
-                        </div>
+                    <div class="info-group">
+                        <label class="info-label">Device Type</label>
+                        <label class="info-value">{{details[0]?.device_type}}</label>
                     </div>
                 </div>
             </div>
-        </mat-card-content>
-    </mat-card>
-</mat-expansion-panel>
+
+            <div class="info-container">
+                <div class="info-container-header">
+                    <mat-icon class="category-icon">power</mat-icon>
+                    <h3><strong> Consumption</strong></h3>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="info-container-group">
+                    <div class="info-group">
+                        <label class="info-label">Consumption Logs</label>
+                        <label class="info-value">1</label>
+                    </div>
+                    <div class="info-group">
+                        <label class="info-label">Power Peak</label>
+                        <label class="info-value">1650 W</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-container">
+                <div class="info-container-header">
+                    <mat-icon class="category-icon">notifications</mat-icon>
+                    <h3><strong> Notifications</strong></h3>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="info-container-group">
+                    <div class="info-group">
+                        <label class="info-label">Total Alerts</label>
+                        <label class="info-value">16</label>
+                    </div>
+                    <div class="info-group">
+                        <label class="info-label">New Alerts</label>
+                        <label class="info-value">3</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-container">
+                <div class="info-container-header">
+                    <mat-icon class="category-icon">power_settings_new</mat-icon>
+                    <h3><strong> Power Thresholds</strong></h3>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="info-container-group">
+                    <div class="info-group">
+                        <label class="info-label">High Threshold</label>
+                        <label class="info-value">{{details[0]?.alert_threshold_high * 100}} %</label>
+                    </div>
+                    <div class="info-group">
+                        <label class="info-label">Low Threshold</label>
+                        <label class="info-value">{{details[0]?.alert_threshold_low * 100}} %</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
 
 
 <br>
 <br>
 
-<mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true">
+<mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true" class="expansion-panel-shadowed">
     <mat-expansion-panel-header>
         <mat-panel-title>
             <h3 class="header-round"><strong>DEVICE CONSUMPTION</strong></h3> <!-- Device Category -->
@@ -135,7 +120,7 @@
                 <mat-icon>add</mat-icon><span>Add New Consumption</span>
             </button>
         </div>
-    
+
         <!-- Consumption Table -->
         <mat-card class="mat-card-table">
             <table mat-table [dataSource]="dataSourceConsumption" matSort>>
@@ -159,38 +144,41 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Max Power </th>
                     <td mat-cell *matCellDef="let row"> {{row.power_max}} </td>
                 </ng-container>
-    
+
                 <!-- Row -->
                 <tr mat-header-row *matHeaderRowDef="columnsConsumption"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnsConsumption;" (click)="onConsumptionRowClick(row)"></tr>
-    
+                <tr mat-row *matRowDef="let row; columns: columnsConsumption;" (click)="onConsumptionRowClick(row)">
+                </tr>
+
                 <!-- Row shown when there is no matching data. -->
                 <tr class="mat-row" *matNoDataRow>
                     <td colspan="5">No data matching the filter "{{filterConsumptions.value}}"</td>
                 </tr>
             </table>
-            <mat-paginator #paginatorConsumptions [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of consumption logs">
+            <mat-paginator #paginatorConsumptions [pageSizeOptions]="[5, 10, 25, 100]"
+                aria-label="Select page of consumption logs">
             </mat-paginator>
         </mat-card>
 
         <br>
-    <mat-divider></mat-divider>
-    <br>
+        <mat-divider></mat-divider>
+        <br>
 
-    <!-- Consumption Chart -->
-    <div *ngIf="readings && readings.length > 0; else noPowerReadingsContent">
-        <h3 align="left" class="rounded-label"> <strong>Device consumption for period: </strong> {{ selectedStartDate |
-            date:'dd/MM/yyyy' }} - {{ selectedEndDate | date:'dd/MM/yyyy' }}</h3>
-        <div>
-            <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="readings" [xAxis]="true"
-                [yAxis]="true" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-                [legend]="false" xAxisLabel="Day" yAxisLabel="Consumption (Watts)">
-            </ngx-charts-line-chart>
+        <!-- Consumption Chart -->
+        <div *ngIf="readings && readings.length > 0; else noPowerReadingsContent">
+            <h3 align="left" class="rounded-label"> <strong>Device consumption for period: </strong> {{
+                selectedStartDate |
+                date:'dd/MM/yyyy' }} - {{ selectedEndDate | date:'dd/MM/yyyy' }}</h3>
+            <div>
+                <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="readings"
+                    [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true"
+                    [gradient]="true" xAxisLabel="Day" yAxisLabel="Consumption (Watts)">
+                </ngx-charts-line-chart>
+            </div>
         </div>
-    </div>
-    <ng-template #noPowerReadingsContent>
-        <h3 align="center" class="rounded-label">Select a consumption record from the table</h3>
-    </ng-template>
+        <ng-template #noPowerReadingsContent>
+            <h3 align="center" class="rounded-label">Select a consumption record from the table</h3>
+        </ng-template>
     </div>
     <ng-template #noConsumptionsContent>
         <h3 align="center" class="rounded-label">No consumptions for this device</h3>
@@ -214,7 +202,7 @@
     <mat-divider></mat-divider>
     <br>
 
-    <div  *ngIf="alerts && alerts.length > 0; else noAlertsContent" >
+    <div *ngIf="alerts && alerts.length > 0; else noAlertsContent">
         <div class="table-toolbar">
             <mat-form-field floatLabel="always">
                 <mat-label>Filter</mat-label>
@@ -224,7 +212,7 @@
                 <mat-icon>delete_sweep</mat-icon><span>Clear Device Alerts</span>
             </button>
         </div>
-    
+
         <mat-card class="mat-card-table">
             <table mat-table [dataSource]="dataSourceAlert" matSort>
                 <ng-container matColumnDef="title">
@@ -237,11 +225,15 @@
                 </ng-container>
                 <ng-container matColumnDef="type">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
-                    <td mat-cell *matCellDef="let row"><span class="cell-container"><span [ngClass]="getTypeClass(row.type)"><mat-icon class="cell-icon">{{getTypeIcon(row.type)}}</mat-icon> {{ getTypeDisplayText(row.type) }} </span></span></td>
+                    <td mat-cell *matCellDef="let row"><span class="cell-container"><span
+                                [ngClass]="getTypeClass(row.type)"><mat-icon
+                                    class="cell-icon">{{getTypeIcon(row.type)}}</mat-icon> {{
+                                getTypeDisplayText(row.type) }} </span></span></td>
                 </ng-container>
                 <ng-container matColumnDef="read_status">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-                    <td mat-cell *matCellDef="let row"> <span [ngClass]="getReadStatusClass(row.read_status)"> {{ getReadStatusDisplayText(row.read_status) }} </span> </td>
+                    <td mat-cell *matCellDef="let row"> <span [ngClass]="getReadStatusClass(row.read_status)"> {{
+                            getReadStatusDisplayText(row.read_status) }} </span> </td>
                 </ng-container>
                 <ng-container matColumnDef="date">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
@@ -251,16 +243,17 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Suggestion </th>
                     <td mat-cell *matCellDef="let row"> {{row.suggestion}} </td>
                 </ng-container>
-    
+
                 <tr mat-header-row *matHeaderRowDef="columnsAlert"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnsAlert;" (click)="onAlertRowClick(row)"></tr>
-    
+
                 <!-- Row shown when there is no matching data. -->
                 <tr class="mat-row" *matNoDataRow>
                     <td colspan="6">No data matching the filter "{{filterAlerts.value}}"</td>
                 </tr>
             </table>
-            <mat-paginator #paginatorAlerts [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of alert logs"></mat-paginator>
+            <mat-paginator #paginatorAlerts [pageSizeOptions]="[5, 10, 25, 100]"
+                aria-label="Select page of alert logs"></mat-paginator>
         </mat-card>
     </div>
     <ng-template #noAlertsContent>
