@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Color, ScaleType } from '@swimlane/ngx-charts';
 import { DataApiService } from 'src/app/service/data-api.service';
 
@@ -15,7 +16,7 @@ export class DashboardComponent implements OnInit {
   highestReadings: any[];
   showGroupedChart: boolean = false;
 
-  constructor(private dataApiService: DataApiService) {
+  constructor(private dataApiService: DataApiService, private router: Router) {
     this.counters = [];
     this.totalPower = [];
     this.totalPowerGrouped = [];
@@ -126,6 +127,10 @@ export class DashboardComponent implements OnInit {
   setChartType(grouped: boolean, groupBy: string = '') {
     this.showGroupedChart = grouped;
     this.loadTotalPowerPerDevice(grouped, groupBy);
+  }
+
+  onChartDeviceSelect(data: any) {
+    this.router.navigate(['/device-detail', data.extra.code]);
   }
 }
 
