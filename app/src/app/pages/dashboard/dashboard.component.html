@@ -111,19 +111,26 @@
       <div *ngIf="highestReadings && highestReadings.length > 0; else noPowerReadingsContent">
         <ngx-charts-line-chart class="line-chart-container" [results]="highestReadings" [xAxis]="true" [yAxis]="true"
           [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-          xAxisLabel="Day" yAxisLabel="Consumption (Watts)">
+          xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
         </ngx-charts-line-chart>
       </div>
     </mat-card-content>
   </mat-card>
 
-  <!-- Card for Chart 2 -->
+  <!-- Lowest Power Consumption Chart -->
   <mat-card class="dashboard-card-chart">
     <mat-card-header>
-      <mat-card-title>Card Title 2</mat-card-title>
-      <mat-card-subtitle>Subtitle</mat-card-subtitle>
+      <mat-card-title>Lowest Power Consumption</mat-card-title>
+      <mat-card-subtitle>Device with lowest power consumption</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
+      <br>
+      <div *ngIf="lowestReadings && lowestReadings.length > 0; else noPowerReadingsContent">
+        <ngx-charts-line-chart class="line-chart-container" [results]="lowestReadings" [xAxis]="true" [yAxis]="true"
+          [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+          xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
+        </ngx-charts-line-chart>
+      </div>
     </mat-card-content>
   </mat-card>
 

@@ -14,12 +14,14 @@ export class DashboardComponent implements OnInit {
   totalPower: any[];
   totalPowerGrouped: any[];
   highestReadings: any[];
+  lowestReadings: any[];
   showGroupedChart: boolean = false;
 
   constructor(private dataApiService: DataApiService, private router: Router) {
     this.counters = [];
     this.totalPower = [];
     this.totalPowerGrouped = [];
+    this.lowestReadings = [];
     this.highestReadings = [];
   }
 
@@ -59,10 +61,14 @@ export class DashboardComponent implements OnInit {
         }
 
         const maxPowerDevice = this.findMaxPowerDevice(data);
+        const minPowerDevice = this.findMinPowerDevice(data);
+        
         if (maxPowerDevice) {
           this.loadPowerReadingsOfHighestDevice(maxPowerDevice);
         }
-
+        if (minPowerDevice) {
+          this.loadPowerReadingsOfLowestDevice(minPowerDevice);
+        }
       },
       error: (error) => {
         console.log(error);
@@ -78,7 +84,32 @@ export class DashboardComponent implements OnInit {
             name: device.device_name,
             series: data.map(item => ({
               name: new Date(item.reading_timestamp as string),
-              value: item.power as number
+              value: item.power as number,
+              extra: {
+                code: device.device_id
+              }
+            }))
+          }
+        ];
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  loadPowerReadingsOfLowestDevice(device: DeviceData) {
+    this.dataApiService.getDevicePowerReadings(device.device_id).subscribe({
+      next: (data: any[]) => {
+        this.lowestReadings = [
+          {
+            name: device.device_name,
+            series: data.map(item => ({
+              name: new Date(item.reading_timestamp as string),
+              value: item.power as number,
+              extra: {
+                code: device.device_id
+              }
             }))
           }
         ];
@@ -121,6 +152,15 @@ export class DashboardComponent implements OnInit {
 
     return data.reduce((prev: DeviceData, current: DeviceData) =>
       (prev.total_power > current.total_power) ? prev : current
+    );
+  }
+
+  // Find the device with the lowest total power consumption
+  findMinPowerDevice(data: DeviceData[]) {
+    if (data.length === 0) return null;
+
+    return data.reduce((prev: DeviceData, current: DeviceData) =>
+      (prev.total_power < current.total_power) ? prev : current
     );
   }
 
