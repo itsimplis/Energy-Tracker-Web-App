@@ -96,7 +96,8 @@
 <br>
 <br>
 
-<mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true" class="expansion-panel-shadowed">
+<mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true"
+    class="expansion-panel-shadowed">
     <mat-expansion-panel-header>
         <mat-panel-title>
             <h3 class="header-round"><strong>DEVICE CONSUMPTION</strong></h3> <!-- Device Category -->
@@ -155,7 +156,7 @@
                     <td colspan="5">No data matching the filter "{{filterConsumptions.value}}"</td>
                 </tr>
             </table>
-            <mat-paginator #paginatorConsumptions [pageSizeOptions]="[5, 10, 25, 100]"
+            <mat-paginator #paginatorConsumptions="matPaginator" [pageSizeOptions]="[5, 10, 25, 100]"
                 aria-label="Select page of consumption logs">
             </mat-paginator>
         </mat-card>
@@ -165,12 +166,26 @@
         <br>
 
         <!-- Consumption Chart -->
-        <div *ngIf="readings && readings.length > 0; else noPowerReadingsContent">
+        <div *ngIf="device_readings && device_readings.length > 0; else noPowerReadingsContent">
+            <div>
+                <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="device_readings"
+                    [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+                    [gradient]="true" xAxisLabel="Day" yAxisLabel="Consumption (Watts)">
+                </ngx-charts-line-chart>
+            </div>
+        </div>
+
+        <br>
+        <mat-divider></mat-divider>
+        <br>
+
+        <!-- Consumption Chart -->
+        <div *ngIf="consumption_readings && consumption_readings.length > 0; else noPowerReadingsContent">
             <h3 align="left" class="rounded-label"> <strong>Device consumption for period: </strong> {{
                 selectedStartDate |
                 date:'dd/MM/yyyy' }} - {{ selectedEndDate | date:'dd/MM/yyyy' }}</h3>
             <div>
-                <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="readings"
+                <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="consumption_readings"
                     [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true"
                     [gradient]="true" xAxisLabel="Day" yAxisLabel="Consumption (Watts)">
                 </ngx-charts-line-chart>
@@ -252,7 +267,7 @@
                     <td colspan="6">No data matching the filter "{{filterAlerts.value}}"</td>
                 </tr>
             </table>
-            <mat-paginator #paginatorAlerts [pageSizeOptions]="[5, 10, 25, 100]"
+            <mat-paginator #paginatorAlerts="matPaginator" [pageSizeOptions]="[5, 10, 25, 100]"
                 aria-label="Select page of alert logs"></mat-paginator>
         </mat-card>
     </div>

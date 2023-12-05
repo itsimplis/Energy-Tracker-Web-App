@@ -89,7 +89,6 @@ export class DevicesComponent implements OnInit {
         })
       } else {
         console.log("Addition of new device cancelled!");
-        console.log(result);
       }
     });
   }

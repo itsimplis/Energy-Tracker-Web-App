@@ -12,66 +12,26 @@ export class DashboardComponent implements OnInit {
 
   counters: any[];
   totalPower: any[];
-  distribution: any[] = [
-    {
-      "name": "Germany",
-      "value": 40632,
-      "extra": {
-        "code": "de"
-      }
-    },
-    {
-      "name": "United States",
-      "value": 50000,
-      "extra": {
-        "code": "us"
-      }
-    },
-    {
-      "name": "France",
-      "value": 36745,
-      "extra": {
-        "code": "fr"
-      }
-    },
-    {
-      "name": "United Kingdom",
-      "value": 36240,
-      "extra": {
-        "code": "uk"
-      }
-    },
-    {
-      "name": "Spain",
-      "value": 33000,
-      "extra": {
-        "code": "es"
-      }
-    },
-    {
-      "name": "Italy",
-      "value": 35800,
-      "extra": {
-        "code": "it"
-      }
-    }
-  ]
-  totalPowerGrouped: any[];
+  totalPowerDistribution: any[];
+  totalPowerCategoryGrouped: any[];
+  totalPowerTypeGrouped: any[];
   highestReadings: any[];
   lowestReadings: any[];
-  showGroupedChart: boolean = false;
+  chartType: string = 'device';
 
   constructor(private dataApiService: DataApiService, private router: Router) {
     this.counters = [];
     this.totalPower = [];
-    this.totalPowerGrouped = [];
+    this.totalPowerDistribution = [];
+    this.totalPowerCategoryGrouped = [];
+    this.totalPowerTypeGrouped = [];
     this.lowestReadings = [];
     this.highestReadings = [];
   }
 
   ngOnInit() {
     this.loadDashboardCounters();
-    this.loadTotalPowerPerDevice(false);
+    this.loadTotalPowerPerDevice();
   }
 
   loadDashboardCounters() {
@@ -85,28 +45,39 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  loadTotalPowerPerDevice(grouped: boolean, groupBy: string = '') {
+  loadTotalPowerPerDevice() {
     this.dataApiService.getTotalPowerPerDevice().subscribe({
       next: (data: DeviceData[]) => {
-        if (grouped) {
-          const groupedData = this.groupDataBy(groupBy, data);
-          this.totalPowerGrouped = Object.keys(groupedData).map(category => ({
+        const categoryGroupedData = this.groupDataBy('category', data);
+        const typeGroupedData = this.groupDataBy('type', data);
+
+        this.totalPowerCategoryGrouped = Object.keys(categoryGroupedData).map(category => ({
+          name: category,
+          series: categoryGroupedData[category]
+        }));
+        this.totalPowerTypeGrouped = Object.keys(typeGroupedData).map(type => ({
+          name: type,
+          series: typeGroupedData[type]
+        }));
+        this.totalPower = data.map(device => ({
+          name: device.device_name,
+          value: device.total_power,
+          extra: {
+            code: device.device_id
+          }
+        }));
+        this.totalPowerDistribution = Object.keys(categoryGroupedData).map(category => {
+          const totalPower = categoryGroupedData[category].reduce((acc, curr) => acc + curr.value, 0);
+          console.log(totalPower);
+          return {
             name: category,
-            series: groupedData[category]
-          }));
-        } else {
-          this.totalPower = data.map(device => ({
-            name: device.device_name,
-            value: device.total_power,
-            extra: {
-              code: device.device_id
-            }
-          }));
-        }
+            value: totalPower
+          }});
+          
 
         const maxPowerDevice = this.findMaxPowerDevice(data);
         const minPowerDevice = this.findMinPowerDevice(data);
-        
+
         if (maxPowerDevice) {
           this.loadPowerReadingsOfHighestDevice(maxPowerDevice);
         }
@@ -208,13 +179,19 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  setChartType(grouped: boolean, groupBy: string = '') {
-    this.showGroupedChart = grouped;
-    this.loadTotalPowerPerDevice(grouped, groupBy);
+  setChartType(groupBy: string = 'device') {
+    this.chartType = groupBy;
   }
 
   onChartDeviceSelect(data: any) {
     this.router.navigate(['/device-detail', data.extra.code]);
+  }
+
+  public formatDistribution(dataItem: any): string {
+    let value = dataItem.value;
+    // Formats the number with thousand separators
+    let formattedValue = value.toLocaleString('de-DE');
+    return formattedValue + ' W';
   }
 }
 

@@ -261,6 +261,30 @@ async def get_device_alerts(device_id: int, username: str = Depends(get_current_
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# =============================================================================================== 
+# Endpoint to get all power readings for a specific device, including consumption start and end dates
+@router.get("/getDevicePowerReadings/{device_id}")
+async def get_device_power_readings(device_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            keys = ["power_reading_id", "consumption_id", "reading_timestamp", "power", "start_date", "end_date"]
+            
+            result = connector.execute("""
+            SELECT p.power_reading.id, p.power_reading.consumption_id, p.power_reading.reading_timestamp, p.power_reading.power, p.consumption.start_date, p.consumption.end_date
+            FROM p.device
+            JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+            JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
+            JOIN p.power_reading ON p.consumption.id = p.power_reading.consumption_id
+            WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
+            json_data = convert_to_json(result, keys)
+
+            return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+
 # ===============================================================================================
 # Endpoint to remove all alerts for a specific device
 @router.delete("/removeDeviceAlerts/{device_id}")

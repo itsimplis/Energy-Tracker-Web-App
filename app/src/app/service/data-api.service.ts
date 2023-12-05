@@ -81,6 +81,11 @@ export class DataApiService {
     return this.http.get<any>(`${this.baseUrl}/data/getDeviceConsumption/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
+  // [GET] Get all power readings for a specific device
+  getDevicePowerReadings(device_id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/data/getDevicePowerReadings/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
   // [GET] Get alerts for a specific device
   getDeviceAlerts(device_id: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/data/getDeviceAlerts/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
@@ -117,12 +122,6 @@ export class DataApiService {
   getConsumptionPowerReadings(consumption_id: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getConsumptionPowerReadings/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
-
-  // [GET] Get power readings for all consumptions of a Device
-  getDevicePowerReadings(consumption_id: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/data/getDevicePowerReadings/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
-  }
-
   
   //========================================
   // DASHBOARD API CALLS

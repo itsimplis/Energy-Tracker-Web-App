@@ -9,6 +9,7 @@
 <mat-divider></mat-divider>
 <br>
 
+<!-- COUNTERS -->
 <div class="cards-container">
   <!-- Card for User Device Count -->
   <mat-card class="dashboard-card" routerLink="/devices">
@@ -53,21 +54,20 @@
   </mat-card>
 </div>
 
-<!-- PANEL 2 -->
+<!-- CHARTS -->
 <div class="cards-container-charts">
-
   <!-- Power Distribution -->
   <mat-card class="dashboard-card-chart">
     <mat-card-header>
-      <mat-card-title>Power Distribution</mat-card-title>
+      <mat-card-title>Category Power Distribution</mat-card-title>
       <mat-card-subtitle>Total power distribution per category</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <br>
-      <div *ngIf="distribution && distribution.length > 0; else noPowerReadingsContent">
-        <ngx-charts-tree-map class="line-chart-container" [results]="distribution"
+      <div *ngIf="totalPowerDistribution && totalPowerDistribution.length > 0; else noPowerReadingsContent">
+        <ngx-charts-number-card class="line-chart-container" [valueFormatting]="formatDistribution" [results]="totalPowerDistribution"
           xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
-        </ngx-charts-tree-map>
+        </ngx-charts-number-card>
       </div>
     </mat-card-content>
   </mat-card>
@@ -79,13 +79,13 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #totalPowerChartMenu class="chart-menu">
-      <button mat-menu-item (click)="setChartType(false)">
+      <button mat-menu-item (click)="setChartType('device')">
         <mat-icon>speaker</mat-icon><span>Per Device</span>
       </button>
-      <button mat-menu-item (click)="setChartType(true, 'type')">
+      <button mat-menu-item (click)="setChartType('type')">
         <mat-icon>workspaces</mat-icon><span>Per Device Type</span>
       </button>
-      <button mat-menu-item (click)="setChartType(true, 'category')">
+      <button mat-menu-item (click)="setChartType('category')">
         <mat-icon>category</mat-icon><span>Per Device Category</span>
       </button>
     </mat-menu>
@@ -96,8 +96,8 @@
     <mat-card-content>
       <br>
 
-      <div *ngIf="!showGroupedChart">
-        <div *ngIf="totalPower && totalPower.length > 0 && !showGroupedChart ; else noPowerReadingsContent">
+      <div *ngIf="chartType == 'device'">
+        <div *ngIf="totalPower && totalPower.length > 0; else noPowerReadingsContent">
           <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
             [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
             xAxisLabel="Device" yAxisLabel="Total Power (Watts)" (select)="onChartDeviceSelect($event)">
@@ -105,9 +105,18 @@
         </div>
       </div>
 
-      <div *ngIf="showGroupedChart">
-        <div *ngIf="totalPowerGrouped && totalPowerGrouped.length > 0; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical-stacked [results]="totalPowerGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
+      <div *ngIf="chartType == 'category'">
+        <div *ngIf="totalPowerCategoryGrouped && totalPowerCategoryGrouped.length > 0; else noPowerReadingsContent">
+          <ngx-charts-bar-vertical-stacked [results]="totalPowerCategoryGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
+            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            xAxisLabel="Category" yAxisLabel="Total Power (Watts)" (select)="onChartDeviceSelect($event)">
+          </ngx-charts-bar-vertical-stacked>
+        </div>
+      </div>
+
+      <div *ngIf="chartType == 'type'">
+        <div *ngIf="totalPowerTypeGrouped && totalPowerTypeGrouped.length > 0; else noPowerReadingsContent">
+          <ngx-charts-bar-vertical-stacked [results]="totalPowerTypeGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
             [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
             xAxisLabel="Category" yAxisLabel="Total Power (Watts)" (select)="onChartDeviceSelect($event)">
           </ngx-charts-bar-vertical-stacked>

@@ -23,7 +23,8 @@ export class DeviceDetailComponent implements OnInit {
 
   details: any[];
   consumptions: any[];
-  readings: any[];
+  consumption_readings: any[];
+  device_readings: any[];
   alerts: any[];
   selectedStartDate: string | null = null;
   selectedEndDate: string | null = null;
@@ -33,33 +34,38 @@ export class DeviceDetailComponent implements OnInit {
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
 
+  @ViewChild('paginatorAlerts') paginatorAlerts!: MatPaginator;
   @ViewChild('paginatorConsumptions') paginatorConsumptions!: MatPaginator;
-  @ViewChild(MatSort) sortConsumptions!: MatSort;
-  @ViewChild('paginatorAlerts') paginatorAlert!: MatPaginator;
-  @ViewChild(MatSort) sortAlert!: MatSort;
+  @ViewChild('sortAlerts') sortAlerts!: MatSort;
+  @ViewChild('sortConsumptions') sortConsumptions!: MatSort;
+
 
   constructor(private route: ActivatedRoute, private dataApiService: DataApiService, private dialogService: DialogService, private alertService: AlertService, private matDialog: MatDialog, private changeDetectorRef: ChangeDetectorRef) {
     this.details = [];
     this.consumptions = [];
-    this.readings = [];
+    this.consumption_readings = [];
+    this.device_readings = [];
     this.alerts = [];
   }
 
   ngOnInit() {
     this.routeSubscription = this.route.params.subscribe(params => {
       const deviceId = Number(params['id']);
-  
+
       this.deviceAlertsSubscription = this.alertService.deviceAlerts$.subscribe(
         deviceAlerts => {
           this.alerts = deviceAlerts;
           this.dataSourceAlert = new MatTableDataSource(this.alerts);
           this.dataSourceAlert.data = this.alerts;
-          this.dataSourceAlert.paginator = this.paginatorAlert;
-          this.dataSourceAlert.sort = this.sortAlert;
+          setTimeout(() => {
+            this.dataSourceAlert.sort = this.sortAlerts;
+            this.dataSourceAlert.paginator = this.paginatorAlerts
+          });
         });
-  
+
       this.loadDeviceDetail(deviceId);
       this.loadDeviceConsumption(deviceId);
+      this.loadDevicePowerReadings(deviceId);
       this.alertService.loadDeviceAlerts(deviceId);
     });
   }
@@ -90,14 +96,54 @@ export class DeviceDetailComponent implements OnInit {
         this.consumptions = data;
         this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
         this.dataSourceConsumption.data = this.consumptions;
-        this.dataSourceConsumption.paginator = this.paginatorConsumptions;
-        this.dataSourceConsumption.sort = this.sortConsumptions;
+        setTimeout(() => {
+          this.dataSourceConsumption.sort = this.sortConsumptions;
+          this.dataSourceConsumption.paginator = this.paginatorConsumptions;
+        });
       },
       error: (error) => {
         console.log(error);
       }
     });
   }
+
+  loadDevicePowerReadings(device_id: number) {
+    this.dataApiService.getDevicePowerReadings(device_id).subscribe({
+      next: (data: any[]) => {
+        this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data);
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
+  groupPowerReadingsByConsumptionPeriod(data: PowerReading[]): { name: string; series: { name: string; value: number; }[] }[] {
+    const groupedData: Record<string, GroupedDataItem> = {};
+
+    data.forEach((reading: PowerReading) => {
+      const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
+      if (!groupedData[period]) {
+        groupedData[period] = {
+          name: period,
+          series: [],
+          startDate: new Date(reading.start_date)
+        };
+      }
+
+      const readingDate = new Date(reading.reading_timestamp as string);
+      const dayNumber = Math.ceil((readingDate.getTime() - groupedData[period].startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+      groupedData[period].series.push({
+        name: `Day ${dayNumber}`,
+        value: reading.power
+      });
+    });
+
+    return Object.values(groupedData).map(({ name, series }) => ({ name, series }));
+  }
+
 
   applyFilterInConsumptions(event: Event) {
     const filterValueConsumption = (event.target as HTMLInputElement).value;
@@ -136,7 +182,7 @@ export class DeviceDetailComponent implements OnInit {
 
     this.dataApiService.getConsumptionPowerReadings(row.consumption_id).subscribe({
       next: (data: any[]) => {
-        this.readings = [
+        this.consumption_readings = [
           {
             name: 'Power Readings',
             series: data.map(item => ({
@@ -247,4 +293,18 @@ export class DeviceDetailComponent implements OnInit {
     domain: ['#009dff', '#00d089', '#00b8e5']
   };
 
+}
+
+interface PowerReading {
+  consumption_id: number;
+  reading_timestamp: string;
+  power: number;
+  start_date: string;
+  end_date: string;
+}
+
+interface GroupedDataItem {
+  name: string;
+  series: { name: string; value: number; }[];
+  startDate: Date;
 }
