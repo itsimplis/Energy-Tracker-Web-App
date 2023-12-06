@@ -240,6 +240,17 @@ export class DeviceDetailComponent implements OnInit {
     return this.panelOpenState;
   }
 
+  getDeviceDisplayIcon(type: string): string {
+    switch (type) {
+      case 'Cooling': return 'ac_unit';
+      case 'Kitchen': return 'kitchen';
+      case 'Multimedia': return 'tv';
+      case 'Other': return 'device_unknown';
+      case 'Washing': return 'local_laundry_service';
+      default: return 'device_unknown';
+    }
+  }
+
   getTypeDisplayText(type: string): string {
     switch (type) {
       case 'I': return 'Information';

@@ -9,7 +9,7 @@
 <mat-card class="mat-card-details">
     <mat-card-header>
         <div mat-card-avatar class="device-icon">
-            <mat-icon>perm_device_information</mat-icon>
+            <mat-icon>{{getDeviceDisplayIcon(details[0]?.device_category)}}</mat-icon>
         </div>
         <mat-card-title>{{ details[0]?.device_name }}</mat-card-title>
         <mat-card-subtitle>{{ details[0]?.device_type }}</mat-card-subtitle>

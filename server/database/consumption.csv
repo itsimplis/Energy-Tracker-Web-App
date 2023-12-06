@@ -1,43 +1,43 @@
 id,first_ts,last_ts,available_duration,plug_name,appliance_category,comment,files_names,power_max
-343,2021-04-04 21:46:29+00:00,2021-05-03 23:59:59+00:00,29.09,Washing Machine,washing,EcoWash Model X1,washing_machine_343.csv,2663.0
-295,2021-01-16 07:39:05+00:00,2021-02-15 07:39:05+00:00,30.0,Internet Router,multimedia,Freebox Delta,internet_router_295.csv,38.0
-254,2021-01-17 06:20:03+00:00,2021-02-16 06:20:03+00:00,30.0,Vacuum,other,Xiaomi 17061 Robot Vacuum Cleaner (V1),vacuum_254.csv,44.0
-32,2021-01-18 11:13:03+00:00,2021-02-17 11:13:02+00:00,30.0,Washing Machine,washing,Whirlpool washing machine TDLR70230,washing_machine_32.csv,2688.0
-53,2021-01-18 00:51:25+00:00,2021-02-17 00:51:25+00:00,30.0,Dishwasher,washing,DishPro Elite 500,dishwasher_53.csv,1806.0
-226,2021-02-18 05:28:53+00:00,2021-03-20 05:28:52+00:00,30.0,Boiler,kitchen,AquaHeat Series 3,boiler_226.csv,2664.0
-293,2021-01-14 01:44:52+00:00,2021-02-13 01:44:52+00:00,30.0,Air Purifier,other,Mi Air Purifier 3H,air_purifier_293.csv,22.0
-252,2020-10-24 09:39:43+00:00,2020-11-23 09:39:42+00:00,30.0,Sound System,multimedia,Devialet Delta,sound_system_252.csv,17.0
-29,2020-09-25 00:00:00+00:00,2020-10-24 23:59:58+00:00,30.0,3D Printer,multimedia,Micro Delta Rework 3D Printer,3D_printer_29.csv,154.0
-54,2020-12-13 12:51:57+00:00,2021-01-12 12:51:57+00:00,30.0,Coffee,kitchen,Nespresso,coffee_54.csv,1481.0
-282,2021-04-03 21:05:08+00:00,2021-05-03 21:05:07+00:00,30.0,Phone Charger,multimedia,FastCharge Pro,phone_charger_282.csv,86.0
-207,2020-12-23 16:42:05+00:00,2021-01-22 16:42:05+00:00,30.0,Fridge,kitchen,FrostGuardian Elite,fridge_207.csv,1436.0
-309,2020-12-23 16:42:05+00:00,2021-01-22 16:42:05+00:00,30.0,Radiator,other,HeatWave Pro X,radiator_309.csv,1348.0
-310,2020-12-13 12:51:58+00:00,2021-01-12 12:51:57+00:00,30.0,Dehumidifier,other,DryAir Max,dehumidifier_310.csv,1989.0
-317,2021-01-20 00:00:00+00:00,2021-02-18 23:59:59+00:00,30.0,Fridge,kitchen,FrostFree 2000,fridge_317.csv,1001.0
-314,2021-02-03 15:19:26+00:00,2021-03-05 15:19:26+00:00,30.0,Microwave Oven,kitchen,MicroQuick 800,micro_wave_oven_314.csv,1712.0
-289,2021-01-30 06:02:24+00:00,2021-03-01 06:02:24+00:00,30.0,Laptop,multimedia,UltraSlim X2,laptop_289.csv,61.0
-290,2021-02-11 18:38:39+00:00,2021-03-13 18:38:38+00:00,30.0,Tv,multimedia,CrystalVision 4K,tv_290.csv,54.0
-236,2020-12-11 10:11:44+00:00,2021-01-04 17:31:43+00:00,24.31,Vacuum,other,DustAway Advanced,vacuum_236.csv,1099.0
-302,2021-01-11 17:00:26+00:00,2021-01-24 10:33:45+00:00,12.73,Screen,multimedia,WideView HD,screen_302.csv,33.0
-322,2021-03-10 01:37:21+00:00,2021-04-09 01:37:21+00:00,30.0,Dehumidifier,other,Klimatronic 240,dehumidifier_322.csv,55.0
-325,2021-04-20 10:08:23+00:00,2021-05-20 10:08:23+00:00,30.0,Solar Panel,other,SunPower Eco 300,solar_panel_325.csv,417.0
-146,2020-07-17 02:14:56+00:00,2020-08-16 02:14:56+00:00,30.0,Screen,multimedia,Second Office Screen,screen_146.csv,30.0
-157,2021-03-10 02:30:34+00:00,2021-04-09 02:30:34+00:00,30.0,Washing Machine,washing,AquaSpin Vortex,washing_machine_157.csv,2584.0
-215,2020-07-16 18:53:28+00:00,2020-08-15 18:53:28+00:00,30.0,Fan,cooling,Tower fan,fan_215.csv,83.0
-222,2020-10-21 12:57:47+00:00,2020-11-20 12:57:47+00:00,30.0,Air Conditioner,cooling,Portable Air Conditioner,air_conditioner_222.csv,45.0
-64,2020-06-16 13:20:08+00:00,2020-07-15 23:59:59+00:00,29.44,Laptop,multimedia,Professional Laptop (Plugged In),laptop_64.csv,55.0
-37,2020-12-01 18:10:11+00:00,2020-12-31 18:10:11+00:00,30.0,Coffee,kitchen,70s Espresso Machine,coffee_37.csv,1373.0
-52,2020-06-15 15:30:59+00:00,2020-07-14 23:59:59+00:00,29.35,Washing Machine,washing,Drum Washing Machine,washing_machine_52.csv,2171.0
-44,2020-12-01 06:54:44+00:00,2020-12-31 06:54:44+00:00,30.0,Computer,multimedia,PC Tower ,computer_44.csv,280.0
-233,2020-12-06 18:10:48+00:00,2021-01-05 18:10:48+00:00,30.0,Boiler,kitchen,HeatMaster 500,boiler_233.csv,2607.5
-147,2021-02-15 14:26:18+00:00,2021-03-17 14:26:18+00:00,30.0,Microwave Oven,kitchen,QuickCook Gen2,micro_wave_oven_147.csv,1802.0
-286,2020-11-25 00:00:00+00:00,2020-12-24 23:59:59+00:00,30.0,Printer,multimedia,Canon Printer,printer_286.csv,32.0
-284,2020-12-04 00:32:37+00:00,2021-01-03 00:32:36+00:00,30.0,Fridge,kitchen,Samsung Refrigerator,fridge_284.csv,280.0
-97,2021-03-26 20:39:53+00:00,2021-04-25 20:39:53+00:00,30.0,Coffee,kitchen,Philips Senseo Coffee Machine,coffee_97.csv,1399.0
-98,2021-08-13 00:00:00+00:00,2021-09-11 23:59:59+00:00,30.0,Fridge,kitchen,Whirlpool Combination,fridge_98.csv,742.0
-135,2021-07-02 00:00:00+00:00,2021-07-31 23:59:58+00:00,30.0,Washing Machine,washing,Candy Washing Machine,washing_machine_135.csv,1955.0
-131,2021-06-22 13:31:30+00:00,2021-07-22 13:31:27+00:00,30.0,Internet Router,multimedia,Livebox,internet_router_131.csv,16.0
-219,2021-02-11 00:00:00+00:00,2021-03-12 23:59:59+00:00,30.0,Dryer,washing,TurboDry Elite,dryer_219.csv,3267.0
-217,2020-09-23 22:13:53+00:00,2020-10-23 22:13:53+00:00,30.0,Boiler,kitchen,Electric Kettle,boiler_217.csv,2545.0
-218,2021-04-03 17:57:56+00:00,2021-05-03 17:57:55+00:00,30.0,Washing Machine,washing,Candy Washing Machine,washing_machine_218.csv,2523.0
-249,2020-10-09 13:53:49+00:00,2020-11-08 13:53:48+00:00,30.0,Freezer,kitchen,Adelys Star Freezer,freezer_249.csv,1623.0
+343,2021-04-04 21:46:29+00:00,2021-05-03 23:59:59+00:00,29.09,Washing Machine,Washing,EcoWash Model X1,washing_machine_343.csv,2663.0
+295,2021-01-16 07:39:05+00:00,2021-02-15 07:39:05+00:00,30.0,Internet Router,Multimedia,Freebox Delta,internet_router_295.csv,38.0
+254,2021-01-17 06:20:03+00:00,2021-02-16 06:20:03+00:00,30.0,Vacuum,Other,Xiaomi 17061 Robot Vacuum Cleaner (V1),vacuum_254.csv,44.0
+32,2021-01-18 11:13:03+00:00,2021-02-17 11:13:02+00:00,30.0,Washing Machine,Washing,Whirlpool Washing machine TDLR70230,washing_machine_32.csv,2688.0
+53,2021-01-18 00:51:25+00:00,2021-02-17 00:51:25+00:00,30.0,Dishwasher,Washing,DishPro Elite 500,dishwasher_53.csv,1806.0
+226,2021-02-18 05:28:53+00:00,2021-03-20 05:28:52+00:00,30.0,Boiler,Kitchen,AquaHeat Series 3,boiler_226.csv,2664.0
+293,2021-01-14 01:44:52+00:00,2021-02-13 01:44:52+00:00,30.0,Air Purifier,Other,Mi Air Purifier 3H,air_purifier_293.csv,22.0
+252,2020-10-24 09:39:43+00:00,2020-11-23 09:39:42+00:00,30.0,Sound System,Multimedia,Devialet Delta,sound_system_252.csv,17.0
+29,2020-09-25 00:00:00+00:00,2020-10-24 23:59:58+00:00,30.0,3D Printer,Multimedia,Micro Delta Rework 3D Printer,3D_printer_29.csv,154.0
+54,2020-12-13 12:51:57+00:00,2021-01-12 12:51:57+00:00,30.0,Coffee,Kitchen,Nespresso,coffee_54.csv,1481.0
+282,2021-04-03 21:05:08+00:00,2021-05-03 21:05:07+00:00,30.0,Phone Charger,Multimedia,FastCharge Pro,phone_charger_282.csv,86.0
+207,2020-12-23 16:42:05+00:00,2021-01-22 16:42:05+00:00,30.0,Fridge,Kitchen,FrostGuardian Elite,fridge_207.csv,1436.0
+309,2020-12-23 16:42:05+00:00,2021-01-22 16:42:05+00:00,30.0,Radiator,Other,HeatWave Pro X,radiator_309.csv,1348.0
+310,2020-12-13 12:51:58+00:00,2021-01-12 12:51:57+00:00,30.0,Dehumidifier,Other,DryAir Max,dehumidifier_310.csv,1989.0
+317,2021-01-20 00:00:00+00:00,2021-02-18 23:59:59+00:00,30.0,Fridge,Kitchen,FrostFree 2000,fridge_317.csv,1001.0
+314,2021-02-03 15:19:26+00:00,2021-03-05 15:19:26+00:00,30.0,Microwave Oven,Kitchen,MicroQuick 800,micro_wave_oven_314.csv,1712.0
+289,2021-01-30 06:02:24+00:00,2021-03-01 06:02:24+00:00,30.0,Laptop,Multimedia,UltraSlim X2,laptop_289.csv,61.0
+290,2021-02-11 18:38:39+00:00,2021-03-13 18:38:38+00:00,30.0,Tv,Multimedia,CrystalVision 4K,tv_290.csv,54.0
+236,2020-12-11 10:11:44+00:00,2021-01-04 17:31:43+00:00,24.31,Vacuum,Other,DustAway Advanced,vacuum_236.csv,1099.0
+302,2021-01-11 17:00:26+00:00,2021-01-24 10:33:45+00:00,12.73,Screen,Multimedia,WideView HD,screen_302.csv,33.0
+322,2021-03-10 01:37:21+00:00,2021-04-09 01:37:21+00:00,30.0,Dehumidifier,Other,Klimatronic 240,dehumidifier_322.csv,55.0
+325,2021-04-20 10:08:23+00:00,2021-05-20 10:08:23+00:00,30.0,Solar Panel,Other,SunPower Eco 300,solar_panel_325.csv,417.0
+146,2020-07-17 02:14:56+00:00,2020-08-16 02:14:56+00:00,30.0,Screen,Multimedia,Second Office Screen,screen_146.csv,30.0
+157,2021-03-10 02:30:34+00:00,2021-04-09 02:30:34+00:00,30.0,Washing Machine,Washing,AquaSpin Vortex,washing_machine_157.csv,2584.0
+215,2020-07-16 18:53:28+00:00,2020-08-15 18:53:28+00:00,30.0,Fan,Cooling,Tower fan,fan_215.csv,83.0
+222,2020-10-21 12:57:47+00:00,2020-11-20 12:57:47+00:00,30.0,Air Conditioner,Cooling,Portable Air Conditioner,air_conditioner_222.csv,45.0
+64,2020-06-16 13:20:08+00:00,2020-07-15 23:59:59+00:00,29.44,Laptop,Multimedia,Professional Laptop (Plugged In),laptop_64.csv,55.0
+37,2020-12-01 18:10:11+00:00,2020-12-31 18:10:11+00:00,30.0,Coffee,Kitchen,70s Espresso Machine,coffee_37.csv,1373.0
+52,2020-06-15 15:30:59+00:00,2020-07-14 23:59:59+00:00,29.35,Washing Machine,Washing,Drum Washing Machine,washing_machine_52.csv,2171.0
+44,2020-12-01 06:54:44+00:00,2020-12-31 06:54:44+00:00,30.0,Computer,Multimedia,PC Tower ,computer_44.csv,280.0
+233,2020-12-06 18:10:48+00:00,2021-01-05 18:10:48+00:00,30.0,Boiler,Kitchen,HeatMaster 500,boiler_233.csv,2607.5
+147,2021-02-15 14:26:18+00:00,2021-03-17 14:26:18+00:00,30.0,Microwave Oven,Kitchen,QuickCook Gen2,micro_wave_oven_147.csv,1802.0
+286,2020-11-25 00:00:00+00:00,2020-12-24 23:59:59+00:00,30.0,Printer,Multimedia,Canon Printer,printer_286.csv,32.0
+284,2020-12-04 00:32:37+00:00,2021-01-03 00:32:36+00:00,30.0,Fridge,Kitchen,Samsung Refrigerator,fridge_284.csv,280.0
+97,2021-03-26 20:39:53+00:00,2021-04-25 20:39:53+00:00,30.0,Coffee,Kitchen,Philips Senseo Coffee Machine,coffee_97.csv,1399.0
+98,2021-08-13 00:00:00+00:00,2021-09-11 23:59:59+00:00,30.0,Fridge,Kitchen,Whirlpool Combination,fridge_98.csv,742.0
+135,2021-07-02 00:00:00+00:00,2021-07-31 23:59:58+00:00,30.0,Washing Machine,Washing,Candy Washing Machine,washing_machine_135.csv,1955.0
+131,2021-06-22 13:31:30+00:00,2021-07-22 13:31:27+00:00,30.0,Internet Router,Multimedia,Livebox,internet_router_131.csv,16.0
+219,2021-02-11 00:00:00+00:00,2021-03-12 23:59:59+00:00,30.0,Dryer,Washing,TurboDry Elite,dryer_219.csv,3267.0
+217,2020-09-23 22:13:53+00:00,2020-10-23 22:13:53+00:00,30.0,Boiler,Kitchen,Electric Kettle,boiler_217.csv,2545.0
+218,2021-04-03 17:57:56+00:00,2021-05-03 17:57:55+00:00,30.0,Washing Machine,Washing,Candy Washing Machine,washing_machine_218.csv,2523.0
+249,2020-10-09 13:53:49+00:00,2020-11-08 13:53:48+00:00,30.0,Freezer,Kitchen,Adelys Star Freezer,freezer_249.csv,1623.0

@@ -3,9 +3,7 @@ import { Route, Router } from '@angular/router';
 import { AlertService } from 'src/app/service/alert.service';
 import { AuthenticationService } from 'src/app/service/authentication.service';
 import { DataApiService } from 'src/app/service/data-api.service';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DialogRef } from '@angular/cdk/dialog';
-import { NewDeviceDialogComponent } from 'src/app/dialog/new-device-dialog/new-device-dialog.component';
 import { DialogService } from 'src/app/service/dialog.service';
 
 
@@ -51,13 +49,13 @@ export class DevicesComponent implements OnInit {
 
   getCategoryIcon(category: string): string {
     const categoryIcons: { [key: string]: string } = {
-      multimedia: 'tv',
-      cooling: 'ac_unit',
-      washing: 'local_laundry_service',
-      kitchen: 'kitchen',
-      other: 'device_unknown'
+      Multimedia: 'devices_other',
+      Cooling: 'ac_unit',
+      Washing: 'local_laundry_service',
+      Kitchen: 'kitchen',
+      Other: 'device_unknown'
     };
-    return categoryIcons[category.toLowerCase()] || 'device_unknown';
+    return categoryIcons[category] || 'device_unknown';
   }
 
   loadDevices() {
