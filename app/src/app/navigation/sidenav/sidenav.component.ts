@@ -20,7 +20,9 @@ export class SidenavComponent {
 
   onSidenavLogout() {
     this.logout();
-    this.sidenavClose.emit();
+    if (this.isMobileView()) {
+      this.sidenavClose.emit();
+    }
   }
 
   isMobileView(): boolean {
