@@ -49,8 +49,8 @@ export class AlertService {
 }
 
   // Add an alert
-  addAlert(device_id: number | null, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
-    this.dataApiService.addAlert(device_id, title, description, date, type, read_status).subscribe({
+  addAlert(device_id: number | null, title: string, description: string, suggestion: string, date: string, type: string, read_status: string, force_refresh: boolean) {
+    this.dataApiService.addAlert(device_id, title, description, suggestion, date, type, read_status).subscribe({
       next: (data) => {
         if (force_refresh) {
           this.loadAlerts();
@@ -64,8 +64,8 @@ export class AlertService {
   }
 
     // Add a registration alert
-    addRegistrationAlert(username: string, device_id: number | null, title: string, description: string, date: string, type: string, read_status: string, force_refresh: boolean) {
-      this.dataApiService.addRegistrationAlert(device_id, username, title, description, date, type, read_status).subscribe({
+    addRegistrationAlert(username: string, device_id: number | null, title: string, description: string, suggestion: string, date: string, type: string, read_status: string, force_refresh: boolean) {
+      this.dataApiService.addRegistrationAlert(device_id, username, title, description, suggestion, date, type, read_status).subscribe({
         next: (data) => {
         },
         error: (error) => {

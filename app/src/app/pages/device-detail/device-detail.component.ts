@@ -244,7 +244,7 @@ export class DeviceDetailComponent implements OnInit {
     switch (type) {
       case 'Cooling': return 'ac_unit';
       case 'Kitchen': return 'kitchen';
-      case 'Multimedia': return 'tv';
+      case 'Multimedia': return 'devices_other';
       case 'Other': return 'device_unknown';
       case 'Washing': return 'local_laundry_service';
       default: return 'device_unknown';

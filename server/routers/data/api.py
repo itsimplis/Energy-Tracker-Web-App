@@ -123,7 +123,7 @@ async def add_registration_alert(data: AddRegistrationAlert):
     with database_connection():
         connector.execute(f"""
             INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
             (data.username, data.device_id, data.title, data.description, data.suggestion, data.date, data.type, data.read_status)
         )
         connector.commit()
@@ -268,7 +268,7 @@ async def get_device_power_readings(device_id: int, username: str = Depends(get_
     with database_connection():
         try:
             keys = ["power_reading_id", "consumption_id", "reading_timestamp", "power", "start_date", "end_date"]
-            
+
             result = connector.execute("""
             SELECT p.power_reading.id, p.power_reading.consumption_id, p.power_reading.reading_timestamp, p.power_reading.power, p.consumption.start_date, p.consumption.end_date
             FROM p.device

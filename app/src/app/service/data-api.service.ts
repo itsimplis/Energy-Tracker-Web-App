@@ -29,11 +29,12 @@ export class DataApiService {
   }
 
   // [POST] Add an alert for the user
-  addAlert(device_id: number | null, title: string, description: string, date: string, type: string, read_status: string): Observable<any> {
+  addAlert(device_id: number | null, title: string, description: string, suggestion: string, date: string, type: string, read_status: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/data/addAlert`, {
       device_id: device_id,
       title: title,
       description: description,
+      suggestion: suggestion,
       date: date,
       type: type,
       read_status: read_status
@@ -41,12 +42,13 @@ export class DataApiService {
   }
 
     // [POST] Add an alert for the user
-    addRegistrationAlert(device_id: number | null, username: string, title: string, description: string, date: string, type: string, read_status: string): Observable<any> {
+    addRegistrationAlert(device_id: number | null, username: string, title: string, description: string, suggestion: string, date: string, type: string, read_status: string): Observable<any> {
       return this.http.post<any>(`${this.baseUrl}/data/addRegistrationAlert`, {
         device_id: device_id,
         username: username,
         title: title,
         description: description,
+        suggestion: suggestion,
         date: date,
         type: type,
         read_status: read_status

@@ -87,6 +87,7 @@ async def register_user(data: RegisterData):
     except HTTPException:
         raise
     except Exception as e:
+        connector.rollback()
         raise HTTPException(status_code=500, detail="Something went wrong!")
 
 # ===============================================================================================
