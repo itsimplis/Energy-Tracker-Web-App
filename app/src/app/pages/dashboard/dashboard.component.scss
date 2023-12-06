@@ -60,12 +60,23 @@
     z-index: 1;
 }
 
-::ng-deep .mat-mdc-menu-panel {
+:host ::ng-deep .mat-mdc-menu-panel {
     width: 250px !important;
 }
 
-::ng-deep .line-chart-container {
+:host ::ng-deep .line-chart-container {
     .line-highlight {
         display: block !important;
     }
 }
+
+:host ::ng-deep .advanced-pie-legend-wrapper * {
+    margin-top: 5px !important;
+    //margin-left: 20px !important;
+    //height: 60px !important;
+}
+
+:host ::ng-deep .item-color {
+    //height: 60px !important;
+}
+

@@ -64,10 +64,10 @@
     </mat-card-header>
     <mat-card-content>
       <br>
-      <div *ngIf="totalPowerDistribution && totalPowerDistribution.length > 0; else noPowerReadingsContent">
-        <ngx-charts-number-card class="line-chart-container" [valueFormatting]="formatDistribution" [results]="totalPowerDistribution"
-          xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
-        </ngx-charts-number-card>
+      <div style="display: flex; height: 400px; width: 100%;" *ngIf="totalPowerDistribution && totalPowerDistribution.length > 0; else noPowerReadingsContent">
+        <ngx-charts-advanced-pie-chart class="line-chart-container" [valueFormatting]="formatDistribution" [results]="totalPowerDistribution"
+          xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)" [animations]="true">
+        </ngx-charts-advanced-pie-chart>
       </div>
     </mat-card-content>
   </mat-card>
