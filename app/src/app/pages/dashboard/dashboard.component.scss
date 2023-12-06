@@ -60,6 +60,16 @@
     z-index: 1;
 }
 
+.pie-chart-container {
+    max-height: 300px;
+}
+
+.dual-cards {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
 :host ::ng-deep .mat-mdc-menu-panel {
     width: 250px !important;
 }
@@ -70,13 +80,19 @@
     }
 }
 
-:host ::ng-deep .advanced-pie-legend-wrapper * {
-    margin-top: 5px !important;
-    //margin-left: 20px !important;
-    //height: 60px !important;
+:host ::ng-deep ngx-charts-pie-grid .label.percent-label {
+    font-size: clamp(12px, 2.5vw, 25px) !important;
+    font-weight: 900;
 }
 
-:host ::ng-deep .item-color {
-    //height: 60px !important;
+/* Targeting the category label (e.g., "Kitchen") */
+:host ::ng-deep ngx-charts-pie-grid .label:not(.percent-label) {
+    font-size: clamp(10px, 1.2vw, 18px) !important;
+    font-weight: 300;
 }
 
+:host ::ng-deep ngx-charts-pie-grid .label.ng-star-inserted:not(.percent-label) {
+    font-weight: 900;
+    display: none;
+    //padding-top: 60px !important;
+}

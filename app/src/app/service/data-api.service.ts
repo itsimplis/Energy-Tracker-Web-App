@@ -138,4 +138,9 @@ export class DataApiService {
   getTotalPowerPerDevice(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getTotalPowerPerDevice`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
+
+    // [GET] GET total power per device
+    getAveragePowerPerDevice(): Observable<any[]> {
+      return this.http.get<any[]>(`${this.baseUrl}/data/getAveragePowerPerDevice`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+    }
 }

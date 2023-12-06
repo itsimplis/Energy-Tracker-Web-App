@@ -56,18 +56,55 @@
 
 <!-- CHARTS -->
 <div class="cards-container-charts">
-  <!-- Power Distribution -->
+  <!-- Average Power Consumption Chart -->
   <mat-card class="dashboard-card-chart">
+    <button mat-icon-button [matMenuTriggerFor]="averagePowerChartMenu" class="menu-button"
+      (click)="$event.stopPropagation()">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #averagePowerChartMenu class="chart-menu">
+      <button mat-menu-item (click)="setAverageChartType('deviceAverage')">
+        <mat-icon>speaker</mat-icon><span>Per Device</span>
+      </button>
+      <button mat-menu-item (click)="setAverageChartType('typeAverage')">
+        <mat-icon>workspaces</mat-icon><span>Per Device Type</span>
+      </button>
+      <button mat-menu-item (click)="setAverageChartType('categoryAverage')">
+        <mat-icon>category</mat-icon><span>Per Device Category</span>
+      </button>
+    </mat-menu>
     <mat-card-header>
-      <mat-card-title>Category Power Distribution</mat-card-title>
-      <mat-card-subtitle>Total power distribution per category</mat-card-subtitle>
+      <mat-card-title>Average Power Consumption</mat-card-title>
+      <mat-card-subtitle>Average power consumed per device</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <br>
-      <div style="display: flex; height: 400px; width: 100%;" *ngIf="totalPowerDistribution && totalPowerDistribution.length > 0; else noPowerReadingsContent">
-        <ngx-charts-advanced-pie-chart class="line-chart-container" [valueFormatting]="formatDistribution" [results]="totalPowerDistribution"
-          xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)" [animations]="true">
-        </ngx-charts-advanced-pie-chart>
+
+      <div *ngIf="chartAverageType == 'deviceAverage'">
+        <div *ngIf="averagePower && averagePower.length > 0; else noPowerReadingsContent">
+          <ngx-charts-bar-vertical [results]="averagePower" [xAxis]="true" [yAxis]="true" [legend]="true"
+            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            xAxisLabel="Device" yAxisLabel="Average Power (Watts)" [roundEdges]="true" (select)="onChartDeviceSelect($event)">
+          </ngx-charts-bar-vertical>
+        </div>
+      </div>
+
+      <div *ngIf="chartAverageType == 'typeAverage'">
+        <div *ngIf="averagePowerCategoryGrouped && averagePowerCategoryGrouped.length > 0; else noPowerReadingsContent">
+          <ngx-charts-bar-vertical-stacked [results]="averagePowerCategoryGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
+            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            xAxisLabel="Category" yAxisLabel="Average Power (Watts)" [roundDomains]="true" (select)="onChartDeviceSelect($event)">
+          </ngx-charts-bar-vertical-stacked>
+        </div>
+      </div>
+
+      <div *ngIf="chartAverageType == 'categoryAverage'">
+        <div *ngIf="averagePowerTypeGrouped && averagePowerTypeGrouped.length > 0; else noPowerReadingsContent">
+          <ngx-charts-bar-vertical-stacked [results]="averagePowerTypeGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
+            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            xAxisLabel="Category" yAxisLabel="Average Power (Watts)" [roundDomains]="true" (select)="onChartDeviceSelect($event)">
+          </ngx-charts-bar-vertical-stacked>
+        </div>
       </div>
     </mat-card-content>
   </mat-card>
@@ -79,13 +116,13 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #totalPowerChartMenu class="chart-menu">
-      <button mat-menu-item (click)="setChartType('device')">
+      <button mat-menu-item (click)="setTotalChartType('deviceTotal')">
         <mat-icon>speaker</mat-icon><span>Per Device</span>
       </button>
-      <button mat-menu-item (click)="setChartType('type')">
+      <button mat-menu-item (click)="setTotalChartType('typeTotal')">
         <mat-icon>workspaces</mat-icon><span>Per Device Type</span>
       </button>
-      <button mat-menu-item (click)="setChartType('category')">
+      <button mat-menu-item (click)="setTotalChartType('categoryTotal')">
         <mat-icon>category</mat-icon><span>Per Device Category</span>
       </button>
     </mat-menu>
@@ -96,7 +133,7 @@
     <mat-card-content>
       <br>
 
-      <div *ngIf="chartType == 'device'">
+      <div *ngIf="chartTotalType == 'deviceTotal'">
         <div *ngIf="totalPower && totalPower.length > 0; else noPowerReadingsContent">
           <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
             [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
@@ -105,7 +142,7 @@
         </div>
       </div>
 
-      <div *ngIf="chartType == 'category'">
+      <div *ngIf="chartTotalType == 'typeTotal'">
         <div *ngIf="totalPowerCategoryGrouped && totalPowerCategoryGrouped.length > 0; else noPowerReadingsContent">
           <ngx-charts-bar-vertical-stacked [results]="totalPowerCategoryGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
             [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
@@ -114,7 +151,7 @@
         </div>
       </div>
 
-      <div *ngIf="chartType == 'type'">
+      <div *ngIf="chartTotalType == 'categoryTotal'">
         <div *ngIf="totalPowerTypeGrouped && totalPowerTypeGrouped.length > 0; else noPowerReadingsContent">
           <ngx-charts-bar-vertical-stacked [results]="totalPowerTypeGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
             [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
