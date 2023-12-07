@@ -1,5 +1,5 @@
 <div class="page-title">
-    <h1><strong>MY DEVICES</strong></h1>
+    <h1 style="flex: 1;"><strong>MY DEVICES</strong></h1>
     <div class="add-device-button">
         <button mat-raised-button color="primary" (click)="onAddNewDevice()">
             <mat-icon>add</mat-icon><span>Add New Device</span>
@@ -12,7 +12,7 @@
     <mat-expansion-panel (opened)="setPanelOpenState(true)" (closed)="setPanelOpenState(false)" expanded="true">
         <mat-expansion-panel-header>
             <mat-panel-title>
-                <h3><strong>{{ category.key | uppercase }}</strong></h3> <!-- Device Category -->
+                <h3><strong>{{ category.key | uppercase }}</strong></h3>
             </mat-panel-title>
             <mat-panel-description>
                 <h3><strong>{{ category.value.length }} devices</strong></h3>

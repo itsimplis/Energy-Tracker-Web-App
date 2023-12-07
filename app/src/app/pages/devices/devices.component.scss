@@ -1,5 +1,5 @@
 .device-category-panel {
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 ::ng-deep .mat-expansion-panel-header-description {
@@ -62,6 +62,18 @@
 
 :host ::ng-deep .mat-expansion-panel {
     box-shadow: 0px 0px 8px rgba(52, 52, 108, 0.5) !important;
+}
+
+:host ::ng-deep .mat-expansion-panel-header {
+    min-height: 70px;
+}
+
+:host ::ng-deep .mat-expansion-panel-header-title {
+    margin: 0px !important;
+}
+
+:host ::ng-deep .mat-expansion-panel-header-description {
+    flex: 1 !important;
 }
 
 .add-device-button {

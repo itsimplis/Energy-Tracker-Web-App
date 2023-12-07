@@ -39,3 +39,8 @@
 button {
   margin-right: 10px;
 }
+
+:host ::ng-deep .mat-mdc-card-header {
+  padding-left: 0px;
+  padding-right: 0px;
+}

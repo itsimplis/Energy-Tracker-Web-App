@@ -5,6 +5,9 @@ import { AuthenticationService } from 'src/app/service/authentication.service';
 import { DataApiService } from 'src/app/service/data-api.service';
 import { DialogRef } from '@angular/cdk/dialog';
 import { DialogService } from 'src/app/service/dialog.service';
+import { MatDialogConfig } from '@angular/material/dialog';
+import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
+
 
 
 @Component({
@@ -100,20 +103,33 @@ export class DevicesComponent implements OnInit {
   }
 
   onDeviceRemove(device_id: number) {
-    this.dataApiService.removeDevice(device_id).subscribe({
-      next: (data) => {
-        this.output.result = 'success';
-        this.output.message = data.message;
-        this.alertService.showSnackBar(this.output.message);
-        this.loadDevices();
-        this.alertService.loadAlerts();
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    dialogConfig.data = { title: 'Device Deletion', content: 'This will delete the device along with all consumption and alert records associated with it.' }
+    this.dialogService.openDialog(BasicDialogComponent, dialogConfig).subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.dataApiService.removeDevice(device_id).subscribe({
+            next: (data) => {
+              this.output.result = 'success';
+              this.output.message = data.message;
+              this.alertService.showSnackBar(this.output.message);
+              this.loadDevices();
+              this.alertService.loadAlerts();
+            },
+            error: (error) => {
+              console.log(error);
+            }
+          });
+        } else {
+          this.alertService.showSnackBar("Device deletion was cancelled!");
+        }
       },
       error: (error) => {
-        console.log(error);
+        this.alertService.showSnackBar("An error occurred!");
       }
     });
   }
-
 }
 
 interface Output {
