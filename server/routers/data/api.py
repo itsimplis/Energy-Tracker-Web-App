@@ -1,6 +1,8 @@
 import json
 import collections
+import random
 import datetime
+from datetime import timedelta
 from decimal import Decimal
 from typing import Optional
 from pydantic import BaseModel
@@ -71,6 +73,35 @@ def convert_to_json(result, keys):
     data = [collections.OrderedDict(zip(keys, row)) for row in result]
     json_data = json.dumps(data, cls=ExtendedEncoder)
     return json.loads(json_data)
+
+# ************************* #
+# POWER READINGS GENERATION #
+# ************************* #
+
+def calculate_number_of_readings(start_date, end_date, reading_frequency):
+    duration = end_date - start_date
+    num_readings = 0
+
+    if reading_frequency == 'hourly':
+        num_readings = int(duration.total_seconds() / 3600) + 1
+    elif reading_frequency == 'daily':
+        num_readings = duration.days + 1
+
+    return num_readings
+
+def generate_power_readings(device_type, start_date, end_date, power_max, reading_frequency):
+    readings = []
+    power_range = get_power_range_for_device(device_type)
+    num_readings = calculate_number_of_readings(start_date, end_date, reading_frequency)
+    time_increment = timedelta(hours=1) if reading_frequency == 'hourly' else timedelta(days=1)
+
+    for _ in range(num_readings):
+        reading_time = start_date + time_increment
+        power_reading = random.uniform(power_range[0], min(power_range[1], power_max))
+        readings.append((reading_time, power_reading))
+        start_date = reading_time
+
+    return readings
 
 # **************** #
 # ALERTS ENDPOINTS #
@@ -487,6 +518,47 @@ async def get_average_power_per_device(username: str = Depends(get_current_user)
             json_data = convert_to_json(result, keys)
 
             return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint to get peak power analysis for a device
+@router.get("/getPeakPowerAnalysis/{consumption_id}")
+async def get_peak_power_analysis(consumption_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            keys = ["consumption_id", "timestamp", "power", "deviation"]
+            result = connector.execute("""
+                SELECT p.power_reading.consumption_id, p.power_reading.reading_timestamp, p.power_reading.power,
+                    ((p.power_reading.power - AVG(p.power_reading.power) OVER()) / AVG(p.power_reading.power) OVER()) AS deviation
+                FROM p.power_reading
+                INNER JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
+                INNER JOIN p.device ON p.device_consumption.device_id = p.device.id
+                INNER JOIN p.user ON p.device.user_username = p.user.username
+                WHERE p.power_reading.consumption_id = %s AND p.user.username = %s
+            """, (consumption_id, username))
+
+            if not result:
+                return []
+            
+            peaks = []
+            for row in result:
+                consumption_id, timestamp, power, deviation = row
+                if deviation > 0.2:
+                    peak = {
+                        "consumption_id": consumption_id,
+                        "timestamp": timestamp,
+                        "power": power,
+                        "deviation": deviation * 100
+                    }
+                    peaks.append(peak)
+
+            json_data = convert_to_json(peaks, keys)
+
+            return json_data
+
         except HTTPException as e:
             raise e
         except Exception as e:
