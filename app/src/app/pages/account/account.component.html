@@ -1,84 +1,85 @@
-<div class="page-title">
-    <h1><strong>MY ACCOUNT</strong></h1>
-</div>
-<mat-divider></mat-divider>
-<br>
-<mat-card class="user-info-card">
-    <mat-card-header>
-        <mat-card-title>Account Details</mat-card-title>
-    </mat-card-header>
+<div class="fade-in-animation">
+    <div class="page-title">
+        <h1><strong>MY ACCOUNT</strong></h1>
+    </div>
     <mat-divider></mat-divider>
     <br>
-    <mat-card-content>
-        <div fxLayout="row wrap" fxLayoutGap="10px">
-            <mat-icon class="user-icon">account_circle</mat-icon>
-            <div fxLayoutGap="10px">
-                <mat-form-field appearance="outline">
-                    <mat-label>Username</mat-label>
-                    <input matInput [(ngModel)]="username" (ngModelChange)="onInputChange()" readonly>
+    <mat-card class="user-info-card">
+        <mat-card-header>
+            <mat-card-title>Account Details</mat-card-title>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <br>
+        <mat-card-content>
+            <div class="account-details">
+                <mat-icon class="user-icon">account_circle</mat-icon>
+                <div class="username-email">
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-label>Username</mat-label>
+                        <input matInput [(ngModel)]="username" (ngModelChange)="onInputChange()" readonly>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-label>Email</mat-label>
+                        <input matInput [(ngModel)]="email" (ngModelChange)="onInputChange()" readonly>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-card-content>
+        <mat-card-header>
+            <mat-card-title>User Details</mat-card-title>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <br>
+        <mat-card-content>
+            <div class="account-details">
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>First Name</mat-label>
+                    <input matInput [(ngModel)]="first_name" (ngModelChange)="onInputChange()">
                 </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Email</mat-label>
-                    <input matInput [(ngModel)]="email" (ngModelChange)="onInputChange()" readonly>
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput [(ngModel)]="last_name" (ngModelChange)="onInputChange()">
+                </mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>Age</mat-label>
+                    <input matInput [(ngModel)]="age" (ngModelChange)="onInputChange()">
+                </mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>Gender</mat-label>
+                    <input matInput [(ngModel)]="gender" (ngModelChange)="onInputChange()">
+                </mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>Country</mat-label>
+                    <input matInput [(ngModel)]="country" (ngModelChange)="onInputChange()">
                 </mat-form-field>
             </div>
-        </div>
-    </mat-card-content>
-    <mat-card-header>
-        <mat-card-title>User Details</mat-card-title>
-    </mat-card-header>
-    <mat-divider></mat-divider>
-    <br>
-    <mat-card-content>
-        <div fxLayout="row wrap" fxLayoutGap="10px">
-
-            <mat-form-field>
-                <mat-label>First Name</mat-label>
-                <input matInput [(ngModel)]="first_name" (ngModelChange)="onInputChange()">
-            </mat-form-field>
-            <mat-form-field>
-                <mat-label>Last Name</mat-label>
-                <input matInput [(ngModel)]="last_name" (ngModelChange)="onInputChange()">
-            </mat-form-field>
-            <mat-form-field>
-                <mat-label>Age</mat-label>
-                <input matInput [(ngModel)]="age" (ngModelChange)="onInputChange()">
-            </mat-form-field>
-            <mat-form-field>
-                <mat-label>Gender</mat-label>
-                <input matInput [(ngModel)]="gender" (ngModelChange)="onInputChange()">
-            </mat-form-field>
-            <mat-form-field>
-                <mat-label>Country</mat-label>
-                <input matInput [(ngModel)]="country" (ngModelChange)="onInputChange()">
-            </mat-form-field>
-        </div>
-    </mat-card-content>
-    <mat-card-header>
-        <mat-card-title>Profile Preferences</mat-card-title>
-    </mat-card-header>
-    <mat-divider></mat-divider>
-    <br>
-    <mat-card-content>
-        <section class="section">
-            <h4 class="radio-header">Visibility: </h4>
-            <mat-radio-group [(ngModel)]="visibility" (ngModelChange)="onInputChange()">
-                <mat-radio-button class="radio-button" value="public">Public</mat-radio-button>
-                <mat-radio-button class="radio-button" value="private">Private</mat-radio-button>
-            </mat-radio-group>
-        </section>
-        <section class="section">
-            <h4 class="radio-header">Notifications: </h4>
-            <mat-radio-group [(ngModel)]="notifications" (ngModelChange)="onInputChange()">
-                <mat-radio-button class="radio-button" value="on">Enabled</mat-radio-button>
-                <mat-radio-button class="radio-button" value="off">Disabled</mat-radio-button>
-            </mat-radio-group>
-        </section>
-        <br><br>
-    </mat-card-content>
-    <mat-card-actions align="start">
-        <button mat-raised-button color="primary" [disabled]="!isFormChanged"
-            (click)="onUpdateDetails()">UpdateDetails</button>
-        <button mat-raised-button color="warn" (click)="onDeleteAccount()">Delete Account</button>
-    </mat-card-actions>
-</mat-card>
+        </mat-card-content>
+        <mat-card-header>
+            <mat-card-title>Profile Preferences</mat-card-title>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <br>
+        <mat-card-content>
+            <section class="section">
+                <h4 class="radio-header">Visibility: </h4>
+                <mat-radio-group [(ngModel)]="visibility" (ngModelChange)="onInputChange()">
+                    <mat-radio-button class="radio-button" value="public">Public</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="private">Private</mat-radio-button>
+                </mat-radio-group>
+            </section>
+            <section class="section">
+                <h4 class="radio-header">Notifications: </h4>
+                <mat-radio-group [(ngModel)]="notifications" (ngModelChange)="onInputChange()">
+                    <mat-radio-button class="radio-button" value="on">Enabled</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="off">Disabled</mat-radio-button>
+                </mat-radio-group>
+            </section>
+            <br><br>
+        </mat-card-content>
+        <mat-card-actions align="start">
+            <button mat-raised-button color="primary" [disabled]="!isFormChanged"
+                (click)="onUpdateDetails()">UpdateDetails</button>
+            <button mat-raised-button color="warn" (click)="onDeleteAccount()">Delete Account</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

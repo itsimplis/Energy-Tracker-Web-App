@@ -10,14 +10,13 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class NewConsumptionDialogComponent {
 
   consumptionForm: FormGroup;
+  fileName: string = '';
 
   constructor(private dialogRef: MatDialogRef<NewConsumptionDialogComponent>, private fb: FormBuilder) {
     this.consumptionForm = this.fb.group({
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       durationDays: [''],
-      filesNames: [''],
-      totalPower: ['', Validators.required]
     });
 
     this.dialogRef.backdropClick().subscribe(() => {
@@ -45,9 +44,23 @@ export class NewConsumptionDialogComponent {
     }
   }
 
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      const file = input.files[0];
+      this.fileName = file.name; // Store the file name
+
+      // Process the file as needed
+      this.readFile(file);
+    }
+  }
+
+  readFile(file: File) {
+    // File Process logic... to do.
+  }
 
   onCancel() {
-
+    this.dialogRef.close();
   }
 
   onSave() {

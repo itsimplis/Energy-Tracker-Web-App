@@ -1,4 +1,5 @@
-<div class="home-content">
+<div class="fade-in-animation">
+  <div class="home-content">
     <div class="center-content">
       <img src="../../../assets/logo.png" alt="app-logo" class="home-logo">
       <h1>Welcome to the Energy Management App</h1>
@@ -6,7 +7,9 @@
       <div class="button-container">
         <button *ngIf="!isAuthenticated()" mat-raised-button color="primary" routerLink="/login">Login</button>
         <button *ngIf="!isAuthenticated()" mat-raised-button color="accent" routerLink="/register">Register</button>
-        <button *ngIf="isAuthenticated()" mat-raised-button color="primary" routerLink="/dashboard">Go to Dashboard</button>
+        <button *ngIf="isAuthenticated()" mat-raised-button color="primary" routerLink="/dashboard">Go to
+          Dashboard</button>
       </div>
     </div>
   </div>
+</div>

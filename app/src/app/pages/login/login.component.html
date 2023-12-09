@@ -17,11 +17,11 @@
     <mat-divider></mat-divider>
     <br>
     <mat-card-content>
-      <mat-form-field class="form-items-centered">
+      <mat-form-field class="form-items-centered" floatLabel="always">
         <mat-label>Username</mat-label>
         <input matInput [(ngModel)]="username">
       </mat-form-field>
-      <mat-form-field class="form-items-centered">
+      <mat-form-field class="form-items-centered" floatLabel="always">
         <mat-label>Password</mat-label>
         <input matInput [type]="hidePwd ? 'password' : 'text'" [(ngModel)]="password">
         <button mat-icon-button matSuffix (click)="hidePwd = !hidePwd" [attr.aria-label]="'Hide password'"

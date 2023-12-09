@@ -6,7 +6,23 @@
 .user-icon {
   height: auto;
   width: auto;
-  font-size: 56px;
+  font-size: 150px;
+}
+
+.account-details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: left;
+  justify-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.username-email {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .form-items-centered {
@@ -43,4 +59,10 @@ button {
 :host ::ng-deep .mat-mdc-card-header {
   padding-left: 0px;
   padding-right: 0px;
+}
+
+@media screen and (max-width: 768px) {
+  mat-form-field, .username-email {
+    width: 100% !important;
+  }
 }

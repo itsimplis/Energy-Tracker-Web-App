@@ -1,203 +1,211 @@
-<div class="page-title">
-  <h1><strong>DASHBOARD</strong></h1>
-  <div class="add-device-button">
-    <button mat-raised-button color="primary">
-      <mat-icon>refresh</mat-icon><span>Refresh</span>
-    </button>
+<div class="fade-in-animation">
+  <div class="page-title">
+    <h1><strong>DASHBOARD</strong></h1>
+    <div class="add-device-button">
+      <button mat-raised-button color="primary">
+        <mat-icon>refresh</mat-icon><span>Refresh</span>
+      </button>
+    </div>
   </div>
-</div>
-<mat-divider></mat-divider>
-<br>
+  <mat-divider></mat-divider>
+  <br>
 
-<!-- COUNTERS -->
-<div class="cards-container">
-  <!-- Card for User Device Count -->
-  <mat-card class="dashboard-card" routerLink="/devices">
-    <mat-card-header>
-      <mat-card-title>Devices</mat-card-title>
-      <mat-card-subtitle>Total devices registered</mat-card-subtitle>
-      <div class="dashboard-card-data-container">
-        <mat-icon class="dashboard-card-data-icon">screenshot</mat-icon>
-        <h1 class="dashboard-card-data-number">{{counters[0]?.total_devices}}</h1>
-      </div>
-    </mat-card-header>
-    <mat-card-content>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Card for Total Consumption Count -->
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Consumption</mat-card-title>
-      <mat-card-subtitle>Total consumption recorded</mat-card-subtitle>
-      <div class="dashboard-card-data-container">
-        <mat-icon class="dashboard-card-data-icon">power</mat-icon>
-        <h1 class="dashboard-card-data-number">{{counters[0]?.total_consumptions}}</h1>
-      </div>
-    </mat-card-header>
-    <mat-card-content>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Card for Total Alert Count -->
-  <mat-card class="dashboard-card" routerLink="/alerts">
-    <mat-card-header>
-      <mat-card-title>Alerts</mat-card-title>
-      <mat-card-subtitle>Total alerts issued</mat-card-subtitle>
-      <div class="dashboard-card-data-container">
-        <mat-icon class="dashboard-card-data-icon">notifications</mat-icon>
-        <h1 class="dashboard-card-data-number">{{counters[0]?.total_alerts}}</h1>
-      </div>
-    </mat-card-header>
-    <mat-card-content>
-    </mat-card-content>
-  </mat-card>
-</div>
-
-<!-- CHARTS -->
-<div class="cards-container-charts">
-  <!-- Average Power Consumption Chart -->
-  <mat-card class="dashboard-card-chart">
-    <button mat-icon-button [matMenuTriggerFor]="averagePowerChartMenu" class="menu-button"
-      (click)="$event.stopPropagation()">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #averagePowerChartMenu class="chart-menu">
-      <button mat-menu-item (click)="setAverageChartType('deviceAverage')">
-        <mat-icon>speaker</mat-icon><span>Per Device</span>
-      </button>
-      <button mat-menu-item (click)="setAverageChartType('typeAverage')">
-        <mat-icon>workspaces</mat-icon><span>Per Device Type</span>
-      </button>
-      <button mat-menu-item (click)="setAverageChartType('categoryAverage')">
-        <mat-icon>category</mat-icon><span>Per Device Category</span>
-      </button>
-    </mat-menu>
-    <mat-card-header>
-      <mat-card-title>Average Power Consumption</mat-card-title>
-      <mat-card-subtitle>Average power consumed per device</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <br>
-
-      <div *ngIf="chartAverageType == 'deviceAverage'">
-        <div *ngIf="averagePower && averagePower.length > 0; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical [results]="averagePower" [xAxis]="true" [yAxis]="true" [legend]="true"
-            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-            xAxisLabel="Device" yAxisLabel="Average Power (Watts)" [roundEdges]="true" (select)="onChartDeviceSelect($event)">
-          </ngx-charts-bar-vertical>
+  <!-- COUNTERS -->
+  <div class="cards-container">
+    <!-- Card for User Device Count -->
+    <mat-card class="dashboard-card" routerLink="/devices">
+      <mat-card-header>
+        <mat-card-title>Devices</mat-card-title>
+        <mat-card-subtitle>Total devices registered</mat-card-subtitle>
+        <div class="dashboard-card-data-container">
+          <mat-icon class="dashboard-card-data-icon">screenshot</mat-icon>
+          <h1 class="dashboard-card-data-number">{{counters[0]?.total_devices}}</h1>
         </div>
-      </div>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
 
-      <div *ngIf="chartAverageType == 'typeAverage'">
-        <div *ngIf="averagePowerCategoryGrouped && averagePowerCategoryGrouped.length > 0; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical-stacked [results]="averagePowerCategoryGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
-            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-            xAxisLabel="Category" yAxisLabel="Average Power (Watts)" [roundDomains]="true" (select)="onChartDeviceSelect($event)">
-          </ngx-charts-bar-vertical-stacked>
+    <!-- Card for Total Consumption Count -->
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>Consumption</mat-card-title>
+        <mat-card-subtitle>Total consumption recorded</mat-card-subtitle>
+        <div class="dashboard-card-data-container">
+          <mat-icon class="dashboard-card-data-icon">power</mat-icon>
+          <h1 class="dashboard-card-data-number">{{counters[0]?.total_consumptions}}</h1>
         </div>
-      </div>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
 
-      <div *ngIf="chartAverageType == 'categoryAverage'">
-        <div *ngIf="averagePowerTypeGrouped && averagePowerTypeGrouped.length > 0; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical-stacked [results]="averagePowerTypeGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
-            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-            xAxisLabel="Category" yAxisLabel="Average Power (Watts)" [roundDomains]="true" (select)="onChartDeviceSelect($event)">
-          </ngx-charts-bar-vertical-stacked>
+    <!-- Card for Total Alert Count -->
+    <mat-card class="dashboard-card" routerLink="/alerts">
+      <mat-card-header>
+        <mat-card-title>Alerts</mat-card-title>
+        <mat-card-subtitle>Total alerts issued</mat-card-subtitle>
+        <div class="dashboard-card-data-container">
+          <mat-icon class="dashboard-card-data-icon">notifications</mat-icon>
+          <h1 class="dashboard-card-data-number">{{counters[0]?.total_alerts}}</h1>
         </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
-  <!-- Total Power Consumption Chart -->
-  <mat-card class="dashboard-card-chart">
-    <button mat-icon-button [matMenuTriggerFor]="totalPowerChartMenu" class="menu-button"
-      (click)="$event.stopPropagation()">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #totalPowerChartMenu class="chart-menu">
-      <button mat-menu-item (click)="setTotalChartType('deviceTotal')">
-        <mat-icon>speaker</mat-icon><span>Per Device</span>
+  <!-- CHARTS -->
+  <div class="cards-container-charts">
+    <!-- Average Power Consumption Chart -->
+    <mat-card class="dashboard-card-chart">
+      <button mat-icon-button [matMenuTriggerFor]="averagePowerChartMenu" class="menu-button"
+        (click)="$event.stopPropagation()">
+        <mat-icon>more_vert</mat-icon>
       </button>
-      <button mat-menu-item (click)="setTotalChartType('typeTotal')">
-        <mat-icon>workspaces</mat-icon><span>Per Device Type</span>
+      <mat-menu #averagePowerChartMenu class="chart-menu">
+        <button mat-menu-item (click)="setAverageChartType('deviceAverage')">
+          <mat-icon>speaker</mat-icon><span>Per Device</span>
+        </button>
+        <button mat-menu-item (click)="setAverageChartType('typeAverage')">
+          <mat-icon>workspaces</mat-icon><span>Per Device Type</span>
+        </button>
+        <button mat-menu-item (click)="setAverageChartType('categoryAverage')">
+          <mat-icon>category</mat-icon><span>Per Device Category</span>
+        </button>
+      </mat-menu>
+      <mat-card-header>
+        <mat-card-title>Average Power Consumption</mat-card-title>
+        <mat-card-subtitle>Average power consumed per device</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <br>
+
+        <div *ngIf="chartAverageType == 'deviceAverage'">
+          <div *ngIf="averagePower && averagePower.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical [results]="averagePower" [xAxis]="true" [yAxis]="true" [legend]="true"
+              [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+              xAxisLabel="Device" yAxisLabel="Average Power (Watts)" [roundEdges]="true"
+              (select)="onChartDeviceSelect($event)">
+            </ngx-charts-bar-vertical>
+          </div>
+        </div>
+
+        <div *ngIf="chartAverageType == 'typeAverage'">
+          <div
+            *ngIf="averagePowerCategoryGrouped && averagePowerCategoryGrouped.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical-stacked [results]="averagePowerCategoryGrouped" [xAxis]="true" [yAxis]="true"
+              [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+              [gradient]="true" xAxisLabel="Category" yAxisLabel="Average Power (Watts)" [roundDomains]="true"
+              (select)="onChartDeviceSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
+          </div>
+        </div>
+
+        <div *ngIf="chartAverageType == 'categoryAverage'">
+          <div *ngIf="averagePowerTypeGrouped && averagePowerTypeGrouped.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical-stacked [results]="averagePowerTypeGrouped" [xAxis]="true" [yAxis]="true"
+              [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+              [gradient]="true" xAxisLabel="Category" yAxisLabel="Average Power (Watts)" [roundDomains]="true"
+              (select)="onChartDeviceSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Total Power Consumption Chart -->
+    <mat-card class="dashboard-card-chart">
+      <button mat-icon-button [matMenuTriggerFor]="totalPowerChartMenu" class="menu-button"
+        (click)="$event.stopPropagation()">
+        <mat-icon>more_vert</mat-icon>
       </button>
-      <button mat-menu-item (click)="setTotalChartType('categoryTotal')">
-        <mat-icon>category</mat-icon><span>Per Device Category</span>
-      </button>
-    </mat-menu>
-    <mat-card-header>
-      <mat-card-title>Total Power Consumption</mat-card-title>
-      <mat-card-subtitle>Total power consumed per device</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <br>
+      <mat-menu #totalPowerChartMenu class="chart-menu">
+        <button mat-menu-item (click)="setTotalChartType('deviceTotal')">
+          <mat-icon>speaker</mat-icon><span>Per Device</span>
+        </button>
+        <button mat-menu-item (click)="setTotalChartType('typeTotal')">
+          <mat-icon>workspaces</mat-icon><span>Per Device Type</span>
+        </button>
+        <button mat-menu-item (click)="setTotalChartType('categoryTotal')">
+          <mat-icon>category</mat-icon><span>Per Device Category</span>
+        </button>
+      </mat-menu>
+      <mat-card-header>
+        <mat-card-title>Total Power Consumption</mat-card-title>
+        <mat-card-subtitle>Total power consumed per device</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <br>
 
-      <div *ngIf="chartTotalType == 'deviceTotal'">
-        <div *ngIf="totalPower && totalPower.length > 0; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
-            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-            xAxisLabel="Device" yAxisLabel="Total Power (Watts)" (select)="onChartDeviceSelect($event)">
-          </ngx-charts-bar-vertical>
+        <div *ngIf="chartTotalType == 'deviceTotal'">
+          <div *ngIf="totalPower && totalPower.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
+              [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+              xAxisLabel="Device" yAxisLabel="Total Power (Watts)" (select)="onChartDeviceSelect($event)">
+            </ngx-charts-bar-vertical>
+          </div>
         </div>
-      </div>
 
-      <div *ngIf="chartTotalType == 'typeTotal'">
-        <div *ngIf="totalPowerCategoryGrouped && totalPowerCategoryGrouped.length > 0; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical-stacked [results]="totalPowerCategoryGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
-            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-            xAxisLabel="Category" yAxisLabel="Total Power (Watts)" (select)="onChartDeviceSelect($event)">
-          </ngx-charts-bar-vertical-stacked>
+        <div *ngIf="chartTotalType == 'typeTotal'">
+          <div *ngIf="totalPowerCategoryGrouped && totalPowerCategoryGrouped.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical-stacked [results]="totalPowerCategoryGrouped" [xAxis]="true" [yAxis]="true"
+              [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+              [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)"
+              (select)="onChartDeviceSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
+          </div>
         </div>
-      </div>
 
-      <div *ngIf="chartTotalType == 'categoryTotal'">
-        <div *ngIf="totalPowerTypeGrouped && totalPowerTypeGrouped.length > 0; else noPowerReadingsContent">
-          <ngx-charts-bar-vertical-stacked [results]="totalPowerTypeGrouped" [xAxis]="true" [yAxis]="true" [legend]="true"
-            [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-            xAxisLabel="Category" yAxisLabel="Total Power (Watts)" (select)="onChartDeviceSelect($event)">
-          </ngx-charts-bar-vertical-stacked>
+        <div *ngIf="chartTotalType == 'categoryTotal'">
+          <div *ngIf="totalPowerTypeGrouped && totalPowerTypeGrouped.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical-stacked [results]="totalPowerTypeGrouped" [xAxis]="true" [yAxis]="true"
+              [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+              [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)"
+              (select)="onChartDeviceSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
+          </div>
         </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+      </mat-card-content>
+    </mat-card>
 
-  <!-- Highest Power Consumption Chart -->
-  <mat-card class="dashboard-card-chart">
-    <mat-card-header>
-      <mat-card-title>Highest Power Consumption</mat-card-title>
-      <mat-card-subtitle>Device with highest power consumption</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <br>
-      <div *ngIf="highestReadings && highestReadings.length > 0; else noPowerReadingsContent">
-        <ngx-charts-line-chart class="line-chart-container" [results]="highestReadings" [xAxis]="true" [yAxis]="true"
-          [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-          xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
-        </ngx-charts-line-chart>
-      </div>
-    </mat-card-content>
-  </mat-card>
+    <!-- Highest Power Consumption Chart -->
+    <mat-card class="dashboard-card-chart">
+      <mat-card-header>
+        <mat-card-title>Highest Power Consumption</mat-card-title>
+        <mat-card-subtitle>Device with highest power consumption</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <br>
+        <div *ngIf="highestReadings && highestReadings.length > 0; else noPowerReadingsContent">
+          <ngx-charts-line-chart class="line-chart-container" [results]="highestReadings" [xAxis]="true" [yAxis]="true"
+            [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
+          </ngx-charts-line-chart>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
-  <!-- Lowest Power Consumption Chart -->
-  <mat-card class="dashboard-card-chart">
-    <mat-card-header>
-      <mat-card-title>Lowest Power Consumption</mat-card-title>
-      <mat-card-subtitle>Device with lowest power consumption</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <br>
-      <div *ngIf="lowestReadings && lowestReadings.length > 0; else noPowerReadingsContent">
-        <ngx-charts-line-chart class="line-chart-container" [results]="lowestReadings" [xAxis]="true" [yAxis]="true"
-          [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-          xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
-        </ngx-charts-line-chart>
-      </div>
-    </mat-card-content>
-  </mat-card>
+    <!-- Lowest Power Consumption Chart -->
+    <mat-card class="dashboard-card-chart">
+      <mat-card-header>
+        <mat-card-title>Lowest Power Consumption</mat-card-title>
+        <mat-card-subtitle>Device with lowest power consumption</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <br>
+        <div *ngIf="lowestReadings && lowestReadings.length > 0; else noPowerReadingsContent">
+          <ngx-charts-line-chart class="line-chart-container" [results]="lowestReadings" [xAxis]="true" [yAxis]="true"
+            [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
+          </ngx-charts-line-chart>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
-  <ng-template #noPowerReadingsContent>
-    <h3 align="center" class="rounded-label">No data available</h3>
-  </ng-template>
+    <ng-template #noPowerReadingsContent>
+      <h3 align="center" class="rounded-label">No data available</h3>
+    </ng-template>
 
+  </div>
 </div>

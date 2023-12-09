@@ -42,6 +42,14 @@ export class ToolbarComponent {
     this.router.navigate(['/alerts', id]);
   }
 
+  onViewAccountClick() {
+
+  }
+
+  onLogoutClick() {
+    this.authenticationService.logout();
+  }
+
   // Check if user got authenticated
   isAuthenticated(): boolean {
     return this.authenticationService.isAuthenticated();

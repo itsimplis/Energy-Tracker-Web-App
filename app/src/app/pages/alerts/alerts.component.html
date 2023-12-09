@@ -1,18 +1,20 @@
 <div class="fade-in-animation">
     <div class="page-title">
-        <h1><strong>MY ALERTS</strong></h1>
+        <div class="filter-input">
+            <mat-form-field floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Filter</mat-label>
+                <input matInput (keyup)="applyFilterInAlerts($event)" placeholder="Search..." #input>
+            </mat-form-field>
+        </div>
+        <h1 style="flex: 1;"><strong>MY ALERTS</strong></h1>
+        <div class="add-device-button">
+            <button mat-raised-button color="primary" (click)="onClearAllAlerts()">
+                <mat-icon>delete_sweep</mat-icon><span>Clear All Alerts</span>
+            </button>
+        </div>
     </div>
     <mat-divider></mat-divider>
     <br>
-    <div class="table-toolbar">
-        <mat-form-field floatLabel="always">
-            <mat-label>Filter</mat-label>
-            <input matInput (keyup)="applyFilterInAlerts($event)" placeholder="Search..." #input>
-        </mat-form-field>
-        <button mat-raised-button color="primary" (click)="onClearAllAlerts()">
-            <mat-icon>delete_sweep</mat-icon><span>Clear All Alerts</span>
-        </button>
-    </div>
     <mat-card class="mat-card-table">
         <table mat-table [dataSource]="dataSourceAlert" matSort>
             <ng-container matColumnDef="title">

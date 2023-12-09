@@ -213,12 +213,10 @@ def populate_device_consumption_table(data_file, conn):
 def process_csv_file(file_path):
     df = pd.read_csv(file_path)
     
-    # Ensure column names match those in your CSV
     df['timestamp'] = pd.to_datetime(df['timestamp'])
     df.set_index('timestamp', inplace=True)
 
-    # Resample and sum (or use .mean() for average)
-    resampled_df = df.resample('1H').mean() 
+    resampled_df = df.resample('1D').sum() 
 
     resampled_df.reset_index(inplace=True)
     readings = resampled_df.values.tolist()

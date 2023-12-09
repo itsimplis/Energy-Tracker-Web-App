@@ -28,17 +28,19 @@
         <mat-form-field appearance="outline" floatLabel="always">
             <mat-label>Duration Days (Consumption period)</mat-label>
             <input matInput formControlName="durationDays" placeholder="Calculated Duration" readonly="true">
+            <mat-hint align="start"><strong>Automatically calculated</strong></mat-hint>
         </mat-form-field>
         <br>
-        <mat-form-field appearance="fill" floatLabel="always">
-            <mat-label>Files Names</mat-label>
-            <input matInput formControlName="filesNames" placeholder="Enter File Names">
-        </mat-form-field>
-        <br>
-        <mat-form-field appearance="fill" floatLabel="always">
-            <mat-label>Peak Power (Watt)</mat-label>
-            <input matInput formControlName="totalPower" placeholder="Enter Total Power" type="number">
-            <mat-hint align="start"><strong>Enter the peak power recorded, in Watts</strong></mat-hint>
+        <div class="file-input-container" hidden>
+            <input #fileInput type="file" id="file" accept=".csv" (change)="onFileSelected($event)" hidden>
+        </div>
+        <mat-form-field class="example-form-field" floatLabel="always">
+            <mat-label>Power Readings File</mat-label>
+            <input #fileInput matInput type="text" [value]="fileName" readonly="true" (change)="onFileSelected($event)">
+            <mat-hint align="start"><strong>Choose the .csv file with the power readings for this consumption</strong></mat-hint>
+                <button mat-button color="primary" style="margin-right: 10px;" mat-raised-button matSuffix aria-label="Clear" (click)="fileInput.click()">
+                    <mat-icon class="file-icon">file_open</mat-icon>
+                </button>
         </mat-form-field>
 
     </form>

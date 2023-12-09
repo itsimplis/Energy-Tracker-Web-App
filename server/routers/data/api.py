@@ -529,10 +529,11 @@ async def get_average_power_per_device(username: str = Depends(get_current_user)
 async def get_peak_power_analysis(consumption_id: int, username: str = Depends(get_current_user)):
     with database_connection():
         try:
-            keys = ["consumption_id", "timestamp", "power", "deviation"]
+            keys = ["consumption_id", "timestamp", "power", "average", "deviation"]
             result = connector.execute("""
                 SELECT p.power_reading.consumption_id, p.power_reading.reading_timestamp, p.power_reading.power,
-                    ((p.power_reading.power - AVG(p.power_reading.power) OVER()) / AVG(p.power_reading.power) OVER()) AS deviation
+                    AVG(p.power_reading.power) OVER (PARTITION BY p.power_reading.consumption_id) AS average,
+                    ((p.power_reading.power - AVG(p.power_reading.power) OVER (PARTITION BY p.power_reading.consumption_id)) / NULLIF(AVG(p.power_reading.power) OVER (PARTITION BY p.power_reading.consumption_id), 0)) AS deviation
                 FROM p.power_reading
                 INNER JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
                 INNER JOIN p.device ON p.device_consumption.device_id = p.device.id
@@ -546,7 +547,7 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
             peaks = []
             for row in result:
                 print(row)
-                consumption_id, timestamp, power, deviation = row
+                consumption_id, timestamp, power, average, deviation = row
                 if deviation > 0.3:
                     peaks.append(row)
 

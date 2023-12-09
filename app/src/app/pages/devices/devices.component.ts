@@ -19,6 +19,8 @@ import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.c
 export class DevicesComponent implements OnInit {
   devices: any[];
   devicesByCategory: { [category: string]: any[] } = {};
+  filterText: string = '';
+  filteredDevicesByCategory: { [category: string]: any[] } = {};
   dialogRef!: DialogRef;
   panelOpenState: boolean = false;
   output: Output;
@@ -66,6 +68,7 @@ export class DevicesComponent implements OnInit {
       next: (data) => {
         this.devices = data;
         this.groupDevicesByCategory();
+        this.filteredDevicesByCategory = {...this.devicesByCategory};
       },
       error: (error) => {
         console.log(error);
@@ -129,6 +132,26 @@ export class DevicesComponent implements OnInit {
         this.alertService.showSnackBar("An error occurred!");
       }
     });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.filterText = filterValue.trim().toLowerCase();
+    this.filterDevices();
+  }
+
+  filterDevices() {
+    this.filteredDevicesByCategory = {};
+    for (const category in this.devicesByCategory) {
+      this.filteredDevicesByCategory[category] = this.devicesByCategory[category].filter(device =>
+        device.device_name.toLowerCase().includes(this.filterText) ||
+        device.device_type.toLowerCase().includes(this.filterText)
+      );
+    }
+  }
+
+  hasDevicesInCategory(category: string): boolean {
+    return this.filteredDevicesByCategory[category]?.length > 0;
   }
 }
 
