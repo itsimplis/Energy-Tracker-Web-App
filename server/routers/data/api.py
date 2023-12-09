@@ -537,7 +537,7 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
                 INNER JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
                 INNER JOIN p.device ON p.device_consumption.device_id = p.device.id
                 INNER JOIN p.user ON p.device.user_username = p.user.username
-                WHERE p.power_reading.consumption_id = %s AND p.user.username = %s
+                WHERE p.power_reading.consumption_id = %s AND p.user.username = %s AND p.power_reading.power > 0
             """, (consumption_id, username))
 
             if not result:
@@ -545,15 +545,10 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
             
             peaks = []
             for row in result:
+                print(row)
                 consumption_id, timestamp, power, deviation = row
-                if deviation > 0.2:
-                    peak = {
-                        "consumption_id": consumption_id,
-                        "timestamp": timestamp,
-                        "power": power,
-                        "deviation": deviation * 100
-                    }
-                    peaks.append(peak)
+                if deviation > 0.3:
+                    peaks.append(row)
 
             json_data = convert_to_json(peaks, keys)
 

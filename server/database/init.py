@@ -218,7 +218,7 @@ def process_csv_file(file_path):
     df.set_index('timestamp', inplace=True)
 
     # Resample and sum (or use .mean() for average)
-    resampled_df = df.resample('1D').sum() 
+    resampled_df = df.resample('1H').mean() 
 
     resampled_df.reset_index(inplace=True)
     readings = resampled_df.values.tolist()

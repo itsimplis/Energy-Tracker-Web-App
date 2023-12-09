@@ -147,11 +147,11 @@ export class DataApiService {
 
 
   //========================================
-  // DASHBOARD API CALLS
+  // ANALYSIS API CALLS
   //========================================
 
   // [GET] Get power peaks (analysis) per consumption
-  getgetPeakPowerAnalysis(consumption_id: number): Observable<any[]> {
+  getPeakPowerAnalysis(consumption_id: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getPeakPowerAnalysis/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 }

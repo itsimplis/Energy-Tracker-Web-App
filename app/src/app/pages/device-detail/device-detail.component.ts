@@ -196,6 +196,15 @@ export class DeviceDetailComponent implements OnInit {
         console.error(error);
       }
     });
+
+    this.dataApiService.getPeakPowerAnalysis(row.consumption_id).subscribe({
+      next: (data) => {
+        console.log(data);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    })
   }
 
   onClearDeviceAlerts(device_id: number) {
