@@ -8,8 +8,6 @@ import { DialogService } from 'src/app/service/dialog.service';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
 
-
-
 @Component({
   selector: 'devices',
   templateUrl: './devices.component.html',

@@ -53,6 +53,18 @@ mat-toolbar{
     margin: 0px;
 }
 
+.icon-with-badge {
+    position: relative;
+}
+
+.badge-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: scale(0.65);
+    color: rgb(40, 217, 40); 
+}
+
 @media(max-width: 959px){
     mat-toolbar{
         border-radius: 0px;

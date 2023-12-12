@@ -1,5 +1,74 @@
-<div class="page-title">
-    <h1><strong>STATISTICS</strong></h1>
+<div class="fade-in-animation">
+    <div class="page-title">
+        <h1><strong>STATISTICS</strong></h1>
+        <div class="add-device-button">
+            <button mat-raised-button color="primary">
+                <mat-icon>refresh</mat-icon><span>Refresh</span>
+            </button>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+    <br>
+
+    <!-- CHARTS -->
+    <div class="cards-container-charts">
+        <div>
+                <!-- Average Power Consumption Chart -->
+                <mat-card class="dashboard-card-chart">
+                    <mat-card-header>
+                        <mat-card-title>Average Power Consumption</mat-card-title>
+                        <mat-card-subtitle>Average power consumed per device</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <br>
+                        <div *ngIf="averagePower && averagePower.length > 0; else noPowerReadingsContent">
+                            <ngx-charts-number-card [results]="averagePower"
+                                xAxisLabel="Device" yAxisLabel="Average Power (Watts)"
+                                (select)="onChartDeviceSelect($event)">
+                            </ngx-charts-number-card>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+        </div>
+        <div class="age-gender-charts">
+            <!-- Average Power Consumption Chart -->
+            <mat-card class="dashboard-card-chart">
+                <mat-card-header>
+                    <mat-card-title>Average Power Consumption</mat-card-title>
+                    <mat-card-subtitle>Average power consumed per device</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <br>
+                    <div *ngIf="averagePower && averagePower.length > 0; else noPowerReadingsContent">
+                        <ngx-charts-pie-chart [results]="averagePower" [trimLabels]="false" [gradient]="true"
+                            [labels]="true" xAxisLabel="Device" yAxisLabel="Average Power (Watts)"
+                            (select)="onChartDeviceSelect($event)">
+                        </ngx-charts-pie-chart>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Average Power Consumption Chart -->
+            <mat-card class="dashboard-card-chart">
+                <mat-card-header>
+                    <mat-card-title>Average Power Consumption</mat-card-title>
+                    <mat-card-subtitle>Average power consumed per device</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <br>
+                    <div *ngIf="averagePower && averagePower.length > 0; else noPowerReadingsContent">
+                        <ngx-charts-pie-chart [results]="averagePower" [trimLabels]="false" [gradient]="true"
+                            [labels]="true" xAxisLabel="Device" yAxisLabel="Average Power (Watts)"
+                            (select)="onChartDeviceSelect($event)">
+                        </ngx-charts-pie-chart>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <ng-template #noPowerReadingsContent>
+            <h3 align="center" class="rounded-label">No data available</h3>
+        </ng-template>
+
+    </div>
 </div>
-<mat-divider></mat-divider>
-<br>
