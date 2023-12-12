@@ -74,9 +74,12 @@ def convert_to_json(result, keys):
     json_data = json.dumps(data, cls=ExtendedEncoder)
     return json.loads(json_data)
 
-# ************************* #
+
+
+
+# **************************************************************************************************** #
 # POWER READINGS GENERATION #
-# ************************* #
+# **************************************************************************************************** #
 
 def calculate_number_of_readings(start_date, end_date, reading_frequency):
     duration = end_date - start_date
@@ -103,9 +106,12 @@ def generate_power_readings(device_type, start_date, end_date, power_max, readin
 
     return readings
 
-# **************** #
+
+
+
+# **************************************************************************************************** #
 # ALERTS ENDPOINTS #
-# **************** #
+# **************************************************************************************************** #
 
 # ===============================================================================================
 # Endpoint to get user's alerts, with basic info
@@ -199,9 +205,12 @@ async def remove_alerts(username: str = Depends(get_current_user)):
         else:
             raise HTTPException(status_code=400, detail=f"There are no alerts to clear!")
 
-# **************** #
+
+
+
+# **************************************************************************************************** #
 # DEVICE ENDPOINTS #
-# **************** #
+# **************************************************************************************************** #
 
 # ===============================================================================================
 # Endpoint to get user's devices
@@ -387,9 +396,11 @@ async def remove_device(device_id: int, username: str = Depends(get_current_user
             raise HTTPException(status_code=500, detail=str(e))
         
 
-# ********************** #
+
+
+# **************************************************************************************************** #
 # POWER REDING ENDPOINTS #
-# ********************** #
+# **************************************************************************************************** #
 
 # ===============================================================================================
 # Endpoint to get all power readings for all consumptions of a device
@@ -449,9 +460,9 @@ async def get_consumption_power_readings(consumption_id: int, username: str = De
 
 
 
-# ******************* #
+# **************************************************************************************************** #
 # DASHBOARD ENDPOINTS #
-# ******************* #
+# **************************************************************************************************** #
 
 # ===============================================================================================
 # Endpoint to get counts of total devices, alerts and consumptions for current user        
@@ -555,6 +566,89 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
 
             return json_data
 
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
+# **************************************************************************************************** #
+# STATISTICS ENDPOINTS #
+# **************************************************************************************************** #
+
+# ===============================================================================================
+# Endpoint to get the total power consumption per user
+@router.get("/getTotalPowerConsumptionByUser")
+async def get_total_power_consumption_by_user():
+    with database_connection():
+        try:
+            keys = ["username", "total_power_consumption"]
+            result = connector.execute("""
+                SELECT p.user.username, SUM(p.power_reading.power) AS total_power_consumption
+                FROM p.user
+                JOIN p.device ON p.user.username = p.device.user_username
+                JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+                JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
+                WHERE p.user.visibility = 'public'
+                GROUP BY p.user.username
+                ORDER BY total_power_consumption DESC
+                """)
+            
+            json_data = convert_to_json(result, keys)
+
+            return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint to get the total power consumption per age group
+@router.get("/getAveragePowerConsumptionByAgeGroup")
+async def get_average_power_consumption_by_age_group():
+    with database_connection():
+        try:
+            keys = ["age", "average_power_consumption"]
+            result = connector.execute("""
+                SELECT p.user.age, AVG(p.power_reading.power) AS average_power_consumption
+                FROM p.user
+                JOIN p.device ON p.user.username = p.device.user_username
+                JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+                JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
+                WHERE p.user.visibility = 'public'
+                GROUP BY p.user.age
+                """)
+            
+            json_data = convert_to_json(result, keys)
+
+            return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
+# Endpoint to get the total power consumption per gender
+@router.get("/getTotalPowerConsumptionByGender")
+async def get_total_power_consumption_by_gender():
+    with database_connection():
+        try:
+            keys = ["gender", "total_power_consumption"]
+            result = connector.execute("""
+                SELECT p.user.gender, SUM(p.power_reading.power) AS total_power_consumption
+                FROM p.user
+                JOIN p.device ON p.user.username = p.device.user_username
+                JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+                JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
+                WHERE p.user.visibility = 'public'
+                GROUP BY p.user.gender
+                """)
+            
+            json_data = convert_to_json(result, keys)
+
+            return json_data
         except HTTPException as e:
             raise e
         except Exception as e:
