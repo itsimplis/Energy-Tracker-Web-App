@@ -30,10 +30,17 @@ CREATE TABLE p.user (
     notifications VARCHAR(3)
 );
 
+CREATE TABLE p.device_type (
+    type_name VARCHAR(100) PRIMARY KEY NOT NULL,
+    power_min NUMERIC(6, 1),
+    power_max NUMERIC(6, 1),
+    power_draw_pattern VARCHAR(50)
+);
+
 CREATE TABLE p.device (
     id SERIAL PRIMARY KEY NOT NULL,
     user_username VARCHAR(100) NOT NULL REFERENCES p.user(username) ON DELETE CASCADE,
-    device_type VARCHAR(100),
+    device_type VARCHAR(100) NOT NULL REFERENCES p.device_type(type_name),
     device_category VARCHAR(50),
     device_name TEXT,
     alert_threshold_high NUMERIC(3, 1) DEFAULT 1.3,
