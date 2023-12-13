@@ -60,6 +60,11 @@ class DeviceData(BaseModel):
     alert_threshold_low: float
     usage_frequency: str
 
+class PowerReadingData(BaseModel):
+    device_id: int
+    start_date: datetime
+    end_date: datetime
+    duration_days: float
 
 @contextmanager
 def database_connection():
@@ -426,6 +431,84 @@ async def get_device_power_readings(device_id: int, username: str = Depends(get_
             raise e
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+
+# ===============================================================================================
+# Endpoint to generate power readings for a new consumption
+def generate_power_readings(data: PowerReadingData, username: str = Depends(get_current_user)):
+    with database_connection() as connector:
+        try:
+            connector.connect()
+            
+            # Get device type details
+            device_query = """
+            SELECT device_type, power_min, power_max, power_draw_pattern 
+            FROM p.device 
+            JOIN p.device_type ON p.device.device_type = p.device_type.type_name 
+            WHERE p.device.id = %s
+            """
+            device_details = connector.execute(device_query, (data.device_id,))
+            
+            if not device_details:
+                print(f"No device found with ID {data.device_id}")
+                return
+
+            device_type, power_min, power_max, power_draw_pattern = device_details[0]
+            
+            # Define the frequency of readings
+            delta = datetime.timedelta(hours=1)  # For hourly readings
+
+            # Breakdown the period into smaller intervals of one month each
+            current_interval_start = data.start_date
+            while current_interval_start < data.end_date:
+                interval_end = min(current_interval_start + datetime.timedelta(days=30), data.end_date)
+                interval_duration = (interval_end - current_interval_start).days
+
+                # Create a new consumption record for each interval
+                connector.execute("""
+                    INSERT INTO p.consumption (id, start_date, end_date, duration_days, device_type) 
+                    VALUES (DEFAULT, %s, %s, %s, %s) RETURNING id;
+                    """, (current_interval_start, interval_end, interval_duration, device_type))
+                consumption_id = connector.execute("SELECT LASTVAL();")[0][0]
+
+                # Link the consumption record with the device
+                connector.execute("""
+                    INSERT INTO p.device_consumption (device_id, consumption_id)
+                    VALUES (%s, %s);
+                    """, (data.device_id, consumption_id))
+
+                # Generate readings for the interval
+                current_time = current_interval_start
+                while current_time <= interval_end:
+                    power = random.uniform(power_min, power_max)
+                    
+                    # Simulate spikes
+                    if random.random() < 0.05:  # 5% chance of spike
+                        power = random.uniform(power_max, power_max * 1.5)
+
+                    # Simulate inactivity
+                    if power_draw_pattern == 'Occasional' and random.random() < 0.2:
+                        power = 0
+                    elif power_draw_pattern == 'Rare' and random.random() < 0.5:
+                        power = 0
+
+                    # Insert power reading
+                    connector.execute("""
+                        INSERT INTO p.power_reading (consumption_id, reading_timestamp, power) 
+                        VALUES (%s, %s, %s);
+                        """, (consumption_id, current_time, power))
+                    
+                    current_time += delta
+
+                # Move to the next interval
+                current_interval_start = interval_end + datetime.timedelta(days=1)
+
+        except Exception as e:
+            print(f"Error: {e}")
+            connector.rollback()
+        finally:
+            connector.disconnect()
+
 
 # ===============================================================================================
 # Endpoint to get all power readings for a specific consumption
