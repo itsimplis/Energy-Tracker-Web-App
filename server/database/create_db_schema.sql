@@ -32,6 +32,7 @@ CREATE TABLE p.user (
 
 CREATE TABLE p.device_type (
     type_name VARCHAR(100) PRIMARY KEY NOT NULL,
+    device_category VARCHAR(50),
     power_min NUMERIC(6, 1),
     power_max NUMERIC(6, 1),
     power_draw_pattern VARCHAR(50)

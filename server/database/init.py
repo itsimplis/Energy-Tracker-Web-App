@@ -24,6 +24,7 @@ args = parser.parse_args()
 def init(no_data: bool):
 
     create_database_schema('create_db_schema.sql', connector)
+    create_device_type_table(connector)
 
     if (no_data):
         print("-- Database initialization finished, without loading data!\n")
@@ -128,6 +129,59 @@ def populate_consumption_table(data_file, conn):
         conn.disconnect()
 
 
+def create_device_type_table(conn):
+    try:
+        conn.connect()
+        print("-- Populating device type table...")
+        conn.execute("""
+            INSERT INTO p.device_type (type_name, device_category, power_min, power_max, power_draw_pattern) VALUES
+            ('Washing Machine', 'Washing', 500, 1000, 'Occasional'),
+            ('Internet Router', 'Multimedia', 5, 20, 'Continuous'),
+            ('Vacuum Cleaner', 'Other', 500, 2000, 'Rare'),
+            ('Dishwasher', 'Kitchen', 1200, 2400, 'Occasional'),
+            ('Boiler', 'Other', 4000, 5500, 'Continuous'), -- Electric Water Heater
+            ('Air Purifier', 'Other', 25, 100, 'Continuous'), -- Estimated
+            ('Sound System', 'Multimedia', 100, 450, 'Occasional'),
+            ('3D Printer', 'Other', 100, 800, 'Occasional'), -- Estimated similar to desktop computer
+            ('Coffee Maker', 'Kitchen', 600, 1200, 'Occasional'),
+            ('Phone Charger', 'Multimedia', 5, 25, 'Continuous'),
+            ('Fridge', 'Kitchen', 150, 800, 'Continuous'), -- Modern Fridge
+            ('Radiator', 'Other', 750, 1500, 'Continuous'), -- Space Heater
+            ('Dehumidifier', 'Other', 200, 800, 'Continuous'),
+            ('Microwave Oven', 'Kitchen', 600, 1200, 'Rare'),
+            ('Laptop', 'Multimedia', 20, 75, 'Continuous'),
+            ('TV', 'Multimedia', 30, 500, 'Occasional'), -- Range covering different types
+            ('Screen', 'Multimedia', 30, 400, 'Continuous'), -- Estimated similar to TV
+            ('Solar Panel', 'Other', 0, 0, 'Continuous'), -- Solar panels generate power
+            ('Fan', 'Cooling', 10, 175, 'Occasional'), -- Including various types of fans
+            ('Air Conditioner', 'Cooling', 900, 6000, 'Occasional'), -- Central AC (40,000 BTU)
+            ('Computer', 'Multimedia', 100, 800, 'Continuous'),
+            ('Printer', 'Other', 10, 600, 'Rare'), -- Including laser printers
+            ('Dryer', 'Washing', 1800, 5400, 'Occasional'), -- Electric Clothes Dryer
+            ('Electric Oven', 'Kitchen', 2150, 5000, 'Occasional'),
+            ('Toaster', 'Kitchen', 850, 1500, 'Rare'),
+            ('Electric Kettle', 'Kitchen', 1000, 1500, 'Rare'),
+            ('Blender', 'Kitchen', 300, 1000, 'Rare'),
+            ('Hair Dryer', 'Other', 1000, 1875, 'Rare'),
+            ('Iron', 'Other', 1000, 2200, 'Occasional'),
+            ('Electric Stove', 'Kitchen', 1000, 3000, 'Occasional'),
+            ('Freezer', 'Kitchen', 150, 700, 'Continuous'),
+            ('Electric Grill', 'Kitchen', 1200, 2000, 'Rare'),
+            ('Home Theater System', 'Multimedia', 200, 500, 'Occasional'),
+            ('Espresso Coffee Machine', 'Kitchen', 1300, 1500, 'Occasional'),
+            ('Induction Hob', 'Kitchen', 1400, 1800, 'Occasional'),
+            ('Electric Lawn Mower', 'Other', 500, 1500, 'Rare'),
+            ('Electric Shaver', 'Other', 15, 20, 'Rare'),
+            ('Space Heater', 'Other', 750, 2000, 'Occasional'),
+            ('Electric Water Heater (Tankless)', 'Other', 6600, 8800, 'Continuous'),
+            ('Humidifier', 'Other', 175, 300, 'Occasional');
+            """)
+    except psycopg2.Error as e:
+        conn.rollback()
+        print(f"Error executing query: {e}")
+    finally:
+        conn.disconnect()
+
 # [DEVICES] Populate the devices table (p.device)
 #-----------------------------------------------------------------------------------------------
 def populate_device_table(data_file, conn):
@@ -147,16 +201,21 @@ def populate_device_table(data_file, conn):
                     continue
                 device_name = values[6]
                 device_category = values[5]
-                device_type = values[4]
-                unique_devices.add((device_type, device_category, device_name))
+                device_type_text = values[4]
+                unique_devices.add((device_type_text, device_category, device_name))
 
             print("-- Populating device table...")
             for device in unique_devices:
+                type_name_query = "SELECT type_name FROM p.device_type WHERE type_name = %s"
+                type_name_results = connector.execute(type_name_query, (device[0],))
+                
+                if type_name_results:
+                    type_name = type_name_results[0]
                 conn.execute("""
-                    INSERT INTO p.device (user_username, device_type, device_category, device_name)
-                    VALUES (%s, %s, %s, %s);
-                """, ('athtech', device[0], device[1], device[2]))
-
+                        INSERT INTO p.device (user_username, device_type, device_category, device_name)
+                        VALUES (%s, %s, %s, %s);
+                    """, ('athtech', type_name, device[1], device[2]))
+        
             conn.commit()
 
     except FileNotFoundError:
