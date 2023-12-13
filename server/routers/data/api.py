@@ -501,7 +501,8 @@ async def get_total_power_per_device(username: str = Depends(get_current_user)):
                 LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
                 LEFT JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
                 WHERE p.device.user_username = %s
-                GROUP BY p.device.id, p.device.device_name""", (username,))
+                GROUP BY p.device.id, p.device.device_name
+                ORDER BY total_power DESC""", (username,))
             
             json_data = convert_to_json(result, keys)
 
@@ -524,7 +525,8 @@ async def get_average_power_per_device(username: str = Depends(get_current_user)
                 LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
                 LEFT JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
                 WHERE p.device.user_username = %s
-                GROUP BY p.device.id, p.device.device_name""", (username,))
+                GROUP BY p.device.id, p.device.device_name
+                ORDER BY average_power DESC""", (username,))
             
             json_data = convert_to_json(result, keys)
 
