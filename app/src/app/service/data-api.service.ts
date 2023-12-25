@@ -64,6 +64,17 @@ export class DataApiService {
   }
 
 
+
+  //========================================
+  // DEVICE TYPE API CALLS
+  //========================================
+
+  // [GET] Get all user's devices
+  getDeviceTypes(device_category: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getDeviceTypes/${device_category}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  
   //========================================
   // DEVICES API CALLS
   //========================================
@@ -169,5 +180,5 @@ export class DataApiService {
   //========================================
   //  API CALLS
   //========================================
-  
+
 }

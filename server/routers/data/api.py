@@ -179,6 +179,33 @@ async def remove_alerts(username: str = Depends(get_current_user)):
 
 
 # **************************************************************************************************** #
+# DEVICE TYPE ENDPOINTS #
+# **************************************************************************************************** #
+
+# ===============================================================================================
+# Endpoint to get available device types
+@router.get("/getDeviceTypes/{device_category}")
+async def get_device_types(device_category: str):
+    try:
+        with database_connection():
+            keys = ["type_name", "device_category", "power_min", "power_max", "power_draw_pattern"]
+            result = connector.execute("""
+            SELECT p.device_type.type_name, p.device_type.device_category, p.device_type.power_min, p.device_type.power_max, p.device_type.power_draw_pattern
+            FROM p.device_type
+            WHERE p.device_type.device_category = %s
+            """, (device_category,))
+            json_data = convert_to_json(result, keys)
+
+        return json_data
+    except HTTPException:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
+# **************************************************************************************************** #
 # DEVICE ENDPOINTS #
 # **************************************************************************************************** #
 
@@ -207,6 +234,8 @@ async def get_devices(username: str = Depends(get_current_user)):
             json_data = convert_to_json(result, keys)
 
         return json_data
+    except HTTPException:
+        raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -406,7 +435,7 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
         try:            
             # Get device type details
             device_details = connector.execute("""
-            SELECT device_type, power_min, power_max, power_draw_pattern 
+            SELECT p.device.device_type, p.device_type.power_min, p.device_type.power_max, p.device_type.power_draw_pattern, p.device.device_category, p.device_name 
             FROM p.device 
             JOIN p.device_type ON p.device.device_type = p.device_type.type_name 
             WHERE p.device.id = %s AND p.device.user_username = %s
@@ -416,7 +445,7 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                 print(f"No device found with ID {data.device_id}")
                 return
 
-            device_type, power_min, power_max, power_draw_pattern = device_details[0]
+            device_type, power_min, power_max, power_draw_pattern, device_category, device_name = device_details[0]
             
             # Define the frequency of readings
             delta = datetime.timedelta(days=1)  # For daily readings
@@ -431,9 +460,9 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
 
                 # Create a new consumption record for each interval
                 connector.execute("""
-                    INSERT INTO p.consumption (start_date, end_date, duration_days, device_type) 
-                    VALUES (%s, %s, %s, %s)
-                    """, (current_interval_start, interval_end, interval_duration, device_type))
+                    INSERT INTO p.consumption (start_date, end_date, duration_days, device_type, device_category, device_name) 
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    """, (current_interval_start, interval_end, interval_duration, device_type, device_category, device_name))
                 consumption_id = connector.execute("SELECT LASTVAL();")[0][0]
 
                 # Link the consumption record with the device

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { DataApiService } from 'src/app/service/data-api.service';
 
 @Component({
   selector: 'app-new-device-dialog',
@@ -10,8 +11,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 export class NewDeviceDialogComponent {
   deviceForm: FormGroup;
+  deviceTypes: any[];
 
-  constructor(private dialogRef: MatDialogRef<NewDeviceDialogComponent>, private fb: FormBuilder) {
+  constructor(private dialogRef: MatDialogRef<NewDeviceDialogComponent>, private fb: FormBuilder, private dataApiService: DataApiService) {
+    this.deviceTypes = [];
     this.deviceForm = this.fb.group({
       deviceCategory: ['', Validators.required],
       deviceType: ['', Validators.required],
@@ -24,6 +27,18 @@ export class NewDeviceDialogComponent {
     this.dialogRef.backdropClick().subscribe(() => {
       this.dialogRef.close();
     });
+  }
+
+  onDeviceCategorySelection(event: any) {
+    console.log('Selected: ' + (event.value));
+    this.dataApiService.getDeviceTypes(event.value).subscribe({
+      next: (data) => {
+        this.deviceTypes = data;
+      },
+      error: (error) => {
+
+      }
+    })
   }
 
   onSave() {
