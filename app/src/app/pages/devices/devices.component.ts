@@ -133,6 +133,28 @@ export class DevicesComponent implements OnInit {
     });
   }
 
+  onAddNewConsumption(device_id: number) {
+    this.dialogService.openNewConsumptionDialog().subscribe(result => {
+      if (result) {
+        this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
+          next: (data) => {
+            this.output.result = 'success';
+            this.output.message = data.message;
+            this.alertService.showSnackBar(this.output.message);
+            this.loadDevices();
+            //this.alertService.loadAlerts();
+          },
+          error: (error) => {
+            this.alertService.showSnackBar("An error occurred!");
+            console.log(error);
+          }
+        })
+      } else {
+        console.log("Addition of new consumption log cancelled!")
+      }
+    });
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.filterText = filterValue.trim().toLowerCase();

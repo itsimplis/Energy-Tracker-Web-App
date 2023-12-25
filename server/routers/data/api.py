@@ -435,7 +435,7 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
         try:            
             # Get device type details
             device_details = connector.execute("""
-            SELECT p.device.device_type, p.device_type.power_min, p.device_type.power_max, p.device_type.power_draw_pattern, p.device.device_category, p.device_name 
+            SELECT p.device.device_type, p.device_type.power_min, p.device_type.power_max, p.device_type.power_draw_pattern, p.device.device_category, p.device.device_name 
             FROM p.device 
             JOIN p.device_type ON p.device.device_type = p.device_type.type_name 
             WHERE p.device.id = %s AND p.device.user_username = %s

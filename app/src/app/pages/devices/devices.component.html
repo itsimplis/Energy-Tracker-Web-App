@@ -74,8 +74,8 @@
                     </mat-card-content>
                     <br>
                     <mat-card-actions>
-                        <button mat-raised-button color="primary">
-                            <mat-icon>power</mat-icon><span>Log Consumption</span>
+                        <button mat-raised-button color="primary" (click)="onAddNewConsumption(device.id)">
+                            <mat-icon>power</mat-icon><span>Add New Consumption</span>
                         </button>
                     </mat-card-actions>
                 </mat-card>

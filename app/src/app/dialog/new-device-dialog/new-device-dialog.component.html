@@ -22,7 +22,7 @@
         <mat-form-field class="form-field" appearance="fill" floatLabel="always">
             <mat-label>Device Type</mat-label>
             <mat-select formControlName="deviceType" placeholder="Select device type" required>
-                <mat-option *ngFor="let deviceType of deviceTypes" [value]="deviceType.type_name">{{ deviceType.type_name }}</mat-option>
+                <mat-option *ngFor="let deviceType of deviceTypes" [value]="deviceType.type_name">{{ deviceType.type_name }} ({{deviceType.power_min}}W - {{deviceType.power_max}}W)</mat-option>
             </mat-select>
             <mat-hint align="start"><strong>The type of your device based on device category (ex: 'Fridge')</strong></mat-hint>
         </mat-form-field>
