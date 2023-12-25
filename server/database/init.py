@@ -41,6 +41,8 @@ def init(no_data: bool):
         except Exception as e:
             print(f"Error : {e}")
 
+    # Alter the consumption table to use SERIAL for the id column regardless of data loading
+    alter_consumption_table_to_serial(connector)
 
 # [SCHEMA] Create the db schema
 def create_database_schema(sql_file, conn):
@@ -128,6 +130,18 @@ def populate_consumption_table(data_file, conn):
     finally:
         conn.disconnect()
 
+def alter_consumption_table_to_serial(conn):
+    try:
+        conn.connect()
+        conn.execute("CREATE SEQUENCE p.consumption_id_seq;")
+        conn.execute("ALTER TABLE p.consumption ALTER COLUMN id SET DEFAULT NEXTVAL('p.consumption_id_seq');")
+        conn.execute("SELECT SETVAL('p.consumption_id_seq', COALESCE((SELECT MAX(id) FROM p.consumption), 0) + 1);")
+        conn.commit()
+    except psycopg2.Error as e:
+        conn.rollback()
+        print(f"Error altering consumption table: {e}")
+    finally:
+        conn.disconnect()
 
 def create_device_type_table(conn):
     try:
@@ -206,7 +220,7 @@ def populate_device_table(data_file, conn):
 
             print("-- Populating device table...")
             for device in unique_devices:
-                type_name_query = "SELECT type_name FROM p.device_type WHERE type_name = %s"
+                type_name_query = "SELECT p.device_type.type_name FROM p.device_type WHERE p.device_type.type_name = %s"
                 type_name_results = connector.execute(type_name_query, (device[0],))
                 
                 if type_name_results:

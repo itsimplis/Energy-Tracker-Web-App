@@ -119,7 +119,7 @@
                     <input matInput (keyup)="applyFilterInConsumptions($event)" placeholder="Search..."
                         #filterConsumptions>
                 </mat-form-field>
-                <button mat-raised-button color="primary" (click)="onAddNewConsumption()">
+                <button mat-raised-button color="primary" (click)="onAddNewConsumption(details[0]!.id)">
                     <mat-icon>add</mat-icon><span>Add New Consumption</span>
                 </button>
             </div>

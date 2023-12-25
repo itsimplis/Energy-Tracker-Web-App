@@ -37,5 +37,8 @@ class PostgresConnector:
         except psycopg2.Error as e:
             print("Error executing query:", e)
 
+    def rollback(self):
+        self.conn.rollback()
+    
     def commit(self):
         self.conn.commit()

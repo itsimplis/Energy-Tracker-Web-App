@@ -125,6 +125,16 @@ export class DataApiService {
     return this.http.get<any[]>(`${this.baseUrl}/data/getConsumptionPowerReadings/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
+  // [POST] Add a consumption, and simulate power reading  by generating them
+  addConsumptionPowerReadings(device_id: number, start_date: string, end_date: string, duration_days: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/data/addConsumptionPowerReadings`, {
+      device_id: device_id,
+      start_date: start_date,
+      end_date: end_date,
+      duration_days: duration_days
+    }, { headers: this.authenticationService.getAuthHeaders() });
+  }
+
 
   //========================================
   // DASHBOARD API CALLS
@@ -154,4 +164,10 @@ export class DataApiService {
   getPeakPowerAnalysis(consumption_id: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getPeakPowerAnalysis/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
+
+
+  //========================================
+  //  API CALLS
+  //========================================
+  
 }

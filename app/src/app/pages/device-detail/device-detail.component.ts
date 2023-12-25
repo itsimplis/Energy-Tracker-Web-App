@@ -29,6 +29,7 @@ export class DeviceDetailComponent implements OnInit {
   selectedStartDate: string | null = null;
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
+  output: Output;
   columnsConsumption: string[] = ['start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
   columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'suggestion', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
@@ -46,6 +47,7 @@ export class DeviceDetailComponent implements OnInit {
     this.consumption_readings = [];
     this.device_readings = [];
     this.alerts = [];
+    this.output = { result: '', message: '' };
   }
 
   ngOnInit() {
@@ -126,6 +128,7 @@ export class DeviceDetailComponent implements OnInit {
       const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
       if (!groupedData[period]) {
         groupedData[period] = {
+
           name: period,
           series: [],
           startDate: new Date(reading.start_date)
@@ -143,7 +146,6 @@ export class DeviceDetailComponent implements OnInit {
 
     return Object.values(groupedData).map(({ name, series }) => ({ name, series }));
   }
-
 
   applyFilterInConsumptions(event: Event) {
     const filterValueConsumption = (event.target as HTMLInputElement).value;
@@ -163,14 +165,25 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
-  onAddNewConsumption() {
+  onAddNewConsumption(device_id: number) {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
-        console.log("Handling addition of new consumption log!")
-        console.log(result);
+        this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
+          next: (data) => {
+            this.output.result = 'success';
+            this.output.message = data.message;
+            this.alertService.showSnackBar(this.output.message);
+            this.loadDeviceConsumption(device_id);
+            this.loadDevicePowerReadings(device_id);
+            //this.alertService.loadAlerts();
+          },
+          error: (error) => {
+            this.alertService.showSnackBar("An error occurred!");
+            console.log(error);
+          }
+        })
       } else {
         console.log("Addition of new consumption log cancelled!")
-        console.log(result);
       }
     });
   }
@@ -327,4 +340,9 @@ interface GroupedDataItem {
   name: string;
   series: { name: string; value: number; }[];
   startDate: Date;
+}
+
+interface Output {
+  result: string;
+  message: string;
 }

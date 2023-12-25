@@ -86,11 +86,12 @@ export class DevicesComponent implements OnInit {
             this.alertService.loadAlerts();
           },
           error: (error) => {
+            this.alertService.showSnackBar("An error occured!");
             console.log(error);
           }
         })
       } else {
-        console.log("Addition of new device cancelled!");
+        this.alertService.showSnackBar("Addition of new device cancelled!");
       }
     });
   }

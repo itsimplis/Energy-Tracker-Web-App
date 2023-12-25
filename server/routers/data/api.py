@@ -60,10 +60,10 @@ class DeviceData(BaseModel):
     alert_threshold_low: float
     usage_frequency: str
 
-class PowerReadingData(BaseModel):
+class AddConsumptionPowerReadings(BaseModel):
     device_id: int
-    start_date: datetime
-    end_date: datetime
+    start_date: datetime.datetime
+    end_date: datetime.datetime
     duration_days: float
 
 @contextmanager
@@ -78,41 +78,6 @@ def convert_to_json(result, keys):
     data = [collections.OrderedDict(zip(keys, row)) for row in result]
     json_data = json.dumps(data, cls=ExtendedEncoder)
     return json.loads(json_data)
-
-
-
-
-# **************************************************************************************************** #
-# POWER READINGS GENERATION #
-# **************************************************************************************************** #
-
-def calculate_number_of_readings(start_date, end_date, reading_frequency):
-    duration = end_date - start_date
-    num_readings = 0
-
-    if reading_frequency == 'hourly':
-        num_readings = int(duration.total_seconds() / 3600) + 1
-    elif reading_frequency == 'daily':
-        num_readings = duration.days + 1
-
-    return num_readings
-
-def generate_power_readings(device_type, start_date, end_date, power_max, reading_frequency):
-    readings = []
-    power_range = get_power_range_for_device(device_type)
-    num_readings = calculate_number_of_readings(start_date, end_date, reading_frequency)
-    time_increment = timedelta(hours=1) if reading_frequency == 'hourly' else timedelta(days=1)
-
-    for _ in range(num_readings):
-        reading_time = start_date + time_increment
-        power_reading = random.uniform(power_range[0], min(power_range[1], power_max))
-        readings.append((reading_time, power_reading))
-        start_date = reading_time
-
-    return readings
-
-
-
 
 # **************************************************************************************************** #
 # ALERTS ENDPOINTS #
@@ -404,7 +369,7 @@ async def remove_device(device_id: int, username: str = Depends(get_current_user
 
 
 # **************************************************************************************************** #
-# POWER REDING ENDPOINTS #
+# POWER READING ENDPOINTS #
 # **************************************************************************************************** #
 
 # ===============================================================================================
@@ -435,19 +400,17 @@ async def get_device_power_readings(device_id: int, username: str = Depends(get_
 
 # ===============================================================================================
 # Endpoint to generate power readings for a new consumption
-def generate_power_readings(data: PowerReadingData, username: str = Depends(get_current_user)):
-    with database_connection() as connector:
-        try:
-            connector.connect()
-            
+@router.post("/addConsumptionPowerReadings")
+def generate_power_readings(data: AddConsumptionPowerReadings, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:            
             # Get device type details
-            device_query = """
+            device_details = connector.execute("""
             SELECT device_type, power_min, power_max, power_draw_pattern 
             FROM p.device 
             JOIN p.device_type ON p.device.device_type = p.device_type.type_name 
-            WHERE p.device.id = %s
-            """
-            device_details = connector.execute(device_query, (data.device_id,))
+            WHERE p.device.id = %s AND p.device.user_username = %s
+            """, (data.device_id, username))
             
             if not device_details:
                 print(f"No device found with ID {data.device_id}")
@@ -456,18 +419,20 @@ def generate_power_readings(data: PowerReadingData, username: str = Depends(get_
             device_type, power_min, power_max, power_draw_pattern = device_details[0]
             
             # Define the frequency of readings
-            delta = datetime.timedelta(hours=1)  # For hourly readings
+            delta = datetime.timedelta(days=1)  # For daily readings
 
             # Breakdown the period into smaller intervals of one month each
             current_interval_start = data.start_date
+            power_min_float = float(power_min)
+            power_max_float = float(power_max)
             while current_interval_start < data.end_date:
                 interval_end = min(current_interval_start + datetime.timedelta(days=30), data.end_date)
                 interval_duration = (interval_end - current_interval_start).days
 
                 # Create a new consumption record for each interval
                 connector.execute("""
-                    INSERT INTO p.consumption (id, start_date, end_date, duration_days, device_type) 
-                    VALUES (DEFAULT, %s, %s, %s, %s) RETURNING id;
+                    INSERT INTO p.consumption (start_date, end_date, duration_days, device_type) 
+                    VALUES (%s, %s, %s, %s)
                     """, (current_interval_start, interval_end, interval_duration, device_type))
                 consumption_id = connector.execute("SELECT LASTVAL();")[0][0]
 
@@ -480,11 +445,11 @@ def generate_power_readings(data: PowerReadingData, username: str = Depends(get_
                 # Generate readings for the interval
                 current_time = current_interval_start
                 while current_time <= interval_end:
-                    power = random.uniform(power_min, power_max)
+                    power = random.uniform(power_min_float, power_max_float)
                     
                     # Simulate spikes
                     if random.random() < 0.05:  # 5% chance of spike
-                        power = random.uniform(power_max, power_max * 1.5)
+                        power = random.uniform(power_max_float, power_max_float * 1.5)
 
                     # Simulate inactivity
                     if power_draw_pattern == 'Occasional' and random.random() < 0.2:
@@ -502,12 +467,13 @@ def generate_power_readings(data: PowerReadingData, username: str = Depends(get_
 
                 # Move to the next interval
                 current_interval_start = interval_end + datetime.timedelta(days=1)
-
+            connector.commit()
+            return {"message": f"Consumption added successfully!"}
+        except HTTPException:
+            raise e
         except Exception as e:
-            print(f"Error: {e}")
             connector.rollback()
-        finally:
-            connector.disconnect()
+            raise HTTPException(status_code=500, detail=str(e))
 
 
 # ===============================================================================================

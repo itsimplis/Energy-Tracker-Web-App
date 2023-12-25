@@ -64,6 +64,8 @@ export class NewConsumptionDialogComponent {
   }
 
   onSave() {
-
+    if (this.consumptionForm.valid) {
+      this.dialogRef.close(this.consumptionForm.value);
+    }
   }
 }
