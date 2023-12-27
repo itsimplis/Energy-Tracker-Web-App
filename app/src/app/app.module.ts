@@ -34,6 +34,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatSliderModule} from '@angular/material/slider';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+
 
 // Custom Components
 import { ToolbarComponent } from './navigation/toolbar/toolbar.component';
@@ -54,6 +57,19 @@ import { DeviceDetailComponent } from './pages/device-detail/device-detail.compo
 import { NewConsumptionDialogComponent } from './dialog/new-consumption-dialog/new-consumption-dialog.component';
 import { NewDeviceDialogComponent } from './dialog/new-device-dialog/new-device-dialog.component';
 import { ViewAlertDialogComponent } from './dialog/view-alert-dialog/view-alert-dialog.component';
+
+// Custom date formats
+export const MY_DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @NgModule({
   declarations: [
@@ -107,11 +123,13 @@ import { ViewAlertDialogComponent } from './dialog/view-alert-dialog/view-alert-
     MatNativeDateModule,
     MatTooltipModule,
     MatGridListModule,
-    MatSliderModule
+    MatSliderModule,
+    MatButtonToggleModule
   ],
   providers: [
     JwtHelperService,
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     AlertService,
     MatSnackBar,
     MatTableModule,

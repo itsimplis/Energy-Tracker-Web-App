@@ -289,7 +289,7 @@ def process_csv_file(file_path):
     df['timestamp'] = pd.to_datetime(df['timestamp'])
     df.set_index('timestamp', inplace=True)
 
-    resampled_df = df.resample('1D').sum() 
+    resampled_df = df.resample('1H').mean()
 
     resampled_df.reset_index(inplace=True)
     readings = resampled_df.values.tolist()

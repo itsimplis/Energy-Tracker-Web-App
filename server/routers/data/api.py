@@ -2,7 +2,8 @@ import json
 import collections
 import random
 import datetime
-from datetime import timedelta
+import calendar
+from datetime import date, timedelta
 from decimal import Decimal
 from typing import Optional
 from pydantic import BaseModel
@@ -62,8 +63,8 @@ class DeviceData(BaseModel):
 
 class AddConsumptionPowerReadings(BaseModel):
     device_id: int
-    start_date: datetime.datetime
-    end_date: datetime.datetime
+    start_date: date
+    end_date: date
     duration_days: float
 
 @contextmanager
@@ -402,63 +403,54 @@ async def remove_device(device_id: int, username: str = Depends(get_current_user
 # **************************************************************************************************** #
 
 # ===============================================================================================
-# Endpoint to get all power readings for all consumptions of a device
-@router.get("/getDevicePowerReadings/{device_id}")
-async def get_device_power_readings(device_id: int, username: str = Depends(get_current_user)):
-    with database_connection():
-        try:
-            keys = ["reading_timestamp", "power"]
-
-            result = connector.execute("""
-                SELECT p.power_reading.reading_timestamp, p.power_reading.power
-                FROM p.power_reading
-                JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
-                JOIN p.device ON p.device_consumption.device_id = p.device.id
-                WHERE p.device_consumption.device_id = %s AND p.device.user_username = %s
-                ORDER BY p.power_reading.reading_timestamp ASC
-                """, (device_id, username))
-            
-            json_data = convert_to_json(result, keys)
-
-            return json_data
-        except HTTPException as e:
-            raise e
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
-
-# ===============================================================================================
-# Endpoint to generate power readings for a new consumption
+# Endpoint to get all power readings for all consumptions of a device - Enhanced
 @router.post("/addConsumptionPowerReadings")
 def generate_power_readings(data: AddConsumptionPowerReadings, username: str = Depends(get_current_user)):
     with database_connection():
-        try:            
+        try:
             # Get device type details
             device_details = connector.execute("""
-            SELECT p.device.device_type, p.device_type.power_min, p.device_type.power_max, p.device_type.power_draw_pattern, p.device.device_category, p.device.device_name 
-            FROM p.device 
-            JOIN p.device_type ON p.device.device_type = p.device_type.type_name 
-            WHERE p.device.id = %s AND p.device.user_username = %s
-            """, (data.device_id, username))
-            
+                SELECT p.device.device_type, p.device_type.power_min, p.device_type.power_max, p.device_type.power_draw_pattern, p.device.device_category, p.device.device_name 
+                FROM p.device 
+                JOIN p.device_type ON p.device.device_type = p.device_type.type_name 
+                WHERE p.device.id = %s AND p.device.user_username = %s
+                """, (data.device_id, username))
+
             if not device_details:
                 print(f"No device found with ID {data.device_id}")
                 return
 
             device_type, power_min, power_max, power_draw_pattern, device_category, device_name = device_details[0]
             
-            # Define the frequency of readings
-            delta = datetime.timedelta(days=1)  # For daily readings
-
-            # Breakdown the period into smaller intervals of one month each
-            current_interval_start = data.start_date
+            # Conversion to float
             power_min_float = float(power_min)
             power_max_float = float(power_max)
-            while current_interval_start < data.end_date:
-                interval_end = min(current_interval_start + datetime.timedelta(days=30), data.end_date)
+
+            # Define the frequency of readings
+            delta = datetime.timedelta(hours=1)
+            
+            # Initialize previous reading for the first iteration
+            previous_power = random.uniform(power_min_float, power_max_float)
+            was_spike = False  # Flag to track if the last reading was a spike
+            was_inactive = False  # Flag to track if the last reading was a period of inactivity
+            
+            # Parse the start and end dates from the request
+            current_interval_start = datetime.datetime.combine(data.start_date, datetime.datetime.min.time())
+            end_date = datetime.datetime.combine(data.end_date, datetime.datetime.min.time())
+
+            # Breakdown the period into monthly intervals
+            while current_interval_start < end_date:
+                year, month = current_interval_start.year, current_interval_start.month
+                last_day = calendar.monthrange(year, month)[1]
+                interval_end = datetime.datetime(year, month, last_day, 23, 59, 59)
+
+                # Adjust if interval_end exceeds end_date
+                if interval_end > end_date:
+                    interval_end = end_date
+
                 interval_duration = (interval_end - current_interval_start).days
 
-                # Create a new consumption record for each interval
+                # Create a new consumption record for the interval
                 connector.execute("""
                     INSERT INTO p.consumption (start_date, end_date, duration_days, device_type, device_category, device_name) 
                     VALUES (%s, %s, %s, %s, %s, %s)
@@ -474,31 +466,49 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                 # Generate readings for the interval
                 current_time = current_interval_start
                 while current_time <= interval_end:
-                    power = random.uniform(power_min_float, power_max_float)
-                    
-                    # Simulate spikes
-                    if random.random() < 0.05:  # 5% chance of spike
-                        power = random.uniform(power_max_float, power_max_float * 1.5)
-
-                    # Simulate inactivity
-                    if power_draw_pattern == 'Occasional' and random.random() < 0.2:
+                    # Determine if the current reading should be a spike
+                    if random.random() < 0.005:  # 0,5% chance to spike
+                        power = random.uniform(power_max_float, power_max_float * 1.2)
+                        was_spike = True
+                        was_inactive = False
+                    elif (power_draw_pattern == 'Occasional' and random.random() < 0.2) or \
+                        (power_draw_pattern == 'Rare' and random.random() < 0.6):
+                        # Set power to 0 for periods of inactivity
                         power = 0
-                    elif power_draw_pattern == 'Rare' and random.random() < 0.5:
-                        power = 0
+                        was_inactive = True
+                        was_spike = False
+                    else:
+                        # Set a maximum percentage change (e.g., 10% of the normal reading range)
+                        max_change = (power_max_float - power_min_float) * 0.1
 
-                    # Insert power reading
+                        # Reset to a normal range value if the previous reading was a spike or inactive
+                        if was_spike or was_inactive:
+                            previous_power = random.uniform(power_min_float, power_max_float)
+                            was_spike = False
+                            was_inactive = False
+
+                        # Generate the next normal reading
+                        next_min = max(power_min_float, previous_power - max_change)
+                        next_max = min(power_max_float, previous_power + max_change)
+                        power = random.uniform(next_min, next_max)
+
                     connector.execute("""
                         INSERT INTO p.power_reading (consumption_id, reading_timestamp, power) 
                         VALUES (%s, %s, %s);
                         """, (consumption_id, current_time, power))
-                    
                     current_time += delta
 
-                # Move to the next interval
-                current_interval_start = interval_end + datetime.timedelta(days=1)
+                    # Update the previous reading for normal fluctuations
+                    if not (was_spike or was_inactive):
+                        previous_power = power
+
+                # Move to the first day of the next month
+                next_month = current_interval_start.replace(day=1, month=month % 12 + 1, year=year + (month // 12))
+                current_interval_start = next_month if next_month > current_interval_start else next_month.replace(year=year + 1)
+
             connector.commit()
-            return {"message": f"Consumption added successfully!"}
-        except HTTPException:
+            return {"message": "Consumption added successfully!"}
+        except HTTPException as e:
             raise e
         except Exception as e:
             connector.rollback()

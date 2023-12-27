@@ -9,21 +9,21 @@
 <mat-dialog-content>
     <form [formGroup]="consumptionForm" class="consumption-form">
 
-        <mat-form-field appearance="fill" floatLabel="always">
-            <mat-label>Start Date</mat-label>
-            <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" required>
-            <mat-hint align="start"><strong>Enter the date the consumption recording started</strong></mat-hint>
-            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #startDatePicker></mat-datepicker>
-        </mat-form-field>
-        <br>
-        <mat-form-field appearance="fill" floatLabel="always">
-            <mat-label>End Date</mat-label>
-            <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" required>
-            <mat-hint align="start"><strong>Enter the date the consumption recording ended</strong></mat-hint>
-            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #endDatePicker></mat-datepicker>
-        </mat-form-field>
+        <mat-form-field class="example-form-field">
+            <mat-label>Consumption Period</mat-label>
+            <mat-date-range-input [rangePicker]="rangePicker">
+              <input matStartDate formControlName="startDate" placeholder="Start date">
+              <input matEndDate formControlName="endDate" placeholder="End date">
+            </mat-date-range-input>
+            <mat-hint align="start"><strong>Select the consumption period (DD/MM/YYYY – DD/MM/YYYY)</strong></mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
+            <mat-date-range-picker #rangePicker>
+              <mat-date-range-picker-actions>
+                <button mat-button matDateRangePickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" (click)="onApplyClick()" matDateRangePickerApply>Apply</button>
+              </mat-date-range-picker-actions>
+            </mat-date-range-picker>
+          </mat-form-field>
         <br>
         <mat-form-field appearance="outline" floatLabel="always">
             <mat-label>Duration Days (Consumption period)</mat-label>

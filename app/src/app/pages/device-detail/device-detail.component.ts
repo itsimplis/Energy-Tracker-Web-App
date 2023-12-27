@@ -30,6 +30,7 @@ export class DeviceDetailComponent implements OnInit {
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
   output: Output;
+  aggregation: 'sum' | 'average' | 'none' = 'none';
   columnsConsumption: string[] = ['start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
   columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'suggestion', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
@@ -48,6 +49,7 @@ export class DeviceDetailComponent implements OnInit {
     this.device_readings = [];
     this.alerts = [];
     this.output = { result: '', message: '' };
+    this.aggregation = 'none';
   }
 
   ngOnInit() {
@@ -112,7 +114,7 @@ export class DeviceDetailComponent implements OnInit {
   loadDevicePowerReadings(device_id: number) {
     this.dataApiService.getDevicePowerReadings(device_id).subscribe({
       next: (data: any[]) => {
-        this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data);
+        this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data, this.aggregation);
       },
       error: (error) => {
         console.log(error);
@@ -121,29 +123,52 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
-  groupPowerReadingsByConsumptionPeriod(data: PowerReading[]): { name: string; series: { name: string; value: number; }[] }[] {
+  groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'sum' | 'average' | 'none' = 'none'): { name: string; series: SeriesItem[] }[] {
     const groupedData: Record<string, GroupedDataItem> = {};
-
+  
     data.forEach((reading: PowerReading) => {
       const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
       if (!groupedData[period]) {
         groupedData[period] = {
-
           name: period,
           series: [],
           startDate: new Date(reading.start_date)
         };
       }
-
+  
       const readingDate = new Date(reading.reading_timestamp as string);
       const dayNumber = Math.ceil((readingDate.getTime() - groupedData[period].startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-
-      groupedData[period].series.push({
-        name: `Day ${dayNumber}`,
-        value: reading.power
-      });
+      const dayLabel = `Day ${dayNumber}`;
+  
+      if (aggregationType === 'none') {
+        const hourLabel = `${readingDate.getHours()}:00`; // Hour of the reading
+        groupedData[period].series.push({
+          name: `${dayLabel}, ${hourLabel}`,
+          value: reading.power
+        });
+      } else {
+        let daySeries = groupedData[period].series.find(s => s.name === dayLabel);
+        if (!daySeries) {
+          daySeries = { name: dayLabel, value: 0, count: 0 };
+          groupedData[period].series.push(daySeries);
+        }
+        daySeries.value += reading.power;
+        if (daySeries.count !== undefined) {
+          daySeries.count += 1;
+        }
+      }
     });
-
+  
+    if (aggregationType === 'average') {
+      Object.values(groupedData).forEach(group => {
+        group.series.forEach(day => {
+          if (day.count !== undefined && day.count > 0) {
+            day.value /= day.count;
+          }
+        });
+      });
+    }
+  
     return Object.values(groupedData).map(({ name, series }) => ({ name, series }));
   }
 
@@ -168,6 +193,8 @@ export class DeviceDetailComponent implements OnInit {
   onAddNewConsumption(device_id: number) {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
+        console.log('Start Date (before API Call): ' + result.startDate);
+        console.log('End Date (before API Call): ' + result.endDate);
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
             this.output.result = 'success';
@@ -254,6 +281,11 @@ export class DeviceDetailComponent implements OnInit {
     })
   }
 
+  setPowerReadingsChartType(aggregationType: 'sum' | 'average' | 'none') {
+    this.aggregation = aggregationType;
+    this.loadDevicePowerReadings(this.details[0]?.id)
+  }
+
   setPanelOpenState(state: boolean) {
     this.panelOpenState = state;
   }
@@ -329,16 +361,21 @@ export class DeviceDetailComponent implements OnInit {
 }
 
 interface PowerReading {
-  consumption_id: number;
-  reading_timestamp: string;
+  start_date: string | Date;
+  end_date: string | Date;
+  reading_timestamp: string | Date;
   power: number;
-  start_date: string;
-  end_date: string;
+}
+
+interface SeriesItem {
+  name: string;
+  value: number;
+  count?: number; // Optional count property for 'sum' and 'average' aggregation
 }
 
 interface GroupedDataItem {
   name: string;
-  series: { name: string; value: number; }[];
+  series: SeriesItem[];
   startDate: Date;
 }
 

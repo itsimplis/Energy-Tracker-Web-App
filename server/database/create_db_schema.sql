@@ -7,8 +7,8 @@ CREATE SCHEMA p;
 -- Create Tables --
 CREATE TABLE p.consumption (
     id INT PRIMARY KEY NOT NULL,
-    start_date TIMESTAMP WITH TIME ZONE,
-    end_date TIMESTAMP WITH TIME ZONE,
+    start_date TIMESTAMP WITHOUT TIME ZONE,
+    end_date TIMESTAMP WITHOUT TIME ZONE,
     duration_days NUMERIC(3, 1),
     device_type VARCHAR(255),
     device_category VARCHAR(255),
@@ -58,7 +58,7 @@ CREATE TABLE p.device_consumption (
 CREATE TABLE p.power_reading (
     id SERIAL PRIMARY KEY NOT NULL,
     consumption_id INT NOT NULL REFERENCES p.consumption(id),
-    reading_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    reading_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     power NUMERIC(10, 1) NOT NULL
 );
 
@@ -69,7 +69,7 @@ CREATE TABLE p.alert (
     title VARCHAR(100),
     description VARCHAR(250),
     suggestion VARCHAR (300),
-    date TIMESTAMP WITH TIME ZONE,
+    date TIMESTAMP WITHOUT TIME ZONE,
     type CHAR(1),
     read_status CHAR(1)
 );

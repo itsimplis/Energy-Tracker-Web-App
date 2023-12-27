@@ -113,6 +113,27 @@
         <br>
 
         <div *ngIf="consumptions && consumptions.length > 0; else noConsumptionsContent">
+            <mat-button-toggle-group #group="matButtonToggleGroup" [value]="aggregation"
+                (valueChange)="setPowerReadingsChartType(group.value)" aria-label="Chart Type">
+                <mat-button-toggle value="none">Hourly</mat-button-toggle>
+                <mat-button-toggle value="average">Monthly (Average)</mat-button-toggle>
+                <mat-button-toggle value="sum">Monthly (Total)</mat-button-toggle>
+            </mat-button-toggle-group>
+            <!-- Consumption Chart -->
+            <div *ngIf="device_readings && device_readings.length > 0; else noPowerReadingsContent">
+                <div>
+                    <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="device_readings"
+                        [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day"
+                        yAxisLabel="Consumption (Watts)">
+                    </ngx-charts-line-chart>
+                </div>
+            </div>
+
+            <br>
+            <mat-divider></mat-divider>
+            <br>
+
             <div class="table-toolbar">
                 <mat-form-field floatLabel="always">
                     <mat-label>Filter</mat-label>
@@ -162,21 +183,6 @@
                     aria-label="Select page of consumption logs">
                 </mat-paginator>
             </mat-card>
-
-            <br>
-            <mat-divider></mat-divider>
-            <br>
-
-            <!-- Consumption Chart -->
-            <div *ngIf="device_readings && device_readings.length > 0; else noPowerReadingsContent">
-                <div>
-                    <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme" [results]="device_readings"
-                        [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
-                        [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day"
-                        yAxisLabel="Consumption (Watts)">
-                    </ngx-charts-line-chart>
-                </div>
-            </div>
 
             <br>
             <mat-divider></mat-divider>

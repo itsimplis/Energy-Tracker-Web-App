@@ -136,6 +136,8 @@ export class DevicesComponent implements OnInit {
   onAddNewConsumption(device_id: number) {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
+        console.log('Start Date (before API Call): ' + result.startDate);
+        console.log('End Date (before API Call): ' + result.endDate);
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
             this.output.result = 'success';
