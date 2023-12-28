@@ -157,16 +157,16 @@
                         <td mat-cell *matCellDef="let row"> {{row.end_date | date:'dd/MM/yyyy, h:mm a'}} </td>
                     </ng-container>
                     <ng-container matColumnDef="duration_days">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Duration Days </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Days </th>
                         <td mat-cell *matCellDef="let row"> {{row.duration_days}} </td>
                     </ng-container>
                     <ng-container matColumnDef="files_names">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Files Names </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> File Name </th>
                         <td mat-cell *matCellDef="let row"> {{row.files_names}} </td>
                     </ng-container>
                     <ng-container matColumnDef="power_max">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Max Power </th>
-                        <td mat-cell *matCellDef="let row"> {{row.power_max}} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Max Power Draw </th>
+                        <td mat-cell *matCellDef="let row"> {{row.power_max}} W</td>
                     </ng-container>
 
                     <!-- Row -->

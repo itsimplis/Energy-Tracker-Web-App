@@ -1,8 +1,10 @@
+import os
 import json
 import collections
 import random
 import datetime
 import calendar
+import pandas as pd
 from datetime import date, timedelta
 from decimal import Decimal
 from typing import Optional
@@ -449,12 +451,25 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                     interval_end = end_date
 
                 interval_duration = (interval_end - current_interval_start).days
+                max_power_for_interval = 0
 
+                # Remove invalid characters from device_name
+                invalid_chars = "!@#$%^&*()[]{};:,/<>?\|`~=_+"  # List of characters to remove
+                cleaned_device_name = device_name.translate(str.maketrans("", "", invalid_chars))
+
+                # Convert to lowercase, replace spaces with underscores, format dates 
+                formatted_device_name = cleaned_device_name.lower().replace(" ", "_")
+                start_date_formatted = current_interval_start.strftime('%d%m%Y')
+                end_date_formatted = interval_end.strftime('%d%m%Y')
+
+                # Define the file name with underscores and the correct file extension
+                file_name = f"{formatted_device_name}_{start_date_formatted}_{end_date_formatted}.csv"
+                
                 # Create a new consumption record for the interval
                 connector.execute("""
-                    INSERT INTO p.consumption (start_date, end_date, duration_days, device_type, device_category, device_name) 
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """, (current_interval_start, interval_end, interval_duration, device_type, device_category, device_name))
+                    INSERT INTO p.consumption (start_date, end_date, duration_days, device_type, device_category, device_name, files_names) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """, (current_interval_start, interval_end, interval_duration, device_type, device_category, device_name, file_name))
                 consumption_id = connector.execute("SELECT LASTVAL();")[0][0]
 
                 # Link the consumption record with the device
@@ -462,7 +477,9 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                     INSERT INTO p.device_consumption (device_id, consumption_id)
                     VALUES (%s, %s);
                     """, (data.device_id, consumption_id))
-
+                
+                # GENERATE POWER READINGS
+                #-----------------------------------
                 # Generate readings for the interval
                 current_time = current_interval_start
                 while current_time <= interval_end:
@@ -501,11 +518,23 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                     # Update the previous reading for normal fluctuations
                     if not (was_spike or was_inactive):
                         previous_power = power
+                        
+                    # Update max_power_for_interval if the current power is greater
+                    if power > max_power_for_interval:
+                        max_power_for_interval = power
 
                 # Move to the first day of the next month
                 next_month = current_interval_start.replace(day=1, month=month % 12 + 1, year=year + (month // 12))
                 current_interval_start = next_month if next_month > current_interval_start else next_month.replace(year=year + 1)
+            
+                # After generating power readings for the interval, update max_power in p.consumption
+                connector.execute("""
+                    UPDATE p.consumption SET power_max = %s WHERE p.consumption.id = %s
+                    """, (max_power_for_interval, consumption_id))
 
+                # Reset max_power_for_interval for the next interval
+                max_power_for_interval = 0
+            
             connector.commit()
             return {"message": "Consumption added successfully!"}
         except HTTPException as e:
