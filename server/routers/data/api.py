@@ -488,8 +488,8 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                         power = random.uniform(power_max_float, power_max_float * 1.2)
                         was_spike = True
                         was_inactive = False
-                    elif (power_draw_pattern == 'Occasional' and random.random() < 0.2) or \
-                        (power_draw_pattern == 'Rare' and random.random() < 0.6):
+                    elif (power_draw_pattern == 'Occasional' and random.random() < 0.35) or \
+                        (power_draw_pattern == 'Rare' and random.random() < 0.75):
                         # Set power to 0 for periods of inactivity
                         power = 0
                         was_inactive = True
