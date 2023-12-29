@@ -19,6 +19,7 @@ export class StatisticsComponent {
   averagePowerTypeGrouped: any[];
   highestReadings: any[];
   lowestReadings: any[];
+  userTotalPowerPerCategory: any[];
   chartTotalType: string = 'deviceTotal';
   chartAverageType: string = 'deviceAverage';
 
@@ -32,18 +33,43 @@ export class StatisticsComponent {
     this.averagePowerTypeGrouped = [];
     this.lowestReadings = [];
     this.highestReadings = [];
+    this.userTotalPowerPerCategory = [];
   }
 
   ngOnInit() {
     this.loadDashboardCounters();
     this.loadAveragePowerPerDevice();
     this.loadTotalPowerPerDevice();
+    this.loadTotalPowerConsumptionComparisonByCategory();
   }
 
   loadDashboardCounters() {
     this.dataApiService.getDashboardCounters().subscribe({
       next: (data) => {
         this.counters = data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  loadTotalPowerConsumptionComparisonByCategory() {
+    this.dataApiService.getUserConsumptionComparisonByCategory().subscribe({
+      next: (data) => {
+        this.userTotalPowerPerCategory = data.map(item => ({
+          "name": item.device_category,
+          "series": [
+            {
+              "name": "You",
+              "value": item.user_total_power_consumption
+            },
+            {
+              "name": "Other Users",
+              "value": item.average_other_users_power_consumption
+            }
+          ]
+        }));
       },
       error: (error) => {
         console.log(error);

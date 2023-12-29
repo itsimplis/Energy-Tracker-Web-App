@@ -178,7 +178,12 @@ export class DataApiService {
 
 
   //========================================
-  //  API CALLS
+  //  STATISTICS CALLS
   //========================================
 
+  // [GET] Get power peaks (analysis) per consumption
+  getUserConsumptionComparisonByCategory(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getUserConsumptionComparisonByCategory`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+  
 }

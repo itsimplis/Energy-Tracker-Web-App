@@ -723,6 +723,48 @@ async def get_total_power_consumption_by_user():
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+
+# ===============================================================================================
+# Endpoint to get the total power consumption per device category for a specific user 
+# and the average for other users
+@router.get("/getUserConsumptionComparisonByCategory")
+async def get_user_consumption_comparison_by_category(username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            keys = ["device_category", "user_total_power_consumption", "average_other_users_power_consumption"]
+            query = """
+                WITH user_consumption AS (
+                    SELECT p.device.device_category, SUM(p.power_reading.power) / 1000 AS total_energy_kWh
+                    FROM p.power_reading
+                    JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
+                    JOIN p.device ON p.device_consumption.device_id = p.device.id
+                    WHERE p.device.user_username = %s
+                    GROUP BY p.device.device_category
+                ),
+                other_users_consumption AS (
+                    SELECT p.device.device_category, AVG(SUM(p.power_reading.power) / 1000) OVER (PARTITION BY p.device.device_category) AS avg_energy_kWh
+                    FROM p.power_reading
+                    JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
+                    JOIN p.device ON p.device_consumption.device_id = p.device.id
+                    WHERE p.device.user_username != %s
+                    GROUP BY p.device.device_category, p.device.user_username
+                )
+                SELECT user_consumption.device_category, user_consumption.total_energy_kWh AS user_total_energy_consumption_kWh, other_users_consumption.avg_energy_kWh AS average_other_users_energy_consumption_kWh
+                FROM user_consumption
+                JOIN other_users_consumption ON user_consumption.device_category = other_users_consumption.device_category
+                ORDER BY user_consumption.device_category
+                """
+
+            result = connector.execute(query, (username, username))
+            
+            json_data = convert_to_json(result, keys)
+
+            return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
 # ===============================================================================================
 # Endpoint to get the total power consumption per age group
 @router.get("/getAveragePowerConsumptionByAgeGroup")

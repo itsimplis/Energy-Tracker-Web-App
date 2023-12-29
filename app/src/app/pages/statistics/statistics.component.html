@@ -30,6 +30,25 @@
                     </mat-card-content>
                 </mat-card>
         </div>
+        <div>
+            <!-- Total User Power Consumption Comparison by Category Chart -->
+            <mat-card class="dashboard-card-chart">
+                <mat-card-header>
+                    <mat-card-title>User Power Consumption Comparison (kWh)</mat-card-title>
+                    <mat-card-subtitle>Total power consumed per device category, compared to other users</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <br>
+                    <div *ngIf="userTotalPowerPerCategory && userTotalPowerPerCategory.length > 0; else noPowerReadingsContent">
+                        <ngx-charts-bar-vertical-2d [results]="userTotalPowerPerCategory" [xAxis]="true" [yAxis]="true" [gradient]="true" 
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" [legend]="true" xAxisLabel="Device Category" yAxisLabel="Total Power (kWh)"
+                        [roundDomains]="true" [roundEdges]="true"
+                            (select)="onChartDeviceSelect($event)">
+                        </ngx-charts-bar-vertical-2d>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+    </div>
         <div class="age-gender-charts">
             <!-- Average Power Consumption Chart -->
             <mat-card class="dashboard-card-chart">
