@@ -766,20 +766,29 @@ async def get_user_consumption_comparison_by_category(username: str = Depends(ge
             raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
-# Endpoint to get the total power consumption per age group
+# Endpoint to get the average total power consumption per age group, measured in kilowatt-hours
 @router.get("/getAveragePowerConsumptionByAgeGroup")
 async def get_average_power_consumption_by_age_group():
     with database_connection():
         try:
-            keys = ["age", "average_power_consumption"]
+            keys = ["age_group", "average_total_power_consumption_kWh"]
             result = connector.execute("""
-                SELECT p.user.age, AVG(p.power_reading.power) AS average_power_consumption
+                SELECT 
+                    CASE
+                        WHEN p.user.age BETWEEN 18 AND 25 THEN '18-25'
+                        WHEN p.user.age BETWEEN 26 AND 35 THEN '26-35'
+                        WHEN p.user.age BETWEEN 36 AND 45 THEN '36-45'
+                        WHEN p.user.age BETWEEN 46 AND 55 THEN '46-55'
+                        WHEN p.user.age > 55 THEN '55+'
+                        ELSE 'Other'
+                    END AS age_group,
+                    SUM(p.power_reading.power) / COUNT(DISTINCT p.user.username) / 1000 AS average_total_power_consumption_kWh
                 FROM p.user
                 JOIN p.device ON p.user.username = p.device.user_username
                 JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
                 JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
                 WHERE p.user.visibility = 'public'
-                GROUP BY p.user.age
+                GROUP BY age_group
                 """)
             
             json_data = convert_to_json(result, keys)
@@ -791,14 +800,14 @@ async def get_average_power_consumption_by_age_group():
             raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
-# Endpoint to get the total power consumption per gender
+# Endpoint to get the average total power consumption per user, per gender, measured in kilowatt-hours (kWh)
 @router.get("/getTotalPowerConsumptionByGender")
 async def get_total_power_consumption_by_gender():
     with database_connection():
         try:
-            keys = ["gender", "total_power_consumption"]
+            keys = ["gender", "average_total_power_consumption_kWh"]
             result = connector.execute("""
-                SELECT p.user.gender, SUM(p.power_reading.power) AS total_power_consumption
+                SELECT p.user.gender, SUM(p.power_reading.power) / COUNT(DISTINCT p.user.username) / 1000 AS average_total_power_consumption_kWh
                 FROM p.user
                 JOIN p.device ON p.user.username = p.device.user_username
                 JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
