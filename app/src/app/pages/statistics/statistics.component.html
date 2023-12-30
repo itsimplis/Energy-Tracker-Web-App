@@ -41,7 +41,7 @@
                     <br>
                     <div *ngIf="userTotalPowerPerCategory && userTotalPowerPerCategory.length > 0; else noPowerReadingsContent">
                         <ngx-charts-bar-vertical-2d [results]="userTotalPowerPerCategory" [xAxis]="true" [yAxis]="true" [gradient]="true" 
-                        [showXAxisLabel]="true" [showYAxisLabel]="true" [legend]="true" xAxisLabel="Device Category" yAxisLabel="Total Power (kWh)"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" [legend]="true" [legendTitle]="'User'" xAxisLabel="Device Category" yAxisLabel="Total Power (kWh)"
                         [roundDomains]="true" [roundEdges]="true"
                             (select)="onChartDeviceSelect($event)">
                         </ngx-charts-bar-vertical-2d>
@@ -50,34 +50,34 @@
             </mat-card>
     </div>
         <div class="age-gender-charts">
-            <!-- Average Power Consumption Chart -->
+            <!-- Average Power Consumption by Age Group Chart -->
             <mat-card class="dashboard-card-chart">
                 <mat-card-header>
-                    <mat-card-title>Average Power Consumption</mat-card-title>
-                    <mat-card-subtitle>Average power consumed per device</mat-card-subtitle>
+                    <mat-card-title>Average Total Power Consumption (kWh) - By Age</mat-card-title>
+                    <mat-card-subtitle>Average total power consumed per age group</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                     <br>
-                    <div *ngIf="averagePower && averagePower.length > 0; else noPowerReadingsContent">
-                        <ngx-charts-pie-chart [results]="averagePower" [trimLabels]="false" [gradient]="true"
-                            [labels]="true" xAxisLabel="Device" yAxisLabel="Average Power (Watts)"
+                    <div *ngIf="averagePowerConsumptionAgeGroup && averagePowerConsumptionAgeGroup.length > 0; else noPowerReadingsContent">
+                        <ngx-charts-pie-chart [results]="averagePowerConsumptionAgeGroup" [trimLabels]="false" [gradient]="true"
+                            [labels]="true" xAxisLabel="Age Group" yAxisLabel="Average Total Power (kWh)" [legend]="true" [legendTitle]="'Age Group'"
                             (select)="onChartDeviceSelect($event)">
                         </ngx-charts-pie-chart>
                     </div>
                 </mat-card-content>
             </mat-card>
 
-            <!-- Average Power Consumption Chart -->
+            <!-- Average Power Consumption by Gender Chart -->
             <mat-card class="dashboard-card-chart">
                 <mat-card-header>
-                    <mat-card-title>Average Power Consumption</mat-card-title>
-                    <mat-card-subtitle>Average power consumed per device</mat-card-subtitle>
+                    <mat-card-title>Average Total Power Consumption (kWh) - By Gender </mat-card-title>
+                    <mat-card-subtitle>Average total power consumed per gender</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                     <br>
-                    <div *ngIf="averagePower && averagePower.length > 0; else noPowerReadingsContent">
-                        <ngx-charts-pie-chart [results]="averagePower" [trimLabels]="false" [gradient]="true"
-                            [labels]="true" xAxisLabel="Device" yAxisLabel="Average Power (Watts)"
+                    <div *ngIf="averagePowerConsumptionGender && averagePowerConsumptionGender.length > 0; else noPowerReadingsContent">
+                        <ngx-charts-pie-chart [results]="averagePowerConsumptionGender" [trimLabels]="false" [gradient]="true"
+                            [labels]="true" xAxisLabel="Gender" yAxisLabel="Average Total Power (kWh)" [legend]="true" [legendTitle]="'Gender'"
                             (select)="onChartDeviceSelect($event)">
                         </ngx-charts-pie-chart>
                     </div>

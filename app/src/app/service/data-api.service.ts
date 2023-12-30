@@ -74,7 +74,7 @@ export class DataApiService {
     return this.http.get<any[]>(`${this.baseUrl}/data/getDeviceTypes/${device_category}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
-  
+
   //========================================
   // DEVICES API CALLS
   //========================================
@@ -181,9 +181,18 @@ export class DataApiService {
   //  STATISTICS CALLS
   //========================================
 
-  // [GET] Get power peaks (analysis) per consumption
+  // [GET] Get user power consumption, compared to other users, per device category
   getUserConsumptionComparisonByCategory(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getUserConsumptionComparisonByCategory`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
-  
+
+  // [GET] Get average power consumption by age group
+  getAveragePowerConsumptionByAgeGroup(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getAveragePowerConsumptionByAgeGroup`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  // [GET] Get average power consumption by gender
+  getAveragePowerConsumptionByGender(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getAveragePowerConsumptionByGender`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
 }

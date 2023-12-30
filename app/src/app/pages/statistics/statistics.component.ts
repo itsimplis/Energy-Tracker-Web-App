@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Color, ScaleType } from '@swimlane/ngx-charts';
+import { Color, LegendPosition, ScaleType } from '@swimlane/ngx-charts';
 import { DataApiService } from 'src/app/service/data-api.service';
 
 @Component({
@@ -17,6 +17,8 @@ export class StatisticsComponent {
   averagePower: any[];
   averagePowerCategoryGrouped: any[];
   averagePowerTypeGrouped: any[];
+  averagePowerConsumptionAgeGroup: any[];
+  averagePowerConsumptionGender: any[];
   highestReadings: any[];
   lowestReadings: any[];
   userTotalPowerPerCategory: any[];
@@ -31,6 +33,8 @@ export class StatisticsComponent {
     this.averagePower = [];
     this.averagePowerCategoryGrouped = [];
     this.averagePowerTypeGrouped = [];
+    this.averagePowerConsumptionAgeGroup = [];
+    this.averagePowerConsumptionGender = [];
     this.lowestReadings = [];
     this.highestReadings = [];
     this.userTotalPowerPerCategory = [];
@@ -41,6 +45,8 @@ export class StatisticsComponent {
     this.loadAveragePowerPerDevice();
     this.loadTotalPowerPerDevice();
     this.loadTotalPowerConsumptionComparisonByCategory();
+    this.loadAveragePowerConsumptionByAgeGroup();
+    this.loadAveragePowerConsumptionByGender();
   }
 
   loadDashboardCounters() {
@@ -69,6 +75,34 @@ export class StatisticsComponent {
               "value": item.average_other_users_power_consumption
             }
           ]
+        }));
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  loadAveragePowerConsumptionByAgeGroup() {
+    this.dataApiService.getAveragePowerConsumptionByAgeGroup().subscribe({
+      next: (data) => {
+        this.averagePowerConsumptionAgeGroup = data.map(item => ({
+          "name": item.age_group,
+          "value": item.average_total_power_consumption
+        }));
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  loadAveragePowerConsumptionByGender() {
+    this.dataApiService.getAveragePowerConsumptionByGender().subscribe({
+      next: (data) => {
+        this.averagePowerConsumptionGender = data.map(item => ({
+          "name": item.gender,
+          "value": item.average_total_power_consumption
         }));
       },
       error: (error) => {
