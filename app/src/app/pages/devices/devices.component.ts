@@ -66,7 +66,7 @@ export class DevicesComponent implements OnInit {
       next: (data) => {
         this.devices = data;
         this.groupDevicesByCategory();
-        this.filteredDevicesByCategory = {...this.devicesByCategory};
+        this.filteredDevicesByCategory = { ...this.devicesByCategory };
       },
       error: (error) => {
         console.log(error);
@@ -97,7 +97,7 @@ export class DevicesComponent implements OnInit {
   }
 
   onDeviceView(device_id: number) {
-      this.router.navigate(['/device-detail', device_id]);
+    this.router.navigate(['/device-detail', device_id]);
   }
 
   onDeviceEdit(device_id: number) {
@@ -140,11 +140,20 @@ export class DevicesComponent implements OnInit {
         console.log('End Date (before API Call): ' + result.endDate);
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
+            data.consumption_ids.forEach((consumption_id: number) => {
+              this.dataApiService.getPeakPowerAnalysis(consumption_id).subscribe({
+                next: (analysisData) => {
+                  this.alertService.loadAlerts();
+                  this.loadDevices();
+                },
+                error: (analysisError) => {
+                  console.error("Error during analysis for consumption_id", consumption_id, ": ", analysisError);
+                }
+              });
+            });
             this.output.result = 'success';
             this.output.message = data.message;
             this.alertService.showSnackBar(this.output.message);
-            this.loadDevices();
-            //this.alertService.loadAlerts();
           },
           error: (error) => {
             this.alertService.showSnackBar("An error occurred!");

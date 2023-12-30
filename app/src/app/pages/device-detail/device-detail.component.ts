@@ -125,7 +125,7 @@ export class DeviceDetailComponent implements OnInit {
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
   groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'sum' | 'average' | 'none' = 'none'): { name: string; series: SeriesItem[] }[] {
     const groupedData: Record<string, GroupedDataItem> = {};
-  
+
     data.forEach((reading: PowerReading) => {
       const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
       if (!groupedData[period]) {
@@ -135,11 +135,11 @@ export class DeviceDetailComponent implements OnInit {
           startDate: new Date(reading.start_date)
         };
       }
-  
+
       const readingDate = new Date(reading.reading_timestamp as string);
       const dayNumber = Math.ceil((readingDate.getTime() - groupedData[period].startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
       const dayLabel = `Day ${dayNumber}`;
-  
+
       if (aggregationType === 'none') {
         const hourLabel = `${readingDate.getHours()}:00`; // Hour of the reading
         groupedData[period].series.push({
@@ -158,7 +158,7 @@ export class DeviceDetailComponent implements OnInit {
         }
       }
     });
-  
+
     if (aggregationType === 'average') {
       Object.values(groupedData).forEach(group => {
         group.series.forEach(day => {
@@ -168,7 +168,7 @@ export class DeviceDetailComponent implements OnInit {
         });
       });
     }
-  
+
     return Object.values(groupedData).map(({ name, series }) => ({ name, series }));
   }
 
@@ -193,16 +193,23 @@ export class DeviceDetailComponent implements OnInit {
   onAddNewConsumption(device_id: number) {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
-        console.log('Start Date (before API Call): ' + result.startDate);
-        console.log('End Date (before API Call): ' + result.endDate);
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
+            data.consumption_ids.forEach((consumption_id: number) => {
+              this.dataApiService.getPeakPowerAnalysis(consumption_id).subscribe({
+                next: (analysisData) => {
+                  this.alertService.loadAlerts();
+                },
+                error: (analysisError) => {
+                  console.error("Error during analysis for consumption_id", consumption_id, ": ", analysisError);
+                }
+              });
+            });
             this.output.result = 'success';
             this.output.message = data.message;
             this.alertService.showSnackBar(this.output.message);
             this.loadDeviceConsumption(device_id);
             this.loadDevicePowerReadings(device_id);
-            //this.alertService.loadAlerts();
           },
           error: (error) => {
             this.alertService.showSnackBar("An error occurred!");
@@ -236,15 +243,6 @@ export class DeviceDetailComponent implements OnInit {
         console.error(error);
       }
     });
-
-    this.dataApiService.getPeakPowerAnalysis(row.consumption_id).subscribe({
-      next: (data) => {
-        console.log(data);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    })
   }
 
   onClearDeviceAlerts(device_id: number) {

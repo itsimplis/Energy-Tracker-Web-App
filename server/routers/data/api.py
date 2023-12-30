@@ -82,6 +82,54 @@ def convert_to_json(result, keys):
     json_data = json.dumps(data, cls=ExtendedEncoder)
     return json.loads(json_data)
 
+def generate_alert_message(exceeded_peaks, close_to_limit_peaks, consumption_id):
+    # Convert percentages to Decimal for compatibility
+    warning_threshold_percentage = Decimal('0.10')  # Top 10% under power_max
+    info_threshold_percentage = Decimal('0.20')     # Top 20% under power_max
+
+    highest_exceeded_peak = None
+    highest_warning_peak = None
+    highest_info_peak = None
+
+    for peak in exceeded_peaks:
+        if highest_exceeded_peak is None or peak[2] > highest_exceeded_peak[2]:
+            highest_exceeded_peak = peak
+
+    for peak in close_to_limit_peaks:
+        warning_threshold = peak[3] * (1 - warning_threshold_percentage)
+        info_threshold = peak[3] * (1 - info_threshold_percentage)
+
+        if peak[2] >= warning_threshold:
+            if highest_warning_peak is None or peak[2] > highest_warning_peak[2]:
+                highest_warning_peak = peak
+        elif peak[2] >= info_threshold:
+            if highest_info_peak is None or peak[2] > highest_info_peak[2]:
+                highest_info_peak = peak
+
+    if highest_exceeded_peak:
+        timestamp, power, power_max = highest_exceeded_peak[1], highest_exceeded_peak[2], highest_exceeded_peak[3]
+        title = "Critical Power Alert"
+        type = 'C'
+        description = f"Excessive power draw detected on {timestamp}: Consumption ID {consumption_id}, Power Limit {power_max} W, Actual Consumption {power} W."
+        suggestion = "Immediate inspection recommended. Consider reducing load or checking device functionality."
+    elif highest_warning_peak:
+        timestamp, power, power_max = highest_warning_peak[1], highest_warning_peak[2], highest_warning_peak[3]
+        title = "Power Usage Warning"
+        type = 'W'
+        description = f"Power draw close to limit detected on {timestamp}: Consumption ID {consumption_id}, Power Limit {power_max} W, Recorded Consumption {power} W."
+        suggestion = "Monitor usage patterns and consider load adjustments to prevent overload."
+    elif highest_info_peak:
+        timestamp, power, power_max = highest_info_peak[1], highest_info_peak[2], highest_info_peak[3]
+        title = "Power Usage Information"
+        type = 'I'
+        description = f"Power draw nearing limit detected on {timestamp}: Consumption ID {consumption_id}, Power Limit {power_max} W, Recorded Consumption {power} W."
+        suggestion = "Recommended to monitor for consistent performance and potential adjustments."
+    else:
+        # No significant power draw - no alert needed
+        return None
+
+    return title, description, suggestion, type
+
 # **************************************************************************************************** #
 # ALERTS ENDPOINTS #
 # **************************************************************************************************** #
@@ -424,6 +472,9 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
 
             device_type, power_min, power_max, power_draw_pattern, device_category, device_name = device_details[0]
             
+            # List to store the newly created consumption IDs
+            consumption_ids = []  
+            
             # Conversion to float
             power_min_float = float(power_min)
             power_max_float = float(power_max)
@@ -484,7 +535,7 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                 current_time = current_interval_start
                 while current_time <= interval_end:
                     # Determine if the current reading should be a spike
-                    if random.random() < 0.005:  # 0,5% chance to spike
+                    if random.random() < 0.001:  # 0,1% chance to spike
                         power = random.uniform(power_max_float, power_max_float * 1.2)
                         was_spike = True
                         was_inactive = False
@@ -495,8 +546,8 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                         was_inactive = True
                         was_spike = False
                     else:
-                        # Set a maximum percentage change (e.g., 10% of the normal reading range)
-                        max_change = (power_max_float - power_min_float) * 0.1
+                        # Set a maximum percentage change (5% of the normal reading range)
+                        max_change = (power_max_float - power_min_float) * 0.05
 
                         # Reset to a normal range value if the previous reading was a spike or inactive
                         if was_spike or was_inactive:
@@ -532,11 +583,14 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                     UPDATE p.consumption SET power_max = %s WHERE p.consumption.id = %s
                     """, (max_power_for_interval, consumption_id))
 
+                # Add the consumption_id to the list
+                consumption_ids.append(consumption_id) 
+                
                 # Reset max_power_for_interval for the next interval
                 max_power_for_interval = 0
             
             connector.commit()
-            return {"message": "Consumption added successfully!"}
+            return {"message": "Consumption added successfully!", "consumption_ids": consumption_ids}
         except HTTPException as e:
             raise e
         except Exception as e:
@@ -659,35 +713,51 @@ async def get_average_power_per_device(username: str = Depends(get_current_user)
 async def get_peak_power_analysis(consumption_id: int, username: str = Depends(get_current_user)):
     with database_connection():
         try:
-            keys = ["consumption_id", "timestamp", "power", "average", "deviation"]
+            keys = ["consumption_id", "timestamp", "power", "power_max", "exceeded"]
+            # Adjust the threshold to match the logic in generate_alert_message
+            info_threshold_percentage = 0.20  # 20% close to the limit
+
             result = connector.execute("""
                 SELECT p.power_reading.consumption_id, p.power_reading.reading_timestamp, p.power_reading.power,
-                    AVG(p.power_reading.power) OVER (PARTITION BY p.power_reading.consumption_id) AS average,
-                    ((p.power_reading.power - AVG(p.power_reading.power) OVER (PARTITION BY p.power_reading.consumption_id)) / NULLIF(AVG(p.power_reading.power) OVER (PARTITION BY p.power_reading.consumption_id), 0)) AS deviation
+                       p.device_type.power_max,
+                       CASE WHEN p.power_reading.power > p.device_type.power_max THEN TRUE
+                            WHEN p.power_reading.power > (p.device_type.power_max * (1 - %s)) THEN FALSE
+                            ELSE NULL END AS exceeded
                 FROM p.power_reading
                 INNER JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
                 INNER JOIN p.device ON p.device_consumption.device_id = p.device.id
+                INNER JOIN p.device_type ON p.device.device_type = p.device_type.type_name
                 INNER JOIN p.user ON p.device.user_username = p.user.username
-                WHERE p.power_reading.consumption_id = %s AND p.user.username = %s AND p.power_reading.power > 0
-            """, (consumption_id, username))
+                WHERE p.power_reading.consumption_id = %s AND p.user.username = %s
+            """, (info_threshold_percentage, consumption_id, username))
 
             if not result:
                 return []
-            
-            peaks = []
-            for row in result:
-                print(row)
-                consumption_id, timestamp, power, average, deviation = row
-                if deviation > 0.3:
-                    peaks.append(row)
+
+            peaks = [row for row in result if row[-1] is not None]  # Filter for records that are over or close to the limit
 
             json_data = convert_to_json(peaks, keys)
 
+            # Analyze peaks for alert generation
+            exceeded_peaks = [row for row in peaks if row[-1]]
+            close_to_limit_peaks = [row for row in peaks if not row[-1]]
+
+            alert_message = generate_alert_message(exceeded_peaks, close_to_limit_peaks, consumption_id)
+            if alert_message:
+                alert_title, alert_description, alert_suggestion, alert_type = alert_message
+                
+                connector.execute("""
+                    INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status)
+                    VALUES (%s, (SELECT device_id FROM p.device_consumption WHERE consumption_id = %s LIMIT 1), %s, %s, %s, NOW(), %s, 'N');
+                """, (username, consumption_id, alert_title, alert_description, alert_suggestion, alert_type))
+
+            connector.commit()
             return json_data
 
         except HTTPException as e:
             raise e
         except Exception as e:
+            connector.rollback()
             raise HTTPException(status_code=500, detail=str(e))
 
 
