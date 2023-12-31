@@ -547,15 +547,16 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                         elif (power_draw_pattern == 'Occasional' and random.random() < 0.35) or \
                             (power_draw_pattern == 'Rare' and random.random() < 0.75):
                             if (power_draw_pattern == 'Occasional'):
-                                inactivity_duration = random.randint(4, 8)
+                                inactivity_duration = random.randint(6, 12)
                             else:
-                                inactivity_duration = random.randint(10, 24)
+                                inactivity_duration = random.randint(12, 24)
                             power = 0
                             was_inactive = True
                             was_spike = False
                         else:
-                            # Set a maximum percentage change (5% of the normal reading range)
-                            max_change = (power_max_float - power_min_float) * 0.05
+                            # Randomly choose a percentage between 2% and 5%
+                            fluctuation_percentage = random.uniform(0.02, 0.05)  # Random percentage between 2% and 5%
+                            max_change = (power_max_float - power_min_float) * fluctuation_percentage
                             
                             # Reset to a normal range value if the previous reading was a spike or inactive
                             if was_spike or was_inactive:
