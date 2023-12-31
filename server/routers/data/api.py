@@ -458,6 +458,7 @@ async def remove_device(device_id: int, username: str = Depends(get_current_user
 def generate_power_readings(data: AddConsumptionPowerReadings, username: str = Depends(get_current_user)):
     with database_connection():
         try:
+            # Get device type details
             device_details = connector.execute("""
                 SELECT p.device.device_type, p.device_type.power_min, p.device_type.power_max, p.device_type.power_draw_pattern, p.device.device_category, p.device.device_name 
                 FROM p.device 
@@ -471,50 +472,70 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
 
             device_type, power_min, power_max, power_draw_pattern, device_category, device_name = device_details[0]
             
-            consumption_ids = []  
+            # List to store the newly created consumption IDs
+            consumption_ids = [] 
+            
+            # Conversion to float 
             power_min_float = float(power_min)
             power_max_float = float(power_max)
-
+            
+            # Define the frequency of readings
             delta = datetime.timedelta(hours=1)
+            
+            # Initialize previous reading for the first iteration, and reset inactivity duation
             previous_power = random.uniform(power_min_float, power_max_float)
             was_spike = False
             was_inactive = False
             inactivity_duration = 0
-
+            
+            # Parse the start and end dates from the request
             current_interval_start = datetime.datetime.combine(data.start_date, datetime.datetime.min.time())
             end_date = datetime.datetime.combine(data.end_date, datetime.datetime.min.time())
-
+            
+            # Breakdown the period into monthly intervals
             while current_interval_start < end_date:
                 year, month = current_interval_start.year, current_interval_start.month
                 last_day = calendar.monthrange(year, month)[1]
                 interval_end = datetime.datetime(year, month, last_day, 23, 59, 59)
 
+                # Adjust if interval_end exceeds end_date
                 if interval_end > end_date:
                     interval_end = end_date
 
                 interval_duration = (interval_end - current_interval_start).days
                 max_power_for_interval = 0
 
+                # Remove invalid characters from device_name
                 invalid_chars = "!@#$%^&*()[]{};:,/<>?\|`~=_+"
                 cleaned_device_name = device_name.translate(str.maketrans("", "", invalid_chars))
+                
+                # Convert to lowercase, replace spaces with underscores, format dates 
                 formatted_device_name = cleaned_device_name.lower().replace(" ", "_")
                 start_date_formatted = current_interval_start.strftime('%d%m%Y')
                 end_date_formatted = interval_end.strftime('%d%m%Y')
+                
+                # Define the file name with underscores and the correct file extension
                 file_name = f"{formatted_device_name}_{start_date_formatted}_{end_date_formatted}.csv"
                 
+                # Create a new consumption record for the interval
                 connector.execute("""
                     INSERT INTO p.consumption (start_date, end_date, duration_days, device_type, device_category, device_name, files_names) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                     """, (current_interval_start, interval_end, interval_duration, device_type, device_category, device_name, file_name))
                 consumption_id = connector.execute("SELECT LASTVAL();")[0][0]
 
+                # Link the consumption record with the device
                 connector.execute("""
                     INSERT INTO p.device_consumption (device_id, consumption_id)
                     VALUES (%s, %s);
                     """, (data.device_id, consumption_id))
                 
+                # GENERATE POWER READINGS
+                #-----------------------------------
+                # Generate readings for the interval
                 current_time = current_interval_start
                 while current_time <= interval_end:
+                    # Set power to 0 for periods of inactivity
                     if was_inactive and inactivity_duration > 0:
                         power = 0
                         inactivity_duration -= 1
@@ -533,12 +554,16 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                             was_inactive = True
                             was_spike = False
                         else:
+                            # Set a maximum percentage change (5% of the normal reading range)
                             max_change = (power_max_float - power_min_float) * 0.05
+                            
+                            # Reset to a normal range value if the previous reading was a spike or inactive
                             if was_spike or was_inactive:
                                 previous_power = random.uniform(power_min_float, power_max_float)
                                 was_spike = False
                                 was_inactive = False
 
+                            # Generate the next normal reading
                             next_min = max(power_min_float, previous_power - max_change)
                             next_max = min(power_max_float, previous_power + max_change)
                             power = random.uniform(next_min, next_max)
@@ -555,14 +580,19 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                     if power > max_power_for_interval:
                         max_power_for_interval = power
 
+                # Move to the first day of the next month
                 next_month = current_interval_start.replace(day=1, month=month % 12 + 1, year=year + (month // 12))
                 current_interval_start = next_month if next_month > current_interval_start else next_month.replace(year=year + 1)
-            
+
+                # After generating power readings for the interval, update max_power in p.consumption
                 connector.execute("""
                     UPDATE p.consumption SET power_max = %s WHERE p.consumption.id = %s
                     """, (max_power_for_interval, consumption_id))
 
+                # Add the consumption_id to the list
                 consumption_ids.append(consumption_id)
+                
+                # Reset max_power_for_interval for the next interval
                 max_power_for_interval = 0
             
             connector.commit()
