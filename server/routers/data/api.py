@@ -402,6 +402,30 @@ async def remove_device_alerts(device_id: int, username: str = Depends(get_curre
             connector.rollback()
             raise HTTPException(status_code=500, detail=str(e))
 
+
+# ===============================================================================================
+# Endpoint to remove all consumption records for a specific device
+@router.delete("/removeAllDeviceConsumption/{device_id}")
+async def remove_all_device_consumption(device_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            connector.execute("""
+                DELETE FROM p.device_consumption 
+                WHERE device_id = %s AND EXISTS (
+                    SELECT 1 FROM p.device WHERE id = %s AND user_username = %s
+                )""",
+                (device_id, device_id, username)
+            )
+
+            connector.commit()
+            return {"message": "All device consumption records have been cleared!"}
+
+        except HTTPException:
+            raise e
+        except Exception as e:
+            connector.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
+
 # ===============================================================================================
 # Endpoint to add a device to user's devices
 @router.post("/addDevice")
@@ -547,7 +571,7 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                         elif (power_draw_pattern == 'Occasional' and random.random() < 0.35) or \
                             (power_draw_pattern == 'Rare' and random.random() < 0.75):
                             if (power_draw_pattern == 'Occasional'):
-                                inactivity_duration = random.randint(6, 12)
+                                inactivity_duration = random.randint(6, 10)
                             else:
                                 inactivity_duration = random.randint(12, 24)
                             power = 0
