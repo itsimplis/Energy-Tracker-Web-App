@@ -126,6 +126,11 @@ export class DataApiService {
     return this.http.delete<any>(`${this.baseUrl}/data/removeDeviceAlerts/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
+  // [DELETE] Remove all consumption records for a device of the user
+  removeAllDeviceConsumption(device_id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/data/removeAllDeviceConsumption/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
 
   //========================================
   // POWER READINGS API CALLS
