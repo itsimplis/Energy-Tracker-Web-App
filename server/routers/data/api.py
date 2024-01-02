@@ -589,8 +589,8 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                             was_inactive = True
                             was_spike = False
                         else:
-                            # Randomly choose a percentage between 2% and 5%
-                            fluctuation_percentage = random.uniform(0.02, 0.05)  # Random percentage between 2% and 5%
+                            # Randomly choose a percentage between 1% and 3%
+                            fluctuation_percentage = random.uniform(0.01, 0.03)  # Random percentage between 1% and 3%
                             max_change = (power_max_float - power_min_float) * fluctuation_percentage
                             
                             # Reset to a normal range value if the previous reading was a spike or inactive

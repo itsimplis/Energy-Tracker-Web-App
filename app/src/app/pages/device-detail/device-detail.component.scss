@@ -235,10 +235,16 @@ h3 {
 
 mat-button-toggle-group {
     margin-bottom: 5px;
+
     mat-button-toggle.mat-button-toggle-checked {
         background-color: rgb(227, 241, 246);
         font-weight: 600;
     }
+}
+
+:host ::ng-deep ngx-charts-gauge .ng-star-inserted tspan {
+    font-weight: 600 !important;
+    font-size: large !important;
   }
 
 :host ::ng-deep .mat-expansion-panel {

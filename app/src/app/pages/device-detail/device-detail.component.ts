@@ -25,6 +25,7 @@ export class DeviceDetailComponent implements OnInit {
   consumptions: any[];
   consumption_readings: any[];
   device_readings: any[];
+  device_readings_kWh: any[];
   alerts: any[];
   selectedStartDate: string | null = null;
   selectedEndDate: string | null = null;
@@ -47,6 +48,7 @@ export class DeviceDetailComponent implements OnInit {
     this.consumptions = [];
     this.consumption_readings = [];
     this.device_readings = [];
+    this.device_readings_kWh = [];
     this.alerts = [];
     this.output = { result: '', message: '' };
     this.aggregation = 'none';
@@ -115,6 +117,7 @@ export class DeviceDetailComponent implements OnInit {
     this.dataApiService.getDevicePowerReadings(device_id).subscribe({
       next: (data: any[]) => {
         this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data, this.aggregation);
+        this.device_readings_kWh = this.groupPowerReadingsByPeriodkWh(data);
       },
       error: (error) => {
         console.log(error);
@@ -172,6 +175,27 @@ export class DeviceDetailComponent implements OnInit {
     return Object.values(groupedData).map(({ name, series }) => ({ name, series }));
   }
 
+  // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
+  groupPowerReadingsByPeriodkWh(data: PowerReading[]): any[] {
+    const groupedData: Record<string, any> = {};
+  
+    data.forEach((reading: PowerReading) => {
+      const periodKey = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
+      if (!groupedData[periodKey]) {
+        groupedData[periodKey] = { name: periodKey, value: 0 };
+      }
+      // Convert Watts to kWh for each reading
+      groupedData[periodKey].value += reading.power / 1000; // Convert to kWh
+    });
+  
+    // Optionally, you might want to round the final kWh values for better readability
+    Object.keys(groupedData).forEach(key => {
+      groupedData[key].value = Number(groupedData[key].value.toFixed(2)); // Rounds to 2 decimal places
+    });
+  
+    return Object.values(groupedData);
+  }
+
   applyFilterInConsumptions(event: Event) {
     const filterValueConsumption = (event.target as HTMLInputElement).value;
     this.dataSourceConsumption.filter = filterValueConsumption.trim().toLowerCase();
@@ -199,6 +223,7 @@ export class DeviceDetailComponent implements OnInit {
               this.dataApiService.getPeakPowerAnalysis(consumption_id).subscribe({
                 next: (analysisData) => {
                   this.alertService.loadAlerts();
+                  this.alertService.loadDeviceAlerts(device_id);
                 },
                 error: (analysisError) => {
                   console.error("Error during analysis for consumption_id", consumption_id, ": ", analysisError);
@@ -238,6 +263,8 @@ export class DeviceDetailComponent implements OnInit {
               this.alertService.showSnackBar(this.output.message);
               this.loadDeviceConsumption(device_id);
               this.loadDevicePowerReadings(device_id);
+              this.alertService.loadAlerts();
+              this.alertService.loadDeviceAlerts(device_id);
             },
             error: (error) => {
               this.alertService.showSnackBar("An error occurred!");
@@ -387,6 +414,65 @@ export class DeviceDetailComponent implements OnInit {
     group: ScaleType.Ordinal,
     domain: ['#009dff', '#00d089', '#00b8e5']
   };
+
+  single: any[] = [
+    {
+      "name": "Germany",
+      "value": 8940000
+    },
+    {
+      "name": "USA",
+      "value": 5000000
+    },
+    {
+      "name": "France",
+      "value": 7200000
+    },
+    {
+      "name": "UK",
+      "value": 5200000
+    },
+    {
+      "name": "Italy",
+      "value": 7700000
+    },
+    {
+      "name": "Spain",
+      "value": 4300000
+    },
+    {
+      "name": "France",
+      "value": 7200000
+    },
+    {
+      "name": "UK",
+      "value": 5200000
+    },
+    {
+      "name": "Italy",
+      "value": 7700000
+    },
+    {
+      "name": "Spain",
+      "value": 4300000
+    },
+    {
+      "name": "France",
+      "value": 7200000
+    },
+    {
+      "name": "UK",
+      "value": 5200000
+    },
+    {
+      "name": "Italy",
+      "value": 7700000
+    },
+    {
+      "name": "Spain",
+      "value": 4300000
+    }
+  ];
 
 }
 
