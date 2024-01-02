@@ -26,6 +26,7 @@
                                 <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
                                 <ng-container *ngIf="alert.type === 'I'">info</ng-container>
                                 <ng-container *ngIf="alert.type === 'U'">account_circle</ng-container>
+                                <ng-container *ngIf="alert.type === 'C'">cancel</ng-container>
                             </mat-icon>
                             <span><h5 class="alert-menu-item-title"><strong>{{alert.title}}</strong> <br> {{alert.date | date:'dd/MM/yyyy, h:mm a' }}</h5></span>
                         </button>
