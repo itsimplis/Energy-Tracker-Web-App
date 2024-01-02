@@ -19,19 +19,19 @@
         <mat-card-content>
             <mat-form-field class="form-items-centered" floatLabel="always">
                 <mat-label>Username</mat-label>
-                <input matInput [(ngModel)]="username" required>
+                <input matInput [(ngModel)]="username" (keyup.enter)="register()" required>
             </mat-form-field>
             <mat-form-field class="form-items-centered" floatLabel="always">
                 <mat-label>Email</mat-label>
-                <input matInput [(ngModel)]="email" required>
+                <input matInput [(ngModel)]="email" (keyup.enter)="register()" required>
             </mat-form-field>
             <mat-form-field class="form-items-centered" floatLabel="always">
                 <mat-label>Password</mat-label>
-                <input matInput type="password" [(ngModel)]="password" required>
+                <input matInput type="password" [(ngModel)]="password" (keyup.enter)="register()" required>
             </mat-form-field>
             <mat-form-field class="form-items-centered" floatLabel="always">
                 <mat-label>Verify Password</mat-label>
-                <input matInput type="password" [(ngModel)]="password2" required>
+                <input matInput type="password" [(ngModel)]="password2" (keyup.enter)="register()" required>
             </mat-form-field>
         </mat-card-content>
         <mat-card-actions class="form-items-centered">

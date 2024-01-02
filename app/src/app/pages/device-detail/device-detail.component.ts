@@ -222,6 +222,38 @@ export class DeviceDetailComponent implements OnInit {
     });
   }
 
+  onClearDeviceConsumption(device_id: number) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    dialogConfig.data = { title: 'Device Consumption Deletion', content: 'This will clear all consumption records associated with your device.' }
+    const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.dataApiService.removeAllDeviceConsumption(device_id).subscribe({
+            next: (data) => {
+              this.output.result = 'success';
+              this.output.message = data.message;
+              this.alertService.showSnackBar(this.output.message);
+              this.loadDeviceConsumption(device_id);
+              this.loadDevicePowerReadings(device_id);
+            },
+            error: (error) => {
+              this.alertService.showSnackBar("An error occurred!");
+              console.log(error);
+            }
+          })
+        } else {
+          this.alertService.showSnackBar("Device alerts deletion was cancelled!");
+        }
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
+      }
+    });
+  }
+
   onConsumptionRowClick(row: any) {
 
     this.selectedStartDate = row.start_date;

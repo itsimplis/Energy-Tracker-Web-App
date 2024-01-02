@@ -404,11 +404,22 @@ async def remove_device_alerts(device_id: int, username: str = Depends(get_curre
 
 
 # ===============================================================================================
-# Endpoint to remove all consumption records for a specific device
+# Endpoint to remove all consumption records for a specific device (and, optionally associated alerts)
 @router.delete("/removeAllDeviceConsumption/{device_id}")
-async def remove_all_device_consumption(device_id: int, username: str = Depends(get_current_user)):
+async def remove_all_device_consumption(device_id: int, deleteAlerts: bool = False, username: str = Depends(get_current_user)):
     with database_connection():
         try:
+            
+            # Delete related alerts if deleteAlerts is True            
+            if deleteAlerts:
+                connector.execute("""
+                    DELETE FROM p.alert 
+                    WHERE device_id = %s AND EXISTS (
+                        SELECT 1 FROM p.device WHERE id = %s AND user_username = %s
+                    )""",
+                    (device_id, device_id, username)
+                )
+            
             connector.execute("""
                 DELETE FROM p.device_consumption 
                 WHERE device_id = %s AND EXISTS (
@@ -418,7 +429,7 @@ async def remove_all_device_consumption(device_id: int, username: str = Depends(
             )
 
             connector.commit()
-            return {"message": "All device consumption records have been cleared!"}
+            return {"message": "All device consumption records" + (" and related alerts" if deleteAlerts else "") + " have been cleared!"}
 
         except HTTPException:
             raise e

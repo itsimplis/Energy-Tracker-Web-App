@@ -136,8 +136,6 @@ export class DevicesComponent implements OnInit {
   onAddNewConsumption(device_id: number) {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
-        console.log('Start Date (before API Call): ' + result.startDate);
-        console.log('End Date (before API Call): ' + result.endDate);
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
             data.consumption_ids.forEach((consumption_id: number) => {
@@ -164,6 +162,12 @@ export class DevicesComponent implements OnInit {
         console.log("Addition of new consumption log cancelled!")
       }
     });
+  }
+
+  onClearDeviceConsumption(device_id: number) {
+    this.dataApiService.removeAllDeviceConsumption(device_id).subscribe({
+      
+    })
   }
 
   applyFilter(event: Event) {

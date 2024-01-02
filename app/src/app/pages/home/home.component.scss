@@ -9,12 +9,25 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 200px;
+    padding-top: 150px;
   }
 
   .home-logo {
     width: 50%;
     margin-bottom: 50px;
+  }
+
+  .home-title {
+    font-size: 24px; /* Adjusted for smaller screens */
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  
+  .home-subtitle {
+    font-size: 18px; /* Adjusted for smaller screens */
+    font-weight: 300;
+    color: #555; /* Subtle color for subtitle */
+    margin-bottom: 0px;
   }
 
   .button-container {

@@ -19,11 +19,11 @@
     <mat-card-content>
       <mat-form-field class="form-items-centered" floatLabel="always">
         <mat-label>Username</mat-label>
-        <input matInput [(ngModel)]="username">
+        <input matInput [(ngModel)]="username" (keyup.enter)="login()">
       </mat-form-field>
       <mat-form-field class="form-items-centered" floatLabel="always">
         <mat-label>Password</mat-label>
-        <input matInput [type]="hidePwd ? 'password' : 'text'" [(ngModel)]="password">
+        <input matInput [type]="hidePwd ? 'password' : 'text'" [(ngModel)]="password" (keyup.enter)="login()">
         <button mat-icon-button matSuffix (click)="hidePwd = !hidePwd" [attr.aria-label]="'Hide password'"
           [attr.aria-pressed]="hidePwd">
           <mat-icon>{{hidePwd ? 'visibility_off' : 'visibility'}}</mat-icon>
