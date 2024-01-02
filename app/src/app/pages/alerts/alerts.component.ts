@@ -45,6 +45,13 @@ export class AlertsComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.params.subscribe(params => {
       this.highlightedAlertId = params['id'];
       this.alertService.loadAlerts();
+      console.log('Highlighted Alert: ' +this.highlightedAlertId);
+      if (this.highlightedAlertId) {
+        const highlightedAlert = this.alerts.find(alert => alert.id == this.highlightedAlertId);
+        if (highlightedAlert) {
+          this.onAlertRowClick(this.alerts.find(alert => alert.id == this.highlightedAlertId));
+        }
+      }
     });
   }
 
@@ -133,7 +140,10 @@ export class AlertsComponent implements OnInit, OnDestroy {
   onAlertRowClick(row: any) {
     this.dialogService.openViewAlertDialog(row).subscribe({
       next: (result) => {
-        if (result === true) {
+        if (result == 'redirect') {
+          this.onButtonClick(row.device_id);
+        }
+        else if (result === true) {
           this.alertService.updateAlerts(row.id);
         }
       },

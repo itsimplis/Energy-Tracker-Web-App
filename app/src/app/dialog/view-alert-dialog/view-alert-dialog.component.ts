@@ -20,6 +20,10 @@ export class ViewAlertDialogComponent {
   onMarkAsRead() {
     this.dialogRef.close(true);
   }
+
+  onViewDevice() {
+    this.dialogRef.close('redirect');
+  }
   
 
   getTypeDisplayText(type: string): string {

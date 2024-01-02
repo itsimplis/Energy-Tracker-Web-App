@@ -40,8 +40,13 @@
         </div>
     </mat-card-content>
     <br>
-    <mat-dialog-actions align="end">
-        <button mat-button (click)="onBack()">Back</button>
-        <button mat-button *ngIf="data.read_status == 'N'" (click)="onMarkAsRead()" cdkFocusInitial>Mark as Read</button>
-      </mat-dialog-actions>
+    <mat-dialog-actions style="display: flex; justify-content: space-between;">
+        <div>
+            <button mat-raised-button color="primary" (click)="onViewDevice()">View Device</button>
+        </div>
+        <div>
+            <button mat-button (click)="onBack()">Back</button>
+            <button mat-button *ngIf="data.read_status == 'N'" (click)="onMarkAsRead()" cdkFocusInitial>Mark as Read</button>
+        </div>
+    </mat-dialog-actions>
 </mat-card>
