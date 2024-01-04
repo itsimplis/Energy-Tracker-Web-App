@@ -9,7 +9,7 @@
         <h1 style="flex: 1;"><strong>{{details[0]?.device_name | uppercase}}</strong></h1>
         <div class="add-device-button">
             <button mat-raised-button color="primary" (click)="onAddNewConsumption(details[0]!.id)">
-                <mat-icon>add</mat-icon><span>Add New Consumption</span>
+                <mat-icon>power</mat-icon><span>Import Consumption</span>
             </button>
         </div>
     </div>
@@ -49,8 +49,8 @@
 
                 <div class="info-container">
                     <div class="info-container-header">
-                        <mat-icon class="category-icon">power</mat-icon>
-                        <h3><strong> Power Limits</strong></h3>
+                        <mat-icon class="category-icon">electric_bolt</mat-icon>
+                        <h3><strong>Power Limits</strong></h3>
                     </div>
                     <mat-divider></mat-divider>
                     <div class="info-container-group">
@@ -67,36 +67,54 @@
 
                 <div class="info-container">
                     <div class="info-container-header">
-                        <mat-icon class="category-icon">notifications</mat-icon>
-                        <h3><strong> Notifications</strong></h3>
+                        <mat-icon class="category-icon">edit_notifications</mat-icon>
+                        <h3><strong>Alert Thresholds</strong></h3>
                     </div>
                     <mat-divider></mat-divider>
                     <div class="info-container-group">
                         <div class="info-group">
-                            <label class="info-label">Total Alerts</label>
-                            <label class="info-value">16</label>
+                            <label class="info-label">Energy Consumption</label>
+                            <label class="info-value">{{details[0]?.energy_alert_threshold * 100}} kWh</label>
                         </div>
                         <div class="info-group">
-                            <label class="info-label">New Alerts</label>
-                            <label class="info-value">3</label>
+                            <label class="info-label">Power Draw</label>
+                            <label class="info-value">{{details[0]?.power_alert_threshold * 100}} W</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="info-container">
                     <div class="info-container-header">
-                        <mat-icon class="category-icon">power_settings_new</mat-icon>
-                        <h3><strong> Alert Thresholds</strong></h3>
+                        <mat-icon class="category-icon">power</mat-icon>
+                        <h3><strong>Consumption</strong></h3>
                     </div>
                     <mat-divider></mat-divider>
                     <div class="info-container-group">
                         <div class="info-group">
-                            <label class="info-label">Energy Consumption Threshold (kWh)</label>
-                            <label class="info-value">{{details[0]?.alert_threshold_high * 100}} %</label>
+                            <label class="info-label">Consumption Logs</label>
+                            <label class="info-value">{{consumptions.length}}</label>
                         </div>
                         <div class="info-group">
-                            <label class="info-label">Power Draw Threshold (W)</label>
-                            <label class="info-value">{{details[0]?.alert_threshold_low * 100}} %</label>
+                            <label class="info-label">Power Draw Peak</label>
+                            <label class="info-value">{{getHighestPowerPeak()}} W</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-container">
+                    <div class="info-container-header">
+                        <mat-icon class="category-icon">notifications</mat-icon>
+                        <h3><strong>Notifications</strong></h3>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <div class="info-container-group">
+                        <div class="info-group">
+                            <label class="info-label">Total Alerts</label>
+                            <label class="info-value">{{alerts.length}}</label>
+                        </div>
+                        <div class="info-group">
+                            <label class="info-label">New Alerts</label>
+                            <label class="info-value">{{getUnreadAlertsCount()}}</label>
                         </div>
                     </div>
                 </div>
@@ -177,11 +195,11 @@
                 <table mat-table [dataSource]="dataSourceConsumption" matSort>>
                     <ng-container matColumnDef="start_date">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
-                        <td mat-cell *matCellDef="let row"> {{row.start_date | date:'dd/MM/yyyy, h:mm a'}} </td>
+                        <td mat-cell *matCellDef="let row"> {{row.start_date | date:'dd/MM/yyyy'}} </td>
                     </ng-container>
                     <ng-container matColumnDef="end_date">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> End Date </th>
-                        <td mat-cell *matCellDef="let row"> {{row.end_date | date:'dd/MM/yyyy, h:mm a'}} </td>
+                        <td mat-cell *matCellDef="let row"> {{row.end_date | date:'dd/MM/yyyy'}} </td>
                     </ng-container>
                     <ng-container matColumnDef="duration_days">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Days </th>

@@ -105,13 +105,13 @@ export class DataApiService {
   }
 
   // [POST] Add a device to user's devices
-  addDevice(device_category: string, device_type: string, device_name: string, alert_threshold_high: number, alert_threshold_low: number, usage_frequency: string, custom_power_min: number, custom_power_max: number): Observable<any> {
+  addDevice(device_category: string, device_type: string, device_name: string, energy_alert_threshold: number, power_alert_threshold: number, usage_frequency: string, custom_power_min: number, custom_power_max: number): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/data/addDevice`, {
       device_category: device_category,
       device_type: device_type,
       device_name: device_name,
-      alert_threshold_high: alert_threshold_high,
-      alert_threshold_low: alert_threshold_low,
+      energy_alert_threshold: energy_alert_threshold,
+      power_alert_threshold: power_alert_threshold,
       usage_frequency: usage_frequency,
       custom_power_min: custom_power_min,
       custom_power_max: custom_power_max

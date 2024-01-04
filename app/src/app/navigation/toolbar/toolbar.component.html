@@ -5,13 +5,14 @@
         </button>
     </div>
     <div class="title-breadcrumb-container">
-        <a routerLink="/home">Home Power Consumption Tracker</a>
+        <a routerLink="/home">Home Device Consumption Tracker</a>
     </div>
     <div fxFlex fxLayout fxLayoutAlign="end">
         <ul fxLayout fxLayoutGap="65px" class="navigation-items">
             <li *ngIf="isAuthenticated()">
                 <button mat-icon-button [matMenuTriggerFor]="alertsMenu">
-                    <mat-icon [matBadge]="alerts.length" [matBadgeHidden]="alerts.length === 0" matBadgeColor="warn" aria-hidden="false">notifications_active</mat-icon>
+                    <mat-icon [matBadge]="alerts.length" [matBadgeHidden]="alerts.length === 0" matBadgeColor="warn"
+                        aria-hidden="false">notifications_active</mat-icon>
                 </button>
                 <button mat-icon-button [matMenuTriggerFor]="userMenu" class="icon-with-badge">
                     <mat-icon style="transform: scale(1.2);" aria-hidden="false">person</mat-icon>
@@ -21,29 +22,34 @@
                     <h3 mat-line class="alert-menu-header">Unread Alerts</h3>
                     <mat-divider></mat-divider>
                     <div *ngIf="alerts.length; else noAlertsTemplate" class="custom-menu">
-                        <button *ngFor="let alert of alerts" (click)="onAlertMenuItemClick(alert.id)" mat-menu-item >
+                        <button *ngFor="let alert of alerts" (click)="onAlertMenuItemClick(alert.id)" mat-menu-item>
                             <mat-icon mat-list-icon>
                                 <ng-container *ngIf="alert.type === 'W'">warning</ng-container>
                                 <ng-container *ngIf="alert.type === 'I'">info</ng-container>
                                 <ng-container *ngIf="alert.type === 'U'">account_circle</ng-container>
                                 <ng-container *ngIf="alert.type === 'C'">cancel</ng-container>
                             </mat-icon>
-                            <span><h5 class="alert-menu-item-title"><strong>{{alert.title}}</strong> <br> {{alert.date | date:'dd/MM/yyyy, h:mm a' }}</h5></span>
+                            <span>
+                                <h5 class="alert-menu-item-title"><strong>{{alert.title}}</strong> <br> {{alert.date |
+                                    date:'dd/MM/yyyy, h:mm a' }}</h5>
+                            </span>
                         </button>
                     </div>
                     <ng-template #noAlertsTemplate>
                         <button mat-menu-item disabled>
-                          <span>You don't have any unread alerts</span>
+                            <span>You don't have any unread alerts</span>
                         </button>
-                      </ng-template>
+                    </ng-template>
                 </mat-menu>
                 <mat-menu #userMenu="matMenu">
-                        <button mat-menu-item routerLink="/account">
-                            <mat-icon mat-list-icon>person_outline</mat-icon> View Account
-                        </button>
-                        <button (click)="onLogoutClick()" mat-menu-item >
-                            <mat-icon mat-list-icon>logout</mat-icon> Logout
-                        </button>
+                    <h3 mat-line class="user-menu-header">Hello, {{getUsername()}}!</h3>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item routerLink="/account">
+                        <mat-icon mat-list-icon>person_outline</mat-icon> View Account
+                    </button>
+                    <button (click)="onLogoutClick()" mat-menu-item>
+                        <mat-icon mat-list-icon>logout</mat-icon> Logout
+                    </button>
                 </mat-menu>
             </li>
         </ul>

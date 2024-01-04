@@ -292,17 +292,22 @@ async def get_devices(username: str = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# ===============================================================================================
-# Endpoint to get user's devices
 @router.get("/getDevice/{device_id}")
 async def get_device(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
-            keys = ["id", "user_username", "device_type", "device_category", "device_name", "energy_alert_threshold", "power_alert_threshold", "usage_frequency", "custom_power_min", "custom_power_max"]
+            keys = ["id", "user_username", "device_type", "device_category", "device_name", 
+                    "energy_alert_threshold", "power_alert_threshold", "usage_frequency", 
+                    "custom_power_min", "custom_power_max"]
+            
             result = connector.execute("""
-            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name, p.device.energy_alert_threshold, p.device.power_alert_threshold, p.device.usage_frequency, p.device.custom_power_min, p.device.custom_power_max 
+            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, 
+                p.device.device_name, p.device.energy_alert_threshold, p.device.power_alert_threshold, 
+                p.device.usage_frequency, p.device.custom_power_min, p.device.custom_power_max 
             FROM p.device
-            WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
+            WHERE p.device.id = %s AND p.device.user_username = %s
+            """, (device_id, username))
+            
             json_data = convert_to_json(result, keys)
 
         return json_data

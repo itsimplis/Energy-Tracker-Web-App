@@ -19,8 +19,8 @@ export class NewDeviceDialogComponent {
       deviceCategory: ['', Validators.required],
       deviceType: ['', Validators.required],
       deviceName: ['', Validators.required],
-      alertThresholdHigh:['130', Validators.required],
-      alertThresholdLow:['0', Validators.required],
+      alertEnergyThreshold:['130', Validators.required],
+      alertPowerThreshold:['0', Validators.required],
       usageFrequency:['N', Validators.required],
       customPowerMin:['', Validators.required],
       customPowerMax:['', Validators.required]
@@ -69,8 +69,8 @@ export interface DeviceData {
   deviceCategory: string;
   deviceType: string;
   deviceName: string;
-  alertThresholdHigh: number;
-  alertThresholdLow: number;
+  alertEnergyThreshold: number;
+  alertPowerThreshold: number;
   usageFrequency: string;
   custom_power_min: number;
   custom_power_max: number;

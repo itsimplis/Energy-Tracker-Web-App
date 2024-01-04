@@ -54,4 +54,8 @@ export class ToolbarComponent {
   isAuthenticated(): boolean {
     return this.authenticationService.isAuthenticated();
   }
+
+  getUsername() {
+    return this.authenticationService.getUserName();
+  }
 }

@@ -44,6 +44,15 @@ mat-toolbar{
     margin: 0px;
 }
 
+.user-menu-header {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: rgb(52, 52, 108);
+    color: white;
+    margin: 0px;
+}
+
 .custom-menu {
     max-height: 300px !important;
     overflow-y: auto;

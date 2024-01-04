@@ -224,6 +224,7 @@ export class DeviceDetailComponent implements OnInit {
                 next: (analysisData) => {
                   this.alertService.loadAlerts();
                   this.alertService.loadDeviceAlerts(device_id);
+                  this.loadDeviceDetail(device_id);
                 },
                 error: (analysisError) => {
                   console.error("Error during analysis for consumption_id", consumption_id, ": ", analysisError);
@@ -265,6 +266,7 @@ export class DeviceDetailComponent implements OnInit {
               this.loadDevicePowerReadings(device_id);
               this.alertService.loadAlerts();
               this.alertService.loadDeviceAlerts(device_id);
+              this.loadDeviceDetail(device_id);
             },
             error: (error) => {
               this.alertService.showSnackBar("An error occurred!");
@@ -314,6 +316,7 @@ export class DeviceDetailComponent implements OnInit {
       next: (result) => {
         if (result === true) {
           this.alertService.removeDeviceAlerts(device_id);
+          this.loadDeviceDetail(device_id);
         } else {
           this.alertService.showSnackBar("Device alerts deletion was cancelled!");
         }
@@ -349,6 +352,18 @@ export class DeviceDetailComponent implements OnInit {
 
   getPanelOpenState(): boolean {
     return this.panelOpenState;
+  }
+
+  getUnreadAlertsCount(): number {
+    return this.alerts.filter(alert => alert.read_status === 'N').length;
+  }
+
+  getHighestPowerPeak(): number {
+    if (this.consumptions && this.consumptions.length > 0) {
+      return Math.max(...this.consumptions.map(consumption => consumption.power_max));
+    } else {
+      return 0;
+    }
   }
 
   getDeviceDisplayIcon(type: string): string {
@@ -414,66 +429,6 @@ export class DeviceDetailComponent implements OnInit {
     group: ScaleType.Ordinal,
     domain: ['#009dff', '#00d089', '#00b8e5']
   };
-
-  single: any[] = [
-    {
-      "name": "Germany",
-      "value": 8940000
-    },
-    {
-      "name": "USA",
-      "value": 5000000
-    },
-    {
-      "name": "France",
-      "value": 7200000
-    },
-    {
-      "name": "UK",
-      "value": 5200000
-    },
-    {
-      "name": "Italy",
-      "value": 7700000
-    },
-    {
-      "name": "Spain",
-      "value": 4300000
-    },
-    {
-      "name": "France",
-      "value": 7200000
-    },
-    {
-      "name": "UK",
-      "value": 5200000
-    },
-    {
-      "name": "Italy",
-      "value": 7700000
-    },
-    {
-      "name": "Spain",
-      "value": 4300000
-    },
-    {
-      "name": "France",
-      "value": 7200000
-    },
-    {
-      "name": "UK",
-      "value": 5200000
-    },
-    {
-      "name": "Italy",
-      "value": 7700000
-    },
-    {
-      "name": "Spain",
-      "value": 4300000
-    }
-  ];
-
 }
 
 interface PowerReading {

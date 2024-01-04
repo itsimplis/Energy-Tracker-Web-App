@@ -115,7 +115,7 @@ h3 {
 .info-container {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 280px;
     gap: 10px;
     border: lightblue 1px solid;
     border-radius: 8px;
@@ -144,6 +144,7 @@ h3 {
 
 .info-value {
     font-weight: 500;
+    color: #2833a8;
     border: 1px solid lightblue;
     background-color: lightblue;
     border-radius: 8px;
