@@ -8,6 +8,12 @@
     }
 }
 
+.device-form-one-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
 .dialog-subtitle {
     color: rgb(0, 0, 0, 0.54);
     font-size: 14px;
@@ -24,5 +30,5 @@ button {
 
 .numeric-percentage {
     padding-right: 16px;
-    margin-top: 30px;
+    //margin-top: 50px;
 }

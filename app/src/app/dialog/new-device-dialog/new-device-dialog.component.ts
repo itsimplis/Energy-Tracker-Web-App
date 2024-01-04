@@ -21,7 +21,9 @@ export class NewDeviceDialogComponent {
       deviceName: ['', Validators.required],
       alertThresholdHigh:['130', Validators.required],
       alertThresholdLow:['0', Validators.required],
-      usageFrequency:['N', Validators.required]
+      usageFrequency:['N', Validators.required],
+      customPowerMin:['', Validators.required],
+      customPowerMax:['', Validators.required]
     });
 
     this.dialogRef.backdropClick().subscribe(() => {
@@ -34,11 +36,22 @@ export class NewDeviceDialogComponent {
     this.dataApiService.getDeviceTypes(event.value).subscribe({
       next: (data) => {
         this.deviceTypes = data;
+        this.deviceForm.get('customPowerMin')!.setValue('')
+        this.deviceForm.get('customPowerMax')!.setValue('');
       },
       error: (error) => {
 
       }
     })
+  }
+
+  onDeviceTypeSelection(event: any) {
+    const selectedDevice = this.deviceTypes.find(deviceType => deviceType.type_name == event.value);
+    
+    if (selectedDevice) {
+      this.deviceForm.get('customPowerMin')!.setValue(selectedDevice.power_min);
+      this.deviceForm.get('customPowerMax')!.setValue(selectedDevice.power_max);
+    }
   }
 
   onSave() {
@@ -59,4 +72,6 @@ export interface DeviceData {
   alertThresholdHigh: number;
   alertThresholdLow: number;
   usageFrequency: string;
+  custom_power_min: number;
+  custom_power_max: number;
 }

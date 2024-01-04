@@ -164,7 +164,7 @@ def create_device_type_table(conn):
             ('Dehumidifier', 'Other', 200, 800, 'Continuous'),
             ('Microwave Oven', 'Kitchen', 600, 1200, 'Rare'),
             ('Laptop', 'Multimedia', 20, 75, 'Continuous'),
-            ('TV', 'Multimedia', 30, 500, 'Occasional'), -- Range covering different types
+            ('Tv', 'Multimedia', 30, 500, 'Occasional'), -- Range covering different types
             ('Screen', 'Multimedia', 30, 400, 'Continuous'), -- Estimated similar to TV
             ('Solar Panel', 'Other', 0, 0, 'Continuous'), -- Solar panels generate power
             ('Fan', 'Cooling', 10, 175, 'Occasional'), -- Including various types of fans
@@ -182,7 +182,6 @@ def create_device_type_table(conn):
             ('Freezer', 'Kitchen', 150, 700, 'Continuous'),
             ('Electric Grill', 'Kitchen', 1200, 2000, 'Rare'),
             ('Home Theater System', 'Multimedia', 200, 500, 'Occasional'),
-            ('Espresso Coffee Machine', 'Kitchen', 1300, 1500, 'Occasional'),
             ('Induction Hob', 'Kitchen', 1400, 1800, 'Occasional'),
             ('Electric Lawn Mower', 'Other', 500, 1500, 'Rare'),
             ('Electric Shaver', 'Other', 15, 20, 'Rare'),
@@ -220,15 +219,23 @@ def populate_device_table(data_file, conn):
 
             print("-- Populating device table...")
             for device in unique_devices:
-                type_name_query = "SELECT p.device_type.type_name FROM p.device_type WHERE p.device_type.type_name = %s"
+                type_name_query = "SELECT p.device_type.type_name, p.device_type.power_min, p.device_type.power_max FROM p.device_type WHERE p.device_type.type_name = %s"
                 type_name_results = connector.execute(type_name_query, (device[0],))
                 
+                 # Initialize default values
+                type_name = None
+                power_min = None
+                power_max = None
+
                 if type_name_results:
-                    type_name = type_name_results[0]
-                conn.execute("""
-                        INSERT INTO p.device (user_username, device_type, device_category, device_name)
-                        VALUES (%s, %s, %s, %s);
-                    """, ('athtech', type_name, device[1], device[2]))
+                    type_name, power_min, power_max = type_name_results[0]
+
+                insert_query = """
+                    INSERT INTO p.device (user_username, device_type, device_category, device_name, custom_power_min, custom_power_max)
+                    VALUES (%s, %s, %s, %s, %s, %s);
+                    """
+                insert_values = ('athtech', type_name, device[1], device[2], power_min, power_max)
+                conn.execute(insert_query, insert_values)
         
             conn.commit()
 
