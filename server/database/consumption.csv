@@ -11,8 +11,6 @@ id,first_ts,last_ts,available_duration,plug_name,appliance_category,comment,file
 54,2020-12-13 12:51:57+00:00,2021-01-12 12:51:57+00:00,30.0,Coffee Maker,Kitchen,Nespresso,coffee_54.csv,1481.0
 282,2021-04-03 21:05:08+00:00,2021-05-03 21:05:07+00:00,30.0,Phone Charger,Multimedia,FastCharge Pro,phone_charger_282.csv,86.0
 207,2020-12-23 16:42:05+00:00,2021-01-22 16:42:05+00:00,30.0,Fridge,Kitchen,FrostGuardian Elite,fridge_207.csv,1436.0
-309,2020-12-23 16:42:05+00:00,2021-01-22 16:42:05+00:00,30.0,Radiator,Other,HeatWave Pro X,radiator_309.csv,1348.0
-310,2020-12-13 12:51:58+00:00,2021-01-12 12:51:57+00:00,30.0,Dehumidifier,Other,DryAir Max,dehumidifier_310.csv,1989.0
 317,2021-01-20 00:00:00+00:00,2021-02-18 23:59:59+00:00,30.0,Fridge,Kitchen,FrostFree 2000,fridge_317.csv,1001.0
 314,2021-02-03 15:19:26+00:00,2021-03-05 15:19:26+00:00,30.0,Microwave Oven,Kitchen,MicroQuick 800,micro_wave_oven_314.csv,1712.0
 289,2021-01-30 06:02:24+00:00,2021-03-01 06:02:24+00:00,30.0,Laptop,Multimedia,UltraSlim X2,laptop_289.csv,61.0
@@ -28,7 +26,6 @@ id,first_ts,last_ts,available_duration,plug_name,appliance_category,comment,file
 64,2020-06-16 13:20:08+00:00,2020-07-15 23:59:59+00:00,29.44,Laptop,Multimedia,Professional Laptop (Plugged In),laptop_64.csv,55.0
 37,2020-12-01 18:10:11+00:00,2020-12-31 18:10:11+00:00,30.0,Coffee Maker,Kitchen,70s Espresso Machine,coffee_37.csv,1373.0
 52,2020-06-15 15:30:59+00:00,2020-07-14 23:59:59+00:00,29.35,Washing Machine,Washing,Drum Washing Machine,washing_machine_52.csv,2171.0
-44,2020-12-01 06:54:44+00:00,2020-12-31 06:54:44+00:00,30.0,Computer,Multimedia,PC Tower,computer_44.csv,280.0
 233,2020-12-06 18:10:48+00:00,2021-01-05 18:10:48+00:00,30.0,Boiler,Kitchen,HeatMaster 500,boiler_233.csv,2607.5
 147,2021-02-15 14:26:18+00:00,2021-03-17 14:26:18+00:00,30.0,Microwave Oven,Kitchen,QuickCook Gen2,micro_wave_oven_147.csv,1802.0
 286,2020-11-25 00:00:00+00:00,2020-12-24 23:59:59+00:00,30.0,Printer,Multimedia,Canon Printer,printer_286.csv,32.0
