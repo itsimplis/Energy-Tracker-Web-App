@@ -759,14 +759,13 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
     with database_connection():
         try:
             keys = ["consumption_id", "timestamp", "power", "power_max", "exceeded"]
-            # Adjust the threshold to match the logic in generate_alert_message
             info_threshold_percentage = 0.20  # 20% close to the limit
 
             result = connector.execute("""
                 SELECT p.power_reading.consumption_id, p.power_reading.reading_timestamp, p.power_reading.power,
-                       p.device_type.power_max,
-                       CASE WHEN p.power_reading.power > p.device_type.power_max THEN TRUE
-                            WHEN p.power_reading.power > (p.device_type.power_max * (1 - %s)) THEN FALSE
+                       p.device.custom_power_max,
+                       CASE WHEN p.power_reading.power > p.device.custom_power_max THEN TRUE
+                            WHEN p.power_reading.power > (p.device.custom_power_max * (1 - %s)) THEN FALSE
                             ELSE NULL END AS exceeded
                 FROM p.power_reading
                 INNER JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
