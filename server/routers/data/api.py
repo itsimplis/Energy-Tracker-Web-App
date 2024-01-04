@@ -62,6 +62,8 @@ class DeviceData(BaseModel):
     alert_threshold_high: float
     alert_threshold_low: float
     usage_frequency: str
+    custom_power_min: float
+    custom_power_max: float
 
 class AddConsumptionPowerReadings(BaseModel):
     device_id: int
@@ -444,8 +446,8 @@ async def add_device(data: DeviceData, username: str = Depends(get_current_user)
     with database_connection():
         try:
             connector.execute(
-                "INSERT INTO p.device (user_username, device_type, device_category, device_name, alert_threshold_high, alert_threshold_low, usage_frequency) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                (username, data.device_type, data.device_category, data.device_name, data.alert_threshold_high, data.alert_threshold_low, data.usage_frequency)
+                "INSERT INTO p.device (user_username, device_type, device_category, device_name, alert_threshold_high, alert_threshold_low, usage_frequency, custom_power_min, custom_power_max) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (username, data.device_type, data.device_category, data.device_name, data.alert_threshold_high, data.alert_threshold_low, data.usage_frequency, data.custom_power_min, data.custom_power_max)
             )
             connector.commit()
             return {"message": f"Device '{data.device_name}' added successfully!"}
