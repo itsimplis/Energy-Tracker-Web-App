@@ -497,7 +497,7 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
         try:
             # Get device type details
             device_details = connector.execute("""
-                SELECT p.device.device_type, p.device_type.power_min, p.device_type.power_max, p.device_type.power_draw_pattern, p.device.device_category, p.device.device_name 
+                SELECT p.device.device_type, p.device.custom_power_min, p.device.custom_power_max, p.device_type.power_draw_pattern, p.device.device_category, p.device.device_name 
                 FROM p.device 
                 JOIN p.device_type ON p.device.device_type = p.device_type.type_name 
                 WHERE p.device.id = %s AND p.device.user_username = %s
@@ -507,14 +507,14 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                 print(f"No device found with ID {data.device_id}")
                 return
 
-            device_type, power_min, power_max, power_draw_pattern, device_category, device_name = device_details[0]
+            device_type, custom_power_min, custom_power_max, power_draw_pattern, device_category, device_name = device_details[0]
             
             # List to store the newly created consumption IDs
             consumption_ids = [] 
             
             # Conversion to float 
-            power_min_float = float(power_min)
-            power_max_float = float(power_max)
+            power_min_float = float(custom_power_min)
+            power_max_float = float(custom_power_max)
             
             # Define the frequency of readings
             delta = datetime.timedelta(hours=1)
