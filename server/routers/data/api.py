@@ -59,8 +59,8 @@ class DeviceData(BaseModel):
     device_category: str
     device_type: str
     device_name: str
-    alert_threshold_high: float
-    alert_threshold_low: float
+    energy_alert_threshold: float
+    power_alert_threshold: float
     usage_frequency: str
     custom_power_min: float
     custom_power_max: float
@@ -298,9 +298,9 @@ async def get_devices(username: str = Depends(get_current_user)):
 async def get_device(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
-            keys = ["id", "user_username", "device_type", "device_category", "device_name", "alert_threshold_high", "alert_threshold_low", "usage_frequency"]
+            keys = ["id", "user_username", "device_type", "device_category", "device_name", "energy_alert_threshold", "power_alert_threshold", "usage_frequency", "custom_power_min", "custom_power_max"]
             result = connector.execute("""
-            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name, p.device.alert_threshold_high, p.device.alert_threshold_low, p.device.usage_frequency 
+            SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name, p.device.energy_alert_threshold, p.device.power_alert_threshold, p.device.usage_frequency, p.device.custom_power_min, p.device.custom_power_max 
             FROM p.device
             WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
             json_data = convert_to_json(result, keys)
@@ -446,8 +446,8 @@ async def add_device(data: DeviceData, username: str = Depends(get_current_user)
     with database_connection():
         try:
             connector.execute(
-                "INSERT INTO p.device (user_username, device_type, device_category, device_name, alert_threshold_high, alert_threshold_low, usage_frequency, custom_power_min, custom_power_max) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (username, data.device_type, data.device_category, data.device_name, data.alert_threshold_high, data.alert_threshold_low, data.usage_frequency, data.custom_power_min, data.custom_power_max)
+                "INSERT INTO p.device (user_username, device_type, device_category, device_name, energy_alert_threshold, power_alert_threshold, usage_frequency, custom_power_min, custom_power_max) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (username, data.device_type, data.device_category, data.device_name, data.energy_alert_threshold, data.power_alert_threshold, data.usage_frequency, data.custom_power_min, data.custom_power_max)
             )
             connector.commit()
             return {"message": f"Device '{data.device_name}' added successfully!"}

@@ -56,11 +56,11 @@
                     <div class="info-container-group">
                         <div class="info-group">
                             <label class="info-label">Minimum Power</label>
-                            <label class="info-value">1000 W</label>
+                            <label class="info-value">{{details[0]?.custom_power_min}} W</label>
                         </div>
                         <div class="info-group">
                             <label class="info-label">Maximum Power</label>
-                            <label class="info-value">1650 W</label>
+                            <label class="info-value">{{details[0]?.custom_power_max}} W</label>
                         </div>
                     </div>
                 </div>
@@ -86,16 +86,16 @@
                 <div class="info-container">
                     <div class="info-container-header">
                         <mat-icon class="category-icon">power_settings_new</mat-icon>
-                        <h3><strong> Power Thresholds</strong></h3>
+                        <h3><strong> Alert Thresholds</strong></h3>
                     </div>
                     <mat-divider></mat-divider>
                     <div class="info-container-group">
                         <div class="info-group">
-                            <label class="info-label">High Threshold</label>
+                            <label class="info-label">Energy Consumption Threshold (kWh)</label>
                             <label class="info-value">{{details[0]?.alert_threshold_high * 100}} %</label>
                         </div>
                         <div class="info-group">
-                            <label class="info-label">Low Threshold</label>
+                            <label class="info-label">Power Draw Threshold (W)</label>
                             <label class="info-value">{{details[0]?.alert_threshold_low * 100}} %</label>
                         </div>
                     </div>
