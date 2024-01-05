@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DataApiService } from 'src/app/service/data-api.service';
 
 @Component({
@@ -12,27 +12,55 @@ import { DataApiService } from 'src/app/service/data-api.service';
 export class NewDeviceDialogComponent {
   deviceForm: FormGroup;
   deviceTypes: any[];
+  isEditMode = false;
+  existingDeviceData: any | null = null;
 
-  constructor(private dialogRef: MatDialogRef<NewDeviceDialogComponent>, private fb: FormBuilder, private dataApiService: DataApiService) {
+  constructor(private dialogRef: MatDialogRef<NewDeviceDialogComponent>, private fb: FormBuilder, private dataApiService: DataApiService, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.deviceTypes = [];
     this.deviceForm = this.fb.group({
       deviceCategory: ['', Validators.required],
       deviceType: ['', Validators.required],
       deviceName: ['', Validators.required],
-      alertEnergyThreshold:['0', Validators.required],
-      alertPowerThreshold:['0', Validators.required],
-      usageFrequency:['N', Validators.required],
-      customPowerMin:['', Validators.required],
-      customPowerMax:['', Validators.required]
+      alertEnergyThreshold: ['0', Validators.required],
+      alertPowerThreshold: ['0', Validators.required],
+      usageFrequency: ['N', Validators.required],
+      customPowerMin: ['', Validators.required],
+      customPowerMax: ['', Validators.required]
     });
+
+    // Check if editing an existing device
+    if (this.data) {
+      this.isEditMode = true;
+      this.existingDeviceData = this.data[0];
+      this.populateForm(this.existingDeviceData);
+    }
 
     this.dialogRef.backdropClick().subscribe(() => {
       this.dialogRef.close();
     });
   }
 
+  // Populate form when editing
+  private populateForm(deviceData: any): void {
+    this.deviceForm.get('deviceCategory')!.setValue(deviceData.device_category);
+
+    this.dataApiService.getDeviceTypes(deviceData.device_category).subscribe({
+      next: (data) => {
+        this.deviceTypes = data;
+        this.deviceForm.get('deviceType')!.setValue(deviceData.device_type);
+      },
+      error: (error) => {}
+    });
+
+    this.deviceForm.get('deviceName')!.setValue(deviceData.device_name);
+    this.deviceForm.get('alertEnergyThreshold')!.setValue(deviceData.energy_alert_threshold);
+    this.deviceForm.get('alertPowerThreshold')!.setValue(deviceData.power_alert_threshold);
+    this.deviceForm.get('usageFrequency')!.setValue(deviceData.usage_frequency);
+    this.deviceForm.get('customPowerMin')!.setValue(deviceData.custom_power_min);
+    this.deviceForm.get('customPowerMax')!.setValue(deviceData.custom_power_max);
+  }
+
   onDeviceCategorySelection(event: any) {
-    console.log('Selected: ' + (event.value));
     this.dataApiService.getDeviceTypes(event.value).subscribe({
       next: (data) => {
         this.deviceTypes = data;
@@ -42,12 +70,12 @@ export class NewDeviceDialogComponent {
       error: (error) => {
 
       }
-    })
+    });
   }
 
   onDeviceTypeSelection(event: any) {
     const selectedDevice = this.deviceTypes.find(deviceType => deviceType.type_name == event.value);
-    
+
     if (selectedDevice) {
       this.deviceForm.get('customPowerMin')!.setValue(selectedDevice.power_min);
       this.deviceForm.get('customPowerMax')!.setValue(selectedDevice.power_max);
@@ -55,6 +83,7 @@ export class NewDeviceDialogComponent {
   }
 
   onSave() {
+
     if (this.deviceForm.valid) {
       this.dialogRef.close(this.deviceForm.value);
     }

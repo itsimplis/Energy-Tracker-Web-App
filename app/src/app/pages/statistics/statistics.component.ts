@@ -14,14 +14,15 @@ export class StatisticsComponent {
   totalPower: any[];
   totalPowerCategoryGrouped: any[];
   totalPowerTypeGrouped: any[];
-  averagePower: any[];
   averagePowerCategoryGrouped: any[];
   averagePowerTypeGrouped: any[];
   averagePowerConsumptionAgeGroup: any[];
   averagePowerConsumptionGender: any[];
   highestReadings: any[];
   lowestReadings: any[];
+  globalTopTenAveragePower: any[];
   userTotalPowerPerCategory: any[];
+  userTotalUsagePerCategory: any[];
   chartTotalType: string = 'deviceTotal';
   chartAverageType: string = 'deviceAverage';
 
@@ -30,21 +31,22 @@ export class StatisticsComponent {
     this.totalPower = [];
     this.totalPowerCategoryGrouped = [];
     this.totalPowerTypeGrouped = [];
-    this.averagePower = [];
     this.averagePowerCategoryGrouped = [];
     this.averagePowerTypeGrouped = [];
     this.averagePowerConsumptionAgeGroup = [];
     this.averagePowerConsumptionGender = [];
     this.lowestReadings = [];
     this.highestReadings = [];
+    this.globalTopTenAveragePower = [];
     this.userTotalPowerPerCategory = [];
+    this.userTotalUsagePerCategory = [];
   }
 
   ngOnInit() {
     this.loadDashboardCounters();
-    this.loadAveragePowerPerDevice();
-    this.loadTotalPowerPerDevice();
+    this.loadGlobalTopTenAveragePowerDrawDevices();
     this.loadTotalPowerConsumptionComparisonByCategory();
+    this.loadTotalUsageComparisonByCategory();
     this.loadAveragePowerConsumptionByAgeGroup();
     this.loadAveragePowerConsumptionByGender();
   }
@@ -83,6 +85,29 @@ export class StatisticsComponent {
     });
   }
 
+  loadTotalUsageComparisonByCategory() {
+    this.dataApiService.getUserUsageComparisonByCategory().subscribe({
+      next: (data) => {
+        this.userTotalUsagePerCategory = data.map(item => ({
+          "name": item.device_category,
+          "series": [
+            {
+              "name": "You",
+              "value": item.user_total_usage_hours
+            },
+            {
+              "name": "Other Users",
+              "value": item.average_other_users_usage_hours
+            }
+          ]
+        }));
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
   loadAveragePowerConsumptionByAgeGroup() {
     this.dataApiService.getAveragePowerConsumptionByAgeGroup().subscribe({
       next: (data) => {
@@ -111,30 +136,18 @@ export class StatisticsComponent {
     });
   }
 
-  loadAveragePowerPerDevice() {
-    this.dataApiService.getAveragePowerPerDevice().subscribe({
-      next: (data: DeviceData[]) => {
-        const categoryGroupedData = this.groupDataBy('category','average', data);
-        const typeGroupedData = this.groupDataBy('type','average', data);
-
-        this.averagePowerCategoryGrouped = Object.keys(categoryGroupedData).map(category => ({
-          name: category,
-          series: categoryGroupedData[category]
+  loadGlobalTopTenAveragePowerDrawDevices() {
+    this.dataApiService.getTopTenDevicesByPowerDraw().subscribe({
+      next: (data) => {
+        const formattedData = data.map(item => ({
+          name: item.device_name,
+          value: item.average_power_draw
         }));
-        this.averagePowerTypeGrouped = Object.keys(typeGroupedData).map(type => ({
-          name: type,
-          series: typeGroupedData[type]
-        }));
-        this.averagePower = data.map(device => ({
-          name: device.device_name,
-          value: device.average_power,
-          extra: {
-            code: device.device_id
-          }
-        }));
+  
+        this.globalTopTenAveragePower = formattedData;
       },
       error: (error) => {
-        console.log(error);
+        console.log('Error loading top ten devices by power draw:', error);
       }
     });
   }
@@ -286,13 +299,9 @@ export class StatisticsComponent {
     this.router.navigate(['/device-detail', data.extra.code]);
   }
 
-  public formatDistribution(dataItem: any): string {
-    let value = dataItem.name;
-    // Formats the number with thousand separators
-    let formattedValue = value.toLocaleString('de-DE');
-    return formattedValue + ' W';
+  public valueFormat(dataItem: any): string {
+    return dataItem.value.toFixed(2) + " W";
   }
-
 }
 
 interface DeviceData {

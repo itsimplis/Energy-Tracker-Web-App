@@ -101,7 +101,33 @@ export class DevicesComponent implements OnInit {
   }
 
   onDeviceEdit(device_id: number) {
-    // To do...
+    this.dataApiService.getDevice(device_id).subscribe({
+      next: (data) => {
+        this.dialogService.openEditDeviceDialog(data).subscribe(result => {
+          if (result) {
+            this.dataApiService.updateDevice(device_id, result.deviceCategory, result.deviceType, result.deviceName, result.alertEnergyThreshold, result.alertPowerThreshold, result.usageFrequency, result.customPowerMin, result.customPowerMax).subscribe({
+              next: (data) => {
+                this.output.result = 'success';
+                this.output.message = data.message;
+                this.alertService.showSnackBar(this.output.message);
+                this.loadDevices();
+                this.alertService.loadAlerts();
+              },
+              error: (error) => {
+                this.alertService.showSnackBar("An error occured!");
+                console.log(error);
+              }
+            })
+          } else {
+            this.alertService.showSnackBar("Editing of current device cancelled!");
+          }
+        });
+      },
+      error: (error) => {
+        console.log('Error fetching device:', error);
+        this.alertService.showSnackBar("Failed to fetch device details.");
+      }
+    })
   }
 
   onDeviceRemove(device_id: number) {

@@ -118,6 +118,20 @@ export class DataApiService {
     }, { headers: this.authenticationService.getAuthHeaders() });
   }
 
+  // [PATCH] Update a device of the user
+  updateDevice(device_id: number, device_category: string, device_type: string, device_name: string, energy_alert_threshold: number, power_alert_threshold: number, usage_frequency: string, custom_power_min: number, custom_power_max: number): Observable<any> {
+    return this.http.patch<any>(`${this.baseUrl}/data/editDevice/${device_id}`, {
+      device_category: device_category,
+      device_type: device_type,
+      device_name: device_name,
+      energy_alert_threshold: energy_alert_threshold,
+      power_alert_threshold: power_alert_threshold,
+      usage_frequency: usage_frequency,
+      custom_power_min: custom_power_min,
+      custom_power_max: custom_power_max
+    }, { headers: this.authenticationService.getAuthHeaders() });
+  }
+
   // [DELETE] Remove a user's device by device_id
   removeDevice(device_id: number): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/data/removeDevice/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
@@ -194,8 +208,18 @@ export class DataApiService {
   //========================================
 
   // [GET] Get user power consumption, compared to other users, per device category
+  getTopTenDevicesByPowerDraw(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getTopTenDevicesByPowerDraw`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  // [GET] Get user power consumption, compared to other users, per device category
   getUserConsumptionComparisonByCategory(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/data/getUserConsumptionComparisonByCategory`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  // [GET] Get user usage (hours), compared to other users, per device category
+  getUserUsageComparisonByCategory(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getUserUsageComparisonByCategory`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
   // [GET] Get average power consumption by age group

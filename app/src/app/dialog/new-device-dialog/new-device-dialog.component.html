@@ -15,7 +15,7 @@
                 <h3 class="new-device-subtitle"><strong>Device Detail</strong></h3>
             </div>
             <mat-divider></mat-divider>
-            <mat-form-field class="form-field" appearance="fill" floatLabel="always">
+            <mat-form-field *ngIf="!isEditMode" class="form-field" appearance="fill" floatLabel="always">
                 <mat-label>Device Category</mat-label>
                 <mat-select formControlName="deviceCategory" required
                     (selectionChange)="onDeviceCategorySelection($event)">
@@ -29,7 +29,7 @@
                         'Multimedia')</strong></mat-hint>
             </mat-form-field>
 
-            <mat-form-field class="form-field" appearance="fill" floatLabel="always">
+            <mat-form-field *ngIf="!isEditMode" class="form-field" appearance="fill" floatLabel="always">
                 <mat-label>Device Type</mat-label>
                 <mat-select formControlName="deviceType" required (selectionChange)="onDeviceTypeSelection($event)">
                     <mat-option *ngFor="let deviceType of deviceTypes" [value]="deviceType.type_name">

@@ -537,6 +537,24 @@ async def add_device(data: DeviceData, username: str = Depends(get_current_user)
         except Exception as e:
             connector.rollback()
             raise HTTPException(status_code=500, detail=str(e))
+        
+# ===============================================================================================
+# Endpoint to edit a user's device
+@router.patch("/editDevice/{device_id}")
+async def edit_device(device_id: int, data: DeviceData, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            connector.execute(
+                "UPDATE p.device SET device_type = %s, device_category = %s, device_name = %s, energy_alert_threshold = %s, power_alert_threshold = %s, usage_frequency = %s, custom_power_min = %s, custom_power_max = %s WHERE id = %s AND user_username = %s",
+                (data.device_type, data.device_category, data.device_name, data.energy_alert_threshold, data.power_alert_threshold, data.usage_frequency, data.custom_power_min, data.custom_power_max, device_id, username)
+            )
+            connector.commit()
+            return {"message": f"Device '{data.device_name}' updated successfully!"}
+        except HTTPException:
+            raise
+        except Exception as e:
+            connector.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
 # Endpoint remove a user's device
@@ -921,6 +939,34 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
 # **************************************************************************************************** #
 
 # ===============================================================================================
+# Endpoint to get the global top 10 devices, with the highest average power draw 
+@router.get("/getTopTenDevicesByPowerDraw")
+async def get_top_ten_devices_by_power_draw():
+    with database_connection():
+        try:
+            keys = ["device_name", "average_power_draw"]
+            query = """
+                SELECT p.device.device_name, AVG(p.power_reading.power) AS average_power_draw
+                FROM p.power_reading
+                JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
+                JOIN p.device ON p.device_consumption.device_id = p.device.id
+                GROUP BY p.device.device_name
+                ORDER BY average_power_draw DESC
+                LIMIT 10
+                """
+
+            result = connector.execute(query)
+            if result is not None:
+                json_data = convert_to_json(result, keys)
+                return json_data
+            else:
+                return {"message": "No data found"}
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
 # Endpoint to get the total power consumption per user
 @router.get("/getTotalPowerConsumptionByUser")
 async def get_total_power_consumption_by_user():
@@ -946,6 +992,52 @@ async def get_total_power_consumption_by_user():
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+# ===============================================================================================
+# Endpoint to get the total hours of usage per device category for a specific user 
+# and the average for other users
+@router.get("/getUserUsageComparisonByCategory")
+async def get_user_usage_comparison_by_category(username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            keys = ["device_category", "user_total_usage_hours", "average_other_users_usage_hours"]
+            query = """
+                WITH user_usage AS (
+                    SELECT 
+                        p.device.device_category, 
+                        SUM(p.consumption.duration_days * 24) AS total_usage_hours
+                    FROM p.consumption
+                    JOIN p.device_consumption ON p.consumption.id = p.device_consumption.consumption_id
+                    JOIN p.device ON p.device_consumption.device_id = p.device.id
+                    WHERE p.device.user_username = %s
+                    GROUP BY p.device.device_category
+                ),
+                other_users_usage AS (
+                    SELECT 
+                        p.device.device_category, 
+                        AVG(SUM(p.consumption.duration_days * 24)) OVER (PARTITION BY p.device.device_category) AS avg_usage_hours
+                    FROM p.consumption
+                    JOIN p.device_consumption ON p.consumption.id = p.device_consumption.consumption_id
+                    JOIN p.device ON p.device_consumption.device_id = p.device.id
+                    WHERE p.device.user_username != %s
+                    GROUP BY p.device.device_category, p.device.user_username
+                )
+                SELECT 
+                    user_usage.device_category, 
+                    user_usage.total_usage_hours AS user_total_usage_hours, 
+                    other_users_usage.avg_usage_hours AS average_other_users_usage_hours
+                FROM user_usage
+                JOIN other_users_usage ON user_usage.device_category = other_users_usage.device_category
+                ORDER BY user_usage.device_category
+                """
+
+            result = connector.execute(query, (username, username))
+            json_data = convert_to_json(result, keys)
+
+            return json_data
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
 # Endpoint to get the total power consumption per device category for a specific user 
@@ -979,7 +1071,6 @@ async def get_user_consumption_comparison_by_category(username: str = Depends(ge
                 """
 
             result = connector.execute(query, (username, username))
-            
             json_data = convert_to_json(result, keys)
 
             return json_data

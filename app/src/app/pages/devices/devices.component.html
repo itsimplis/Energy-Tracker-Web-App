@@ -42,7 +42,7 @@
                         <button mat-menu-item (click)="onDeviceView(device.id)">
                             <mat-icon>remove_red_eye</mat-icon><span>View</span>
                         </button>
-                        <button mat-menu-item>
+                        <button mat-menu-item (click)="onDeviceEdit(device.id)">
                             <mat-icon>edit</mat-icon><span>Edit</span>
                         </button>
                         <button mat-menu-item (click)="onDeviceRemove(device.id)">

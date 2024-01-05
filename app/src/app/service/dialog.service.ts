@@ -30,6 +30,13 @@ export class DialogService {
     return this.openDialog(NewDeviceDialogComponent, dialogConfig);
   }
 
+  openEditDeviceDialog(data: any[]): Observable<any> {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '700px';
+    dialogConfig.data = data;
+    return this.openDialog(NewDeviceDialogComponent, dialogConfig);
+  }
+
   openNewConsumptionDialog(): Observable<any> {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '500px';
