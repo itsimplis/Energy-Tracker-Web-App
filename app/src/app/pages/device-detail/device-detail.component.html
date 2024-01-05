@@ -50,7 +50,7 @@
                 <div class="info-container">
                     <div class="info-container-header">
                         <mat-icon class="category-icon">electric_bolt</mat-icon>
-                        <h3><strong>Power Limits</strong></h3>
+                        <h3><strong>Power Range</strong></h3>
                     </div>
                     <mat-divider></mat-divider>
                     <div class="info-container-group">
@@ -74,11 +74,21 @@
                     <div class="info-container-group">
                         <div class="info-group">
                             <label class="info-label">Energy Consumption</label>
-                            <label class="info-value">{{details[0]?.energy_alert_threshold * 100}} kWh</label>
+                            <label class="info-value">
+                                <ng-container *ngIf="details[0]?.energy_alert_threshold; else disabledThreshold">
+                                    {{details[0]?.energy_alert_threshold}} kWh (Limit)
+                                </ng-container>
+                                <ng-template #disabledThreshold>Disabled</ng-template>
+                            </label>
                         </div>
                         <div class="info-group">
                             <label class="info-label">Power Draw</label>
-                            <label class="info-value">{{details[0]?.power_alert_threshold * 100}} W</label>
+                            <label class="info-value">
+                                <ng-container *ngIf="details[0]?.power_alert_threshold; else disabledThreshold">
+                                    {{details[0]?.power_alert_threshold}} W (Limit)
+                                </ng-container>
+                                <ng-template #disabledThreshold>Disabled</ng-template>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -140,14 +150,14 @@
 
         <mat-divider></mat-divider>
         <br>
-
         <div *ngIf="consumptions && consumptions.length > 0; else noConsumptionsContent">
+            <h2>Energy Consumption (kWh)</h2>
             <!-- Consumption Chart -->
             <div *ngIf="device_readings_kWh && device_readings_kWh.length > 0; else noPowerReadingsContent">
                 <div>
                     <ngx-charts-gauge class="chart-container" [scheme]="'cool'" [results]="device_readings_kWh" [legend]="true"
                         [legendTitle]="'Consumption Period'" [showAxis]="true" units="kWh" [bigSegments]="10"
-                        [startAngle]="-100" [angleSpan]="200" [margin]="[80, 70, -100, 70]"
+                        [startAngle]="-100" [angleSpan]="200" [margin]="[20, 70, -100, 70]"
                         yAxisLabel="Consumption (Watts)">
                     </ngx-charts-gauge>
                 </div>
@@ -157,7 +167,7 @@
             <mat-divider></mat-divider>
             <br>
 
-
+            <h2>Power Draw (W)</h2>
             <!-- Consumption Chart -->
             <mat-button-toggle-group #group="matButtonToggleGroup" [value]="aggregation"
                 (valueChange)="setPowerReadingsChartType(group.value)" aria-label="Chart Type">
@@ -167,10 +177,10 @@
             </mat-button-toggle-group>
             <div *ngIf="device_readings && device_readings.length > 0; else noPowerReadingsContent">
                 <div>
-                    <ngx-charts-line-chart class="chart-container" [scheme]="'cool'" [results]="device_readings"
+                    <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'" [results]="device_readings"
                         [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
                         [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day"
-                        yAxisLabel="Consumption (Watts)">
+                        yAxisLabel="Power Draw (W)">
                     </ngx-charts-line-chart>
                 </div>
             </div>
@@ -242,7 +252,7 @@
                     <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme"
                         [results]="consumption_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                         [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day"
-                        yAxisLabel="Consumption (Watts)">
+                        yAxisLabel="Power Draw (W)">
                     </ngx-charts-line-chart>
                 </div>
             </div>

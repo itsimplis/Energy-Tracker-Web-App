@@ -19,7 +19,7 @@ export class NewDeviceDialogComponent {
       deviceCategory: ['', Validators.required],
       deviceType: ['', Validators.required],
       deviceName: ['', Validators.required],
-      alertEnergyThreshold:['130', Validators.required],
+      alertEnergyThreshold:['0', Validators.required],
       alertPowerThreshold:['0', Validators.required],
       usageFrequency:['N', Validators.required],
       customPowerMin:['', Validators.required],

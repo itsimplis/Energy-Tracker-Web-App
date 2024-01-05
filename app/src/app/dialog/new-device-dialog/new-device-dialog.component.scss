@@ -32,3 +32,43 @@ button {
     padding-right: 16px;
     //margin-top: 50px;
 }
+
+.new-device-subtitle-container {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.new-device-subtitle {
+    margin-bottom: 0px;
+}
+
+.info-container-header {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: lightblue 1px solid;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0px 0px 4px rgba(52, 52, 108, 0.2);
+    padding: 20px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .device-form-one-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}

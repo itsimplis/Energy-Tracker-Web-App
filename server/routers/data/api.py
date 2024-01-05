@@ -110,27 +110,67 @@ def generate_alert_message(exceeded_peaks, close_to_limit_peaks, consumption_id)
 
     if highest_exceeded_peak:
         timestamp, power, power_max = highest_exceeded_peak[1], highest_exceeded_peak[2], highest_exceeded_peak[3]
-        title = "Critical Power Alert"
+        timestamp = timestamp.strftime("%d/%m/%Y, %I:%M %p")
+        title = "Critical Power Usage"
         type = 'C'
-        description = f"Excessive power draw detected on {timestamp}: Consumption ID {consumption_id}, Power Limit {power_max} W, Actual Consumption {power} W."
-        suggestion = "Immediate inspection recommended. Consider reducing load or checking device functionality."
+        description = (
+            f"Critical Alert: On {timestamp}, Power draw of {power} W has exceeded the "
+            f"threshold of {power_max} W, for Consumption ID {consumption_id}. This level of consumption "
+            "may indicate a potential issue with the device or abnormal operation."
+        )
+        suggestion = (
+            "Immediate investigation is advised. Check for any unusual activity or malfunctioning equipment. "
+            "Consider temporarily shutting down the device to mitigate risks."
+        )
     elif highest_warning_peak:
         timestamp, power, power_max = highest_warning_peak[1], highest_warning_peak[2], highest_warning_peak[3]
+        timestamp = timestamp.strftime("%d/%m/%Y, %I:%M %p")
         title = "Power Usage Warning"
         type = 'W'
-        description = f"Power draw close to limit detected on {timestamp}: Consumption ID {consumption_id}, Power Limit {power_max} W, Recorded Consumption {power} W."
-        suggestion = "Monitor usage patterns and consider load adjustments to prevent overload."
+        description = (
+            f"Warning Alert: On {timestamp}, Power usage of {power} W has approached the alert threshold "
+            f"of {power_max} W, for Consumption ID {consumption_id}. This might lead to potential "
+            "capacity challenges if left unchecked."
+        )
+        suggestion = (
+            "Review your current power usage patterns. Consider rescheduling high-power activities "
+            "to off-peak hours or distributing the load across different circuits."
+        )
     elif highest_info_peak:
         timestamp, power, power_max = highest_info_peak[1], highest_info_peak[2], highest_info_peak[3]
+        timestamp = timestamp.strftime("%d/%m/%Y, %I:%M %p")
         title = "Power Usage Information"
         type = 'I'
-        description = f"Power draw nearing limit detected on {timestamp}: Consumption ID {consumption_id}, Power Limit {power_max} W, Recorded Consumption {power} W."
-        suggestion = "Recommended to monitor for consistent performance and potential adjustments."
+        description = (
+            f"Information Alert: On {timestamp}, Power consumption of {power} W was within acceptable ranges but was "
+            f"nearing the alert threshold of {power_max} W, for Consumption ID {consumption_id}. It's "
+            "advisable to keep an eye on this trend."
+        )
+        suggestion = (
+            "Consider regular monitoring to ensure the consumption remains within safe limits. "
+            "Exploring energy-efficient alternatives may also help in optimizing power usage."
+        )
     else:
         # No significant power draw - no alert needed
         return None
 
     return title, description, suggestion, type
+
+def generate_energy_alert_message(total_energy_consumption, energy_threshold, consumption_id):
+    if total_energy_consumption > energy_threshold:
+        title = "High Energy Consumption"
+        type = 'I'
+        description = (
+            f"Energy Consumption Notice: Your energy consumption of {total_energy_consumption:.2f} kWh for Consumption ID {consumption_id} "
+            f"has surpassed the set threshold of {energy_threshold} kWh. "
+            "This indicates a higher than usual energy demand."
+        )
+        suggestion = (
+            "Consider identifying devices or activities contributing to high energy usage. "
+            "Regular maintenance, using energy-efficient appliances, and turning off unused devices "
+            "can help in reducing energy consumption."
+        )
+        return title, description, suggestion, type
 
 # **************************************************************************************************** #
 # ALERTS ENDPOINTS #
@@ -782,11 +822,12 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
 
             if not result:
                 return []
-
-            peaks = [row for row in result if row[-1] is not None]  # Filter for records that are over or close to the limit
+            
+            # Filter for records that are over or close to the limit
+            peaks = [row for row in result if row[-1] is not None]
 
             json_data = convert_to_json(peaks, keys)
-
+            
             # Analyze peaks for alert generation
             exceeded_peaks = [row for row in peaks if row[-1]]
             close_to_limit_peaks = [row for row in peaks if not row[-1]]
@@ -799,6 +840,33 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
                     INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status)
                     VALUES (%s, (SELECT device_id FROM p.device_consumption WHERE consumption_id = %s LIMIT 1), %s, %s, %s, NOW(), %s, 'N');
                 """, (username, consumption_id, alert_title, alert_description, alert_suggestion, alert_type))
+
+            # Fetch the energy consumption threshold for the device
+            energy_threshold_result = connector.execute("""
+                SELECT p.device.energy_alert_threshold
+                FROM p.device
+                INNER JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+                WHERE p.device_consumption.consumption_id = %s AND p.device.user_username = %s
+                LIMIT 1
+            """, (consumption_id, username))
+
+            # Ensure there is a result and extract the threshold
+            if energy_threshold_result:
+                energy_threshold = energy_threshold_result[0][0]
+                
+                # Check if the threshold is non-zero (since zero means 'disabled')
+                if (energy_threshold != 0):  
+                    # Calculate total energy consumption and compare with threshold
+                    total_energy_consumption = sum([float(row[2]) for row in result]) / 1000.0
+                    alert_message = generate_energy_alert_message(total_energy_consumption, energy_threshold, consumption_id)
+                    if alert_message:
+                        alert_title, alert_description, alert_suggestion, alert_type = alert_message
+
+                        # Insert the alert into the database
+                        connector.execute("""
+                            INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status)
+                            VALUES (%s, (SELECT device_id FROM p.device_consumption WHERE consumption_id = %s LIMIT 1), %s, %s, %s, NOW(), %s, 'N');
+                        """, (username, consumption_id, alert_title, alert_description, alert_suggestion, alert_type))
 
             connector.commit()
             return json_data

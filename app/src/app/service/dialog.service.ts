@@ -26,7 +26,7 @@ export class DialogService {
 
   openNewDeviceDialog(): Observable<any> {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '500px';
+    dialogConfig.width = '700px';
     return this.openDialog(NewDeviceDialogComponent, dialogConfig);
   }
 
