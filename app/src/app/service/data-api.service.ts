@@ -153,6 +153,11 @@ export class DataApiService {
     }, { headers: this.authenticationService.getAuthHeaders() });
   }
 
+  // [GET] Download power readings as an Excel file for a specific device
+  downloadAllConsumptionPowerReadings(deviceId: number): Observable<Blob> {
+    return this.http.get<Blob>(`${this.baseUrl}/data/downloadAllConsumptionPowerReadings/${deviceId}`, { responseType: 'blob' as 'json', headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
 
   //========================================
   // DASHBOARD API CALLS

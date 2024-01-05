@@ -1,4 +1,5 @@
 import os
+import io
 import json
 import collections
 import random
@@ -10,6 +11,7 @@ from decimal import Decimal
 from typing import Optional
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from contextlib import contextmanager
 from ...model.dbconnector import PostgresConnector
 from ..users.authentication import get_current_user
@@ -421,6 +423,40 @@ async def get_device_power_readings(device_id: int, username: str = Depends(get_
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/downloadAllConsumptionPowerReadings/{device_id}")
+async def download_power_readings(device_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            query = """
+            SELECT p.power_reading.reading_timestamp, p.power_reading.power
+            FROM p.device
+            JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+            JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
+            JOIN p.power_reading ON p.consumption.id = p.power_reading.consumption_id
+            WHERE p.device.id = %s AND p.device.user_username = %s
+            ORDER BY p.power_reading.reading_timestamp
+            """
+            result = connector.execute(query, (device_id, username))
+
+            if result:
+                # Convert to DataFrame
+                df = pd.DataFrame(result, columns=['reading_timestamp', 'power'])
+                
+                # Convert DataFrame to Excel
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    df.to_excel(writer, index=False, sheet_name='Power Readings')
+
+                output.seek(0)
+                filename = f"{device_id}_data.xlsx"
+
+                return StreamingResponse(output, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', headers={"Content-Disposition": f"attachment;filename={filename}"})
+            else:
+                raise HTTPException(status_code=404, detail="No data found")
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
 # Endpoint to remove all alerts for a specific device

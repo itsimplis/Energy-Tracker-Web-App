@@ -32,7 +32,7 @@ export class DeviceDetailComponent implements OnInit {
   panelOpenState: boolean = false;
   output: Output;
   aggregation: 'sum' | 'average' | 'none' = 'none';
-  columnsConsumption: string[] = ['start_date', 'end_date', 'duration_days', 'files_names', 'power_max'];
+  columnsConsumption: string[] = ['start_date', 'end_date', 'duration_days', 'power_max', 'files_names', 'actions'];
   columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'suggestion', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
@@ -178,7 +178,7 @@ export class DeviceDetailComponent implements OnInit {
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
   groupPowerReadingsByPeriodkWh(data: PowerReading[]): any[] {
     const groupedData: Record<string, any> = {};
-  
+
     data.forEach((reading: PowerReading) => {
       const periodKey = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
       if (!groupedData[periodKey]) {
@@ -187,12 +187,12 @@ export class DeviceDetailComponent implements OnInit {
       // Convert Watts to kWh for each reading
       groupedData[periodKey].value += reading.power / 1000; // Convert to kWh
     });
-  
+
     // Optionally, you might want to round the final kWh values for better readability
     Object.keys(groupedData).forEach(key => {
       groupedData[key].value = Number(groupedData[key].value.toFixed(2)); // Rounds to 2 decimal places
     });
-  
+
     return Object.values(groupedData);
   }
 
@@ -304,6 +304,34 @@ export class DeviceDetailComponent implements OnInit {
         console.error(error);
       }
     });
+  }
+
+  onDownloadConsumptionData(device_id: number, device_name: string) {
+    this.dataApiService.downloadAllConsumptionPowerReadings(device_id).subscribe({
+      next: (blob) => {
+        const sanitizedDeviceName = device_name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        // Optionally, add date range or other details to the filename here if available
+        const filename = `data_downloaded_${sanitizedDeviceName}.xlsx`;
+  
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Download error:', error);
+        this.alertService.showSnackBar("Failed to download the file.");
+      },
+      complete: () => {
+        this.alertService.showSnackBar("File download complete.");
+      },
+    });
+  }
+
+  onRowButtonClick(consumption_id: number) {
+
   }
 
   onClearDeviceAlerts(device_id: number) {
