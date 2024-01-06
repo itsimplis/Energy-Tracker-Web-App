@@ -25,6 +25,7 @@ export class DeviceDetailComponent implements OnInit {
   consumptions: any[];
   consumption_readings: any[];
   device_readings: any[];
+  device_readings_daily: any[];
   device_readings_kWh: any[];
   alerts: any[];
   selectedStartDate: string | null = null;
@@ -48,6 +49,7 @@ export class DeviceDetailComponent implements OnInit {
     this.consumptions = [];
     this.consumption_readings = [];
     this.device_readings = [];
+    this.device_readings_daily = [];
     this.device_readings_kWh = [];
     this.alerts = [];
     this.output = { result: '', message: '' };
@@ -116,7 +118,8 @@ export class DeviceDetailComponent implements OnInit {
   loadDevicePowerReadings(device_id: number) {
     this.dataApiService.getDevicePowerReadings(device_id).subscribe({
       next: (data: any[]) => {
-        this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data, this.aggregation);
+        this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data, 'none');
+        this.device_readings_daily = this.groupPowerReadingsByConsumptionPeriod(data, 'average');
         this.device_readings_kWh = this.groupPowerReadingsByPeriodkWh(data);
       },
       error: (error) => {
@@ -140,8 +143,7 @@ export class DeviceDetailComponent implements OnInit {
       }
 
       const readingDate = new Date(reading.reading_timestamp as string);
-      const dayNumber = Math.ceil((readingDate.getTime() - groupedData[period].startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      const dayLabel = `Day ${dayNumber}`;
+      const dayLabel = `Day ${readingDate.getDate()}`; // Day of the reading
 
       if (aggregationType === 'none') {
         const hourLabel = `${readingDate.getHours()}:00`; // Hour of the reading
@@ -188,9 +190,9 @@ export class DeviceDetailComponent implements OnInit {
       groupedData[periodKey].value += reading.power / 1000; // Convert to kWh
     });
 
-    // Optionally, you might want to round the final kWh values for better readability
+    // Round the final kWh values for better readability
     Object.keys(groupedData).forEach(key => {
-      groupedData[key].value = Number(groupedData[key].value.toFixed(2)); // Rounds to 2 decimal places
+      groupedData[key].value = Number(groupedData[key].value.toFixed(2));
     });
 
     return Object.values(groupedData);
@@ -371,7 +373,6 @@ export class DeviceDetailComponent implements OnInit {
 
   setPowerReadingsChartType(aggregationType: 'sum' | 'average' | 'none') {
     this.aggregation = aggregationType;
-    this.loadDevicePowerReadings(this.details[0]?.id)
   }
 
   setPanelOpenState(state: boolean) {

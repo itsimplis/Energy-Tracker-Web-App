@@ -172,19 +172,32 @@
             <mat-button-toggle-group #group="matButtonToggleGroup" [value]="aggregation"
                 (valueChange)="setPowerReadingsChartType(group.value)" aria-label="Chart Type">
                 <mat-button-toggle value="none">Hourly</mat-button-toggle>
-                <mat-button-toggle value="average">Monthly (Average)</mat-button-toggle>
-                <mat-button-toggle value="sum">Monthly (Total)</mat-button-toggle>
+                <mat-button-toggle value="average">Daily (Average)</mat-button-toggle>
             </mat-button-toggle-group>
-            <div *ngIf="device_readings && device_readings.length > 0; else noPowerReadingsContent">
-                <div>
-                    <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'" [results]="device_readings"
-                        [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
-                        [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day"
-                        yAxisLabel="Power Draw (W)">
-                    </ngx-charts-line-chart>
+
+            <div *ngIf="this.aggregation == 'none'">
+                <div *ngIf="device_readings && device_readings.length > 0; else noPowerReadingsContent">
+                    <div>
+                        <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'" [results]="device_readings"
+                            [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
+                            [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
+                            yAxisLabel="Power Draw (W)">
+                        </ngx-charts-line-chart>
+                    </div>
                 </div>
             </div>
 
+            <div *ngIf="this.aggregation == 'average'">
+                <div *ngIf="device_readings_daily && device_readings_daily.length > 0; else noPowerReadingsContent">
+                    <div>
+                        <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'" [results]="device_readings_daily"
+                            [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
+                            [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
+                            yAxisLabel="Power Draw (W)">
+                        </ngx-charts-line-chart>
+                    </div>
+                </div>
+            </div>
             <br>
             <mat-divider></mat-divider>
             <br>
@@ -266,7 +279,7 @@
                 <div>
                     <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme"
                         [results]="consumption_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
-                        [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
                         yAxisLabel="Power Draw (W)">
                     </ngx-charts-line-chart>
                 </div>
