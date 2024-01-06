@@ -394,6 +394,7 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
+  // Detail Customization
   getDeviceDisplayIcon(type: string): string {
     switch (type) {
       case 'Cooling': return 'ac_unit';
@@ -405,6 +406,7 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
+  // Alert Table Customization
   getTypeDisplayText(type: string): string {
     switch (type) {
       case 'I': return 'Information';
@@ -448,6 +450,43 @@ export class DeviceDetailComponent implements OnInit {
       case 'Y': return 'read-type';
       case 'N': return 'unread-type';
       default: return '';
+    }
+  }
+
+  // Consumption Table Customization
+  getTypeClassConsumption(powerPeak: number): string {
+    var type = '';
+    if (powerPeak > this.details[0].custom_power_max) {
+      type = 'critical'
+    } else if ((powerPeak >= this.details[0].power_alert_threshold && powerPeak <= this.details[0].custom_power_max) && this.details[0].power_alert_threshold != 0) {
+      type = 'warning'
+    } else {
+      type = 'normal'
+    }
+
+    switch (type) {
+      case 'normal': return 'good-type';
+      case 'warning': return 'warning-type';
+      case 'critical': return 'critical-type';
+      default: return '';
+    }
+  }
+
+  getTypeIconConsumption(powerPeak: number): string {
+    var type = '';
+    if (powerPeak > this.details[0].custom_power_max) {
+      type = 'critical'
+    } else if ((powerPeak >= this.details[0].power_alert_threshold && powerPeak <= this.details[0].custom_power_max) && this.details[0].power_alert_threshold != 0) {
+      type = 'warning'
+    } else {
+      type = 'normal'
+    }
+
+    switch (type) {
+      case 'normal': return 'check_circle';
+      case 'warning': return 'warning';
+      case 'critical': return 'cancel';
+      default: return type;
     }
   }
 

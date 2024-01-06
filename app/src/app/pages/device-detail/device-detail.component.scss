@@ -169,6 +169,7 @@ h3 {
 // Table Cell styling for alert types
 
 .informational-type,
+.good-type,
 .warning-type,
 .critical-type,
 .system-type,
@@ -183,6 +184,12 @@ h3 {
     justify-content: center;
 }
 
+.good-type {
+    border-color: rgba(0, 255, 0, 0.12);
+    background-color: rgba(0, 255, 0, 0.12);
+    color: rgb(26, 177, 26);
+}
+
 .informational-type {
     border-color: rgba(0, 0, 255, 0.1);
     background-color: rgba(0, 0, 255, 0.1);
@@ -190,9 +197,9 @@ h3 {
 }
 
 .warning-type {
-    border-color: rgba(255, 99, 71, 0.1);
-    background-color: rgba(255, 99, 71, 0.1);
-    color: tomato;
+    border-color: rgba(255, 175, 71, 0.13);
+    background-color: rgba(255, 175, 71, 0.13);
+    color: rgb(255, 129, 71);
 }
 
 .critical-type {
