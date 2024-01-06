@@ -181,7 +181,7 @@
                         <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'" [results]="device_readings"
                             [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
                             [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
-                            yAxisLabel="Power Draw (W)">
+                            yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true" [showRefLabels]="true">
                         </ngx-charts-line-chart>
                     </div>
                 </div>
@@ -193,7 +193,7 @@
                         <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'" [results]="device_readings_daily"
                             [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
                             [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
-                            yAxisLabel="Power Draw (W)">
+                            yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true" [showRefLabels]="true">
                         </ngx-charts-line-chart>
                     </div>
                 </div>
@@ -222,6 +222,10 @@
             <!-- Consumption Table -->
             <mat-card class="mat-card-table">
                 <table mat-table [dataSource]="dataSourceConsumption" matSort>>
+                    <ng-container matColumnDef="consumption_id">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+                        <td mat-cell *matCellDef="let row"> {{row.consumption_id}} </td>
+                    </ng-container>
                     <ng-container matColumnDef="start_date">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
                         <td mat-cell *matCellDef="let row"> {{row.start_date | date:'dd/MM/yyyy'}} </td>
@@ -280,7 +284,7 @@
                     <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme"
                         [results]="consumption_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                         [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
-                        yAxisLabel="Power Draw (W)">
+                        yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisMin" [referenceLines]="chartRefLines" [showRefLines]="true" [showRefLabels]="true">
                     </ngx-charts-line-chart>
                 </div>
             </div>

@@ -28,12 +28,15 @@ export class DeviceDetailComponent implements OnInit {
   device_readings_daily: any[];
   device_readings_kWh: any[];
   alerts: any[];
+  chartRefLines: any[];
+  chartYAxisMin: number;
+  chartYAxisGroupedMin: number;
   selectedStartDate: string | null = null;
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
   output: Output;
   aggregation: 'sum' | 'average' | 'none' = 'none';
-  columnsConsumption: string[] = ['start_date', 'end_date', 'duration_days', 'power_max', 'files_names', 'actions'];
+  columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'power_max', 'files_names', 'actions'];
   columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'suggestion', 'date'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
@@ -52,6 +55,9 @@ export class DeviceDetailComponent implements OnInit {
     this.device_readings_daily = [];
     this.device_readings_kWh = [];
     this.alerts = [];
+    this.chartRefLines = [];
+    this.chartYAxisMin = 0;
+    this.chartYAxisGroupedMin = 0;
     this.output = { result: '', message: '' };
     this.aggregation = 'none';
   }
@@ -91,6 +97,7 @@ export class DeviceDetailComponent implements OnInit {
     this.dataApiService.getDevice(device_id).subscribe({
       next: (data) => {
         this.details = data;
+        this.chartRefLines = [{"name": "Min Power Rating","value": this.details[0]?.custom_power_min},{"name": "Max Power Rating","value": this.details[0]?.custom_power_max}];
       },
       error: (error) => {
         console.log(error);
@@ -118,6 +125,7 @@ export class DeviceDetailComponent implements OnInit {
   loadDevicePowerReadings(device_id: number) {
     this.dataApiService.getDevicePowerReadings(device_id).subscribe({
       next: (data: any[]) => {
+        this.chartYAxisGroupedMin = this.getChartYAxisMaxValue(this.getHighestPowerPeak());
         this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data, 'none');
         this.device_readings_daily = this.groupPowerReadingsByConsumptionPeriod(data, 'average');
         this.device_readings_kWh = this.groupPowerReadingsByPeriodkWh(data);
@@ -129,53 +137,57 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
-  groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'sum' | 'average' | 'none' = 'none'): { name: string; series: SeriesItem[] }[] {
+groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'sum' | 'average' | 'none' = 'none'): { name: string; series: SeriesItem[] }[] {
     const groupedData: Record<string, GroupedDataItem> = {};
 
     data.forEach((reading: PowerReading) => {
-      const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
-      if (!groupedData[period]) {
-        groupedData[period] = {
-          name: period,
-          series: [],
-          startDate: new Date(reading.start_date)
-        };
-      }
-
-      const readingDate = new Date(reading.reading_timestamp as string);
-      const dayLabel = `Day ${readingDate.getDate()}`; // Day of the reading
-
-      if (aggregationType === 'none') {
-        const hourLabel = `${readingDate.getHours()}:00`; // Hour of the reading
-        groupedData[period].series.push({
-          name: `${dayLabel}, ${hourLabel}`,
-          value: reading.power
-        });
-      } else {
-        let daySeries = groupedData[period].series.find(s => s.name === dayLabel);
-        if (!daySeries) {
-          daySeries = { name: dayLabel, value: 0, count: 0 };
-          groupedData[period].series.push(daySeries);
+        const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
+        if (!groupedData[period]) {
+            groupedData[period] = {
+                name: period,
+                series: [],
+                startDate: new Date(reading.start_date)
+            };
         }
-        daySeries.value += reading.power;
-        if (daySeries.count !== undefined) {
-          daySeries.count += 1;
+
+        const readingDate = new Date(reading.reading_timestamp as string);
+        const dayLabel = `Day ${readingDate.getDate()}`; // Day of the reading
+
+        if (aggregationType === 'none') {
+            const hourLabel = `${readingDate.getHours()}:00`; // Hour of the reading
+            groupedData[period].series.push({
+                name: `${dayLabel}, ${hourLabel}`,
+                value: reading.power
+            });
+        } else {
+            let daySeries = groupedData[period].series.find(s => s.name === dayLabel);
+            if (!daySeries) {
+                daySeries = { name: dayLabel, value: 0, count: 0 };
+                groupedData[period].series.push(daySeries);
+            }
+            if (aggregationType === 'average' && reading.power !== 0) {
+                // Only add non-zero readings for average calculation
+                daySeries.value += reading.power;
+                daySeries.count! += 1;
+            } else if (aggregationType !== 'average') {
+                daySeries.value += reading.power;
+                daySeries.count! += 1;
+            }
         }
-      }
     });
 
     if (aggregationType === 'average') {
-      Object.values(groupedData).forEach(group => {
-        group.series.forEach(day => {
-          if (day.count !== undefined && day.count > 0) {
-            day.value /= day.count;
-          }
+        Object.values(groupedData).forEach(group => {
+            group.series.forEach(day => {
+                if (day.count !== undefined && day.count > 0) {
+                    day.value /= day.count;
+                }
+            });
         });
-      });
     }
 
     return Object.values(groupedData).map(({ name, series }) => ({ name, series }));
-  }
+}
 
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
   groupPowerReadingsByPeriodkWh(data: PowerReading[]): any[] {
@@ -292,12 +304,15 @@ export class DeviceDetailComponent implements OnInit {
 
     this.dataApiService.getConsumptionPowerReadings(row.consumption_id).subscribe({
       next: (data: any[]) => {
+
+        this.chartYAxisMin = this.getChartYAxisMaxValue(row.power_max);
+
         this.consumption_readings = [
           {
             name: 'Power Readings',
             series: data.map(item => ({
               name: new Date(item.reading_timestamp as string),
-              value: item.power as number
+              value: item.power as number,
             }))
           }
         ];
@@ -308,11 +323,12 @@ export class DeviceDetailComponent implements OnInit {
     });
   }
 
+  
+
   onDownloadConsumptionData(device_id: number, device_name: string) {
     this.dataApiService.downloadAllConsumptionPowerReadings(device_id).subscribe({
       next: (blob) => {
         const sanitizedDeviceName = device_name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        // Optionally, add date range or other details to the filename here if available
         const filename = `data_downloaded_${sanitizedDeviceName}.xlsx`;
   
         const url = window.URL.createObjectURL(blob);
@@ -489,6 +505,19 @@ export class DeviceDetailComponent implements OnInit {
       case 'critical': return 'cancel';
       default: return type;
     }
+  }
+
+  // Add a 10% margin to yAxisMax for better visual clarity of peaks
+  getChartYAxisMaxValue(curren_consumption_peak: number): number {
+    var yAxisMaxValue = 0;
+    
+    if (curren_consumption_peak > this.details[0].custom_power_max) {
+      yAxisMaxValue = curren_consumption_peak + (0.1 * curren_consumption_peak);
+    } else {
+      yAxisMaxValue = this.details[0].custom_power_max + (0.1 * this.details[0].custom_power_max);
+    }
+
+    return yAxisMaxValue;
   }
 
   colorScheme: Color = {

@@ -828,18 +828,23 @@ async def get_total_power_per_device(username: str = Depends(get_current_user)):
             raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
-# Endpoint to get total power consumption, per device
+# Endpoint to get average power peak, per device
 @router.get("/getAveragePowerPerDevice")
 async def get_average_power_per_device(username: str = Depends(get_current_user)):
     with database_connection():
         try:
             keys = ["device_id", "device_name", "device_category", "device_type", "average_power"]
             result = connector.execute("""
-                SELECT p.device.id, p.device.device_name, p.device.device_category, p.device.device_type, COALESCE(AVG(p.power_reading.power), 0) AS average_power
+                SELECT 
+                    p.device.id, 
+                    p.device.device_name, 
+                    p.device.device_category, 
+                    p.device.device_type, 
+                    COALESCE(AVG(NULLIF(p.power_reading.power, 0)), 0) AS average_power
                 FROM p.device
                 LEFT JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
                 LEFT JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
-                WHERE p.device.user_username = %s
+                WHERE p.device.user_username = %s AND p.power_reading.power <> 0
                 GROUP BY p.device.id, p.device.device_name
                 ORDER BY average_power DESC""", (username,))
             
@@ -950,6 +955,7 @@ async def get_top_ten_devices_by_power_draw():
                 FROM p.power_reading
                 JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
                 JOIN p.device ON p.device_consumption.device_id = p.device.id
+                WHERE p.power_reading.power > 0
                 GROUP BY p.device.device_name
                 ORDER BY average_power_draw DESC
                 LIMIT 10
