@@ -92,8 +92,8 @@
         </div>
 
         <div *ngIf="chartTotalType == 'typeTotal'">
-          <div *ngIf="totalPowerCategoryGrouped && totalPowerCategoryGrouped.length > 0; else noPowerReadingsContent">
-            <ngx-charts-bar-vertical-stacked [results]="totalPowerCategoryGrouped" [xAxis]="true" [yAxis]="true"
+          <div *ngIf="totalPowerTypeGrouped && totalPowerTypeGrouped.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical-stacked [results]="totalPowerTypeGrouped" [xAxis]="true" [yAxis]="true"
               [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
               [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)"
               (select)="onChartDeviceSelect($event)">
@@ -102,8 +102,8 @@
         </div>
 
         <div *ngIf="chartTotalType == 'categoryTotal'">
-          <div *ngIf="totalPowerTypeGrouped && totalPowerTypeGrouped.length > 0; else noPowerReadingsContent">
-            <ngx-charts-bar-vertical-stacked [results]="totalPowerTypeGrouped" [xAxis]="true" [yAxis]="true"
+          <div *ngIf="totalPowerCategoryGrouped && totalPowerCategoryGrouped.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical-stacked [results]="totalPowerCategoryGrouped" [xAxis]="true" [yAxis]="true"
               [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
               [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)"
               (select)="onChartDeviceSelect($event)">
@@ -149,8 +149,8 @@
 
         <div *ngIf="chartAverageType == 'typeAverage'">
           <div
-            *ngIf="averagePowerCategoryGrouped && averagePowerCategoryGrouped.length > 0; else noPowerReadingsContent">
-            <ngx-charts-bar-vertical-stacked [results]="averagePowerCategoryGrouped" [xAxis]="true" [yAxis]="true"
+            *ngIf="averagePowerTypeGrouped && averagePowerTypeGrouped.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical-stacked [results]="averagePowerTypeGrouped" [xAxis]="true" [yAxis]="true"
               [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
               [gradient]="true" xAxisLabel="Category" yAxisLabel="Average Power (Watts)" [roundDomains]="true"
               (select)="onChartDeviceSelect($event)">
@@ -159,8 +159,8 @@
         </div>
 
         <div *ngIf="chartAverageType == 'categoryAverage'">
-          <div *ngIf="averagePowerTypeGrouped && averagePowerTypeGrouped.length > 0; else noPowerReadingsContent">
-            <ngx-charts-bar-vertical-stacked [results]="averagePowerTypeGrouped" [xAxis]="true" [yAxis]="true"
+          <div *ngIf="averagePowerCategoryGrouped && averagePowerCategoryGrouped.length > 0; else noPowerReadingsContent">
+            <ngx-charts-bar-vertical-stacked [results]="averagePowerCategoryGrouped" [xAxis]="true" [yAxis]="true"
               [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
               [gradient]="true" xAxisLabel="Category" yAxisLabel="Average Power (Watts)" [roundDomains]="true"
               (select)="onChartDeviceSelect($event)">

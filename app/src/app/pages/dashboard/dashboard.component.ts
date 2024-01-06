@@ -165,26 +165,25 @@ export class DashboardComponent implements OnInit {
   private groupDataBy(groupBy: string, chart: string, data: DeviceData[]): Record<string, { name: string; value: number; extra: { code: number } }[]> {
     const groupedData: Record<string, { name: string; value: number; extra: { code: number } }[]> = {};
     var group = '';
-
+    console.log(groupBy);
     data.forEach(device => {
       if (groupBy == 'category') {
         group = device.device_category;
-      }
-      if (groupBy == 'type') {
+      } else if (groupBy == 'type') {
         group = device.device_type;
       }
 
       if (!groupedData[group]) {
         groupedData[group] = [];
       }
+
       if (chart == 'total') {
         groupedData[group].push({
           name: device.device_name,
           value: device.total_power,
           extra: { code: device.device_id }
         });
-      }
-      if (chart == 'average') {
+      } else if (chart == 'average') {
         groupedData[group].push({
           name: device.device_name,
           value: device.average_power,
