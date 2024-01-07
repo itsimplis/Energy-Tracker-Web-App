@@ -1,6 +1,6 @@
-<h2 mat-dialog-title align="center">New Device
+<h2 mat-dialog-title align="center">{{isEditMode ? 'Edit Device' : 'New Device'}}
     <span>
-        <h4 class="dialog-subtitle"> Add a new device to your list</h4>
+        <h4 class="dialog-subtitle">{{isEditMode ? 'Edit the details of your device' : 'Add a new device to your list'}}</h4>
         <mat-divider></mat-divider>
     </span>
 </h2>
