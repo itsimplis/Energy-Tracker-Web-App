@@ -354,8 +354,6 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
     });
   }
 
-  
-
   onDownloadConsumptionData(device_id: number, device_name: string) {
     this.dataApiService.downloadAllConsumptionPowerReadings(device_id).subscribe({
       next: (blob) => {
@@ -379,8 +377,25 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
     });
   }
 
-  onRowButtonClick(consumption_id: number) {
-
+  onRowButtonClick(event: MouseEvent, consumption_id: number, filename: string) {
+    event.stopPropagation();
+    this.dataApiService.downloadConsumptionPowerReadings(consumption_id).subscribe({
+      next: (blob) => {  
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Download error:', error);
+        this.alertService.showSnackBar("Failed to download the file.");
+      },
+      complete: () => {
+        this.alertService.showSnackBar("File download complete.");
+      },
+    });
   }
 
   onClearDeviceAlerts(device_id: number) {

@@ -172,6 +172,13 @@ export class DataApiService {
     return this.http.get<Blob>(`${this.baseUrl}/data/downloadAllConsumptionPowerReadings/${deviceId}`, { responseType: 'blob' as 'json', headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
+   // [GET] Download power readings as an Excel file for a specific consumption of device
+   downloadConsumptionPowerReadings(consumption_id: number): Observable<Blob> {
+    return this.http.get<Blob>(`${this.baseUrl}/data/downloadConsumptionPowerReadings/${consumption_id}`, { responseType: 'blob' as 'json', headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  
+
 
   //========================================
   // DASHBOARD API CALLS

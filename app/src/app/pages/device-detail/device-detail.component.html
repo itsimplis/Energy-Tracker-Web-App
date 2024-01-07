@@ -19,7 +19,8 @@
 
     <!-- Device Detail Card -->
     <mat-card class="mat-card-details">
-        <button mat-raised-button class="edit-details-button" color="primary" (click)="onEditDetailsClick(details[0]!.id)">
+        <button mat-raised-button class="edit-details-button" color="primary"
+            (click)="onEditDetailsClick(details[0]!.id)">
             <mat-icon>edit</mat-icon><span>Edit Details</span>
         </button>
         <mat-card-header>
@@ -158,9 +159,9 @@
             <!-- Consumption Chart -->
             <div *ngIf="device_readings_kWh && device_readings_kWh.length > 0; else noPowerReadingsContent">
                 <div>
-                    <ngx-charts-gauge class="chart-container" [scheme]="'cool'" [results]="device_readings_kWh" [legend]="true"
-                        [legendTitle]="'Consumption Period'" [showAxis]="true" units="kWh" [bigSegments]="10"
-                        [startAngle]="-100" [angleSpan]="200" [margin]="[20, 70, -100, 70]"
+                    <ngx-charts-gauge class="chart-container" [scheme]="'cool'" [results]="device_readings_kWh"
+                        [legend]="true" [legendTitle]="'Consumption Period'" [showAxis]="true" units="kWh"
+                        [bigSegments]="10" [startAngle]="-100" [angleSpan]="200" [margin]="[20, 70, -100, 70]"
                         yAxisLabel="Consumption (Watts)">
                     </ngx-charts-gauge>
                 </div>
@@ -181,10 +182,12 @@
             <div *ngIf="this.aggregation == 'none'">
                 <div *ngIf="device_readings && device_readings.length > 0; else noPowerReadingsContent">
                     <div>
-                        <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'" [results]="device_readings"
-                            [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
-                            [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
-                            yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true" [showRefLabels]="true">
+                        <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'"
+                            [results]="device_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
+                            [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+                            [gradient]="true" xAxisLabel="Day, Time" yAxisLabel="Power Draw (W)"
+                            [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
+                            [showRefLabels]="true">
                         </ngx-charts-line-chart>
                     </div>
                 </div>
@@ -193,10 +196,12 @@
             <div *ngIf="this.aggregation == 'average'">
                 <div *ngIf="device_readings_daily && device_readings_daily.length > 0; else noPowerReadingsContent">
                     <div>
-                        <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'" [results]="device_readings_daily"
-                            [xAxis]="true" [yAxis]="true" [legend]="true" [legendTitle]="'Consumption Period'"
-                            [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
-                            yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true" [showRefLabels]="true">
+                        <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'"
+                            [results]="device_readings_daily" [xAxis]="true" [yAxis]="true" [legend]="true"
+                            [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+                            [gradient]="true" xAxisLabel="Day, Time" yAxisLabel="Power Draw (W)"
+                            [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
+                            [showRefLabels]="true">
                         </ngx-charts-line-chart>
                     </div>
                 </div>
@@ -212,14 +217,15 @@
                         #filterConsumptions>
                 </mat-form-field>
                 <div>
-                    <button mat-raised-button class="green-button" color="primary" (click)="onDownloadConsumptionData(details[0]?.id, details[0]?.device_name)">
+                    <button mat-raised-button class="green-button" color="primary"
+                        (click)="onDownloadConsumptionData(details[0]?.id, details[0]?.device_name)">
                         <mat-icon>download</mat-icon><span>Download Data (.xlsx)</span>
                     </button>
                     <button mat-raised-button color="primary" (click)="onClearDeviceConsumption(details[0]?.id)">
                         <mat-icon>delete_sweep</mat-icon><span>Clear Device Consumption</span>
                     </button>
                 </div>
-                
+
             </div>
 
             <!-- Consumption Table -->
@@ -255,9 +261,11 @@
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef> Actions </th>
                         <td mat-cell *matCellDef="let row">
-                          <button mat-stroked-button color="primary" (click)="onRowButtonClick(row.consumption_id)" style="text-wrap: nowrap;">Download</button>
+                            <button mat-stroked-button color="primary"
+                                (click)="onRowButtonClick($event, row.consumption_id, row.files_names)"
+                                style="text-wrap: nowrap;">Download</button>
                         </td>
-                      </ng-container>
+                    </ng-container>
 
                     <!-- Row -->
                     <tr mat-header-row *matHeaderRowDef="columnsConsumption"></tr>
@@ -266,7 +274,7 @@
 
                     <!-- Row shown when there is no matching data. -->
                     <tr class="mat-row" *matNoDataRow>
-                        <td colspan="5">No data matching the filter "{{filterConsumptions.value}}"</td>
+                        <td colspan="7">No data matching the filter "{{filterConsumptions.value}}"</td>
                     </tr>
                 </table>
                 <mat-paginator #paginatorConsumptions="matPaginator" [pageSizeOptions]="[5, 10, 25, 100]"
@@ -287,7 +295,8 @@
                     <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme"
                         [results]="consumption_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                         [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
-                        yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisMin" [referenceLines]="chartRefLines" [showRefLines]="true" [showRefLabels]="true">
+                        yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisMin" [referenceLines]="chartRefLines"
+                        [showRefLines]="true" [showRefLabels]="true">
                     </ngx-charts-line-chart>
                 </div>
             </div>
@@ -327,6 +336,7 @@
                 </button>
             </div>
 
+            <!-- Alerts Table -->
             <mat-card class="mat-card-table">
                 <table mat-table [dataSource]="dataSourceAlert" matSort>
                     <ng-container matColumnDef="title">
@@ -358,6 +368,7 @@
                         <td mat-cell *matCellDef="let row"> {{row.suggestion}} </td>
                     </ng-container>
 
+                    <!-- Row -->
                     <tr mat-header-row *matHeaderRowDef="columnsAlert"></tr>
                     <tr mat-row *matRowDef="let row; columns: columnsAlert;" (click)="onAlertRowClick(row)"></tr>
 

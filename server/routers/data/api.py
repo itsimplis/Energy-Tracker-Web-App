@@ -423,6 +423,8 @@ async def get_device_power_readings(device_id: int, username: str = Depends(get_
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+# ================================================================================================= 
+# Endpoint to download all power readings of all consumptions for a specific device, as .xlsx file
 @router.get("/downloadAllConsumptionPowerReadings/{device_id}")
 async def download_power_readings(device_id: int, username: str = Depends(get_current_user)):
     with database_connection():
@@ -451,6 +453,43 @@ async def download_power_readings(device_id: int, username: str = Depends(get_cu
                 filename = f"{device_id}_data.xlsx"
 
                 return StreamingResponse(output, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', headers={"Content-Disposition": f"attachment;filename={filename}"})
+            else:
+                raise HTTPException(status_code=404, detail="No data found")
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+# Endpoint to download all power readings of a single consumption for a specific device, as .csv file
+@router.get("/downloadConsumptionPowerReadings/{consumption_id}")
+async def download_single_consumption_power_readings(consumption_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            query = """
+            SELECT p.power_reading.reading_timestamp, p.power_reading.power
+            FROM p.consumption
+            JOIN p.power_reading ON p.consumption.id = p.power_reading.consumption_id
+            WHERE p.consumption.id = %s
+            ORDER BY p.power_reading.reading_timestamp
+            """
+            result = connector.execute(query, (consumption_id,))
+
+            if result:
+                # Convert to DataFrame
+                df = pd.DataFrame(result, columns=['reading_timestamp', 'power'])
+                
+                # Convert DataFrame to CSV
+                output = io.StringIO()
+                df.to_csv(output, index=False)
+                output.seek(0)
+
+                filename = f"{consumption_id}_power_readings.csv"
+
+                return StreamingResponse(
+                    iter([output.getvalue()]), 
+                    media_type='text/csv',
+                    headers={"Content-Disposition": f"attachment;filename={filename}"}
+                )
             else:
                 raise HTTPException(status_code=404, detail="No data found")
         except HTTPException as e:
