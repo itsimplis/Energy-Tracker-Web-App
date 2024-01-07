@@ -88,7 +88,7 @@ def convert_to_json(result, keys):
 
 def generate_alert_message(exceeded_peaks, close_to_limit_peaks, consumption_id):
     # Convert percentages to Decimal for compatibility
-    warning_threshold_percentage = Decimal('0.10')  # Top 10% under power_max
+    warning_threshold_percentage = Decimal('0.05')  # Top 05% under power_max
     info_threshold_percentage = Decimal('0.20')     # Top 20% under power_max
 
     highest_exceeded_peak = None

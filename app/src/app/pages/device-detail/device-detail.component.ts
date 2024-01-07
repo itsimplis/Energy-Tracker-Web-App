@@ -109,6 +109,7 @@ export class DeviceDetailComponent implements OnInit {
     this.dataApiService.getDeviceConsumption(device_id).subscribe({
       next: (data) => {
         this.consumptions = data;
+        this.chartYAxisGroupedMin = this.getChartYAxisMaxValue(this.getHighestPowerPeak());
         this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
         this.dataSourceConsumption.data = this.consumptions;
         setTimeout(() => {
@@ -125,7 +126,6 @@ export class DeviceDetailComponent implements OnInit {
   loadDevicePowerReadings(device_id: number) {
     this.dataApiService.getDevicePowerReadings(device_id).subscribe({
       next: (data: any[]) => {
-        this.chartYAxisGroupedMin = this.getChartYAxisMaxValue(this.getHighestPowerPeak());
         this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data, 'none');
         this.device_readings_daily = this.groupPowerReadingsByConsumptionPeriod(data, 'average');
         this.device_readings_kWh = this.groupPowerReadingsByPeriodkWh(data);
