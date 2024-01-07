@@ -44,7 +44,8 @@
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> Actions </th>
                 <td mat-cell *matCellDef="let row">
-                  <button mat-stroked-button color="primary" (click)="onButtonClick(row.device_id)" style="text-wrap: nowrap;">View Device</button>
+                  <button mat-stroked-button color="primary" (click)="onButtonClick(row.device_id)" style="text-wrap: nowrap;">
+                    {{row.type == 'U' ? 'View Account' : 'View Device'}}</button>
                 </td>
               </ng-container>
 
