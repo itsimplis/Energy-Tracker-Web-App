@@ -28,6 +28,35 @@ export class NewDeviceDialogComponent {
       customPowerMax: ['', Validators.required]
     });
 
+    this.deviceForm.get('customPowerMin')!.valueChanges.subscribe(value => {
+      if (value < 0) {
+        this.deviceForm.get('customPowerMin')!.setValue(0, {emitEvent: false});
+      }
+      this.validatePowerDrawThreshold();
+    });
+    
+    this.deviceForm.get('customPowerMax')!.valueChanges.subscribe(value => {
+      if (value < 0) {
+        this.deviceForm.get('customPowerMax')!.setValue(0, {emitEvent: false});
+      }
+      this.validatePowerDrawThreshold();
+    });
+
+    this.deviceForm.get('alertPowerThreshold')!.valueChanges.subscribe(value => {
+      if (value < 0) {
+        this.deviceForm.get('alertPowerThreshold')!.setValue(0, {emitEvent: false});
+      }
+      this.validatePowerDrawThreshold();
+    });
+
+    this.deviceForm.get('alertEnergyThreshold')!.valueChanges.subscribe(value => {
+      if (value < 0) {
+        this.deviceForm.get('alertEnergyThreshold')!.setValue(0, {emitEvent: false});
+      }
+    });
+
+    
+
     // Check if editing an existing device
     if (this.data) {
       this.isEditMode = true;
@@ -58,6 +87,18 @@ export class NewDeviceDialogComponent {
     this.deviceForm.get('usageFrequency')!.setValue(deviceData.usage_frequency);
     this.deviceForm.get('customPowerMin')!.setValue(deviceData.custom_power_min);
     this.deviceForm.get('customPowerMax')!.setValue(deviceData.custom_power_max);
+  }
+
+  private validatePowerDrawThreshold() {
+    const minPower = this.deviceForm.get('customPowerMin')!.value;
+    const maxPower = this.deviceForm.get('customPowerMax')!.value;
+    const powerDraw = this.deviceForm.get('alertPowerThreshold')!.value;
+  
+    if (powerDraw !== 0 && (powerDraw < minPower || powerDraw > maxPower)) {
+      this.deviceForm.get('alertPowerThreshold')!.setErrors({ outOfRange: true });
+    } else {
+      this.deviceForm.get('alertPowerThreshold')!.setErrors(null);
+    }
   }
 
   onDeviceCategorySelection(event: any) {

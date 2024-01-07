@@ -1,6 +1,7 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from './../../service/authentication.service';
 import { Component } from '@angular/core';
+import { AlertService } from 'src/app/service/alert.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent {
   password: string;
   hidePwd: boolean;
 
-  constructor(private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar) {
+  constructor(private authenticationService: AuthenticationService, private matSnackBar: MatSnackBar, private alertService: AlertService) {
     this.output = { result: '', message: '' };
     this.username = '';
     this.password = '';
@@ -57,6 +58,11 @@ export class LoginComponent {
   resetForm() {
     this.username = '';
     this.password = '';
+  }
+
+  // Easter Egg
+  onForgotPassword() {
+    this.alertService.showSnackBar("Close your eyes... concentrate, remember !", 'Ok...', 6000);
   }
 }
 
