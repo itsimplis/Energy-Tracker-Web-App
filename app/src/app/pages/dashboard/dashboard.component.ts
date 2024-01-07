@@ -165,7 +165,6 @@ export class DashboardComponent implements OnInit {
   private groupDataBy(groupBy: string, chart: string, data: DeviceData[]): Record<string, { name: string; value: number; extra: { code: number } }[]> {
     const groupedData: Record<string, { name: string; value: number; extra: { code: number } }[]> = {};
     var group = '';
-    console.log(groupBy);
     data.forEach(device => {
       if (groupBy == 'category') {
         group = device.device_category;
@@ -211,6 +210,12 @@ export class DashboardComponent implements OnInit {
     return data.reduce((prev: DeviceData, current: DeviceData) =>
       (prev.total_power < current.total_power) ? prev : current
     );
+  }
+
+  onRefreshClick() {
+    this.loadDashboardCounters();
+    this.loadAveragePowerPerDevice();
+    this.loadTotalPowerPerDevice();
   }
 
   setTotalChartType(groupBy: string = 'deviceTotal') {

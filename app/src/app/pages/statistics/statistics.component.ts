@@ -287,6 +287,15 @@ export class StatisticsComponent {
     );
   }
 
+  onRefreshClick() {
+    this.loadDashboardCounters();
+    this.loadGlobalTopTenAveragePowerDrawDevices();
+    this.loadTotalPowerConsumptionComparisonByCategory();
+    this.loadTotalUsageComparisonByCategory();
+    this.loadAveragePowerConsumptionByAgeGroup();
+    this.loadAveragePowerConsumptionByGender();
+  }
+
   setTotalChartType(groupBy: string = 'deviceTotal') {
     this.chartTotalType = groupBy;
   }
