@@ -228,6 +228,37 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
     }
   }
 
+  onEditDetailsClick(device_id: number) {
+    this.dataApiService.getDevice(device_id).subscribe({
+      next: (data) => {
+        this.dialogService.openEditDeviceDialog(data).subscribe(result => {
+          if (result) {
+            this.dataApiService.updateDevice(device_id, result.deviceCategory, result.deviceType, result.deviceName, result.alertEnergyThreshold, result.alertPowerThreshold, result.usageFrequency, result.customPowerMin, result.customPowerMax).subscribe({
+              next: (data) => {
+                this.output.result = 'success';
+                this.output.message = data.message;
+                this.alertService.showSnackBar(this.output.message);
+                this.loadDeviceDetail(device_id);
+                this.loadDeviceConsumption(device_id);
+                this.alertService.loadAlerts();
+              },
+              error: (error) => {
+                this.alertService.showSnackBar("An error occured!");
+                console.log(error);
+              }
+            })
+          } else {
+            this.alertService.showSnackBar("Editing of current device cancelled!");
+          }
+        });
+      },
+      error: (error) => {
+        console.log('Error fetching device:', error);
+        this.alertService.showSnackBar("Failed to fetch device details.");
+      }
+    })
+  }
+
   onAddNewConsumption(device_id: number) {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
@@ -311,7 +342,7 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
           {
             name: 'Power Readings',
             series: data.map(item => ({
-              name: new Date(item.reading_timestamp as string),
+              name: `${(new Date(item.reading_timestamp as string)).toLocaleDateString()}, ${(new Date(item.reading_timestamp as string)).getHours()}:00`,
               value: item.power as number,
             }))
           }

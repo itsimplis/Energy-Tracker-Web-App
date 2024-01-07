@@ -241,6 +241,13 @@ h3 {
     margin-right: 5px;
 }
 
+.edit-details-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 1;
+}
+
 .green-button{
     background-color: rgb(21, 114, 21) !important;
     margin-right: 10px;

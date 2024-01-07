@@ -19,6 +19,9 @@
 
     <!-- Device Detail Card -->
     <mat-card class="mat-card-details">
+        <button mat-raised-button class="edit-details-button" color="primary" (click)="onEditDetailsClick(details[0]!.id)">
+            <mat-icon>edit</mat-icon><span>Edit Details</span>
+        </button>
         <mat-card-header>
             <div mat-card-avatar class="device-icon">
                 <mat-icon>{{getDeviceDisplayIcon(details[0]?.device_category)}}</mat-icon>
@@ -50,7 +53,7 @@
                 <div class="info-container">
                     <div class="info-container-header">
                         <mat-icon class="category-icon">electric_bolt</mat-icon>
-                        <h3><strong>Power Range</strong></h3>
+                        <h3><strong>Power Rating</strong></h3>
                     </div>
                     <mat-divider></mat-divider>
                     <div class="info-container-group">

@@ -48,17 +48,17 @@
 
             <div class="device-form-one-row">
                 <mat-form-field class="form-field" appearance="fill" floatLabel="always">
-                    <mat-label>Minimum Power Draw (W)</mat-label>
+                    <mat-label>Minimum Power Rating (W)</mat-label>
                     <input matInput formControlName="customPowerMin" type="number">
                     <span matSuffix class="numeric-percentage">W</span>
-                    <mat-hint align="start"><strong>Typical minimum power draw</strong></mat-hint>
+                    <mat-hint align="start"><strong>The minimum power draw rating</strong></mat-hint>
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="fill" floatLabel="always">
-                    <mat-label>Maximum Power Draw (W)</mat-label>
+                    <mat-label>Maximum Power Rating (W)</mat-label>
                     <input matInput formControlName="customPowerMax" type="number">
                     <span matSuffix class="numeric-percentage">W</span>
-                    <mat-hint align="start"><strong>Typical maximum power draw</strong></mat-hint>
+                    <mat-hint align="start"><strong>The maximum power draw rating</strong></mat-hint>
                 </mat-form-field>
             </div>
         </div>
@@ -80,7 +80,7 @@
                 <mat-label>Power Draw Threshold (W)</mat-label>
                 <input matInput formControlName="alertPowerThreshold" type="number">
                 <span matSuffix class="numeric-percentage">W</span>
-                <mat-hint align="start"><strong>The power draw threshold for alerts (default: '0' = disabled)</strong></mat-hint>
+                <mat-hint align="start"><strong>The power draw threshold for warning alerts (default: '0' = disabled)</strong></mat-hint>
             </mat-form-field>
 
         </div>
