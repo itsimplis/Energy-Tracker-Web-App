@@ -94,7 +94,7 @@ export class NewDeviceDialogComponent {
     const maxPower = this.deviceForm.get('customPowerMax')!.value;
     const powerDraw = this.deviceForm.get('alertPowerThreshold')!.value;
   
-    if (powerDraw !== 0 && (powerDraw < minPower || powerDraw > maxPower)) {
+    if (powerDraw != 0 && (powerDraw < minPower || powerDraw > maxPower)) {
       this.deviceForm.get('alertPowerThreshold')!.setErrors({ outOfRange: true });
     } else {
       this.deviceForm.get('alertPowerThreshold')!.setErrors(null);
