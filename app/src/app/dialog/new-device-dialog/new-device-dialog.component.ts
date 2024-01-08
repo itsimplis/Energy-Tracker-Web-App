@@ -32,6 +32,7 @@ export class NewDeviceDialogComponent {
       if (value < 0) {
         this.deviceForm.get('customPowerMin')!.setValue(0, {emitEvent: false});
       }
+      this.validateCustomPowerMinMax()
       this.validatePowerDrawThreshold();
     });
     
@@ -39,6 +40,7 @@ export class NewDeviceDialogComponent {
       if (value < 0) {
         this.deviceForm.get('customPowerMax')!.setValue(0, {emitEvent: false});
       }
+      this.validateCustomPowerMinMax()
       this.validatePowerDrawThreshold();
     });
 
@@ -98,6 +100,19 @@ export class NewDeviceDialogComponent {
       this.deviceForm.get('alertPowerThreshold')!.setErrors({ outOfRange: true });
     } else {
       this.deviceForm.get('alertPowerThreshold')!.setErrors(null);
+    }
+  }
+
+  private validateCustomPowerMinMax() {
+    const minPower = this.deviceForm.get('customPowerMin')!.value;
+    const maxPower = this.deviceForm.get('customPowerMax')!.value;
+
+    if (minPower > maxPower) {
+      this.deviceForm.get('customPowerMin')!.setErrors({ outOfRange: true });
+      this.deviceForm.get('customPowerMax')!.setErrors({ outOfRange: true });
+    } else {
+      this.deviceForm.get('customPowerMin')!.setErrors(null);
+      this.deviceForm.get('customPowerMax')!.setErrors(null);
     }
   }
 
