@@ -101,14 +101,26 @@ def generate_alert_message(exceeded_peaks, non_exceeded_peaks, consumption_id, p
 
     # Find the highest warning peak
     for peak in non_exceeded_peaks:
-        if power_alert_threshold != 0:
-            warning_threshold = power_alert_threshold
-        else:
-            warning_threshold = peak[3] * (1 - default_warning_threshold_percentage)
+        custom_power_min = Decimal(peak[4])
+        custom_power_max = Decimal(peak[3])
+        power_range = custom_power_max - custom_power_min
 
-        if peak[2] >= warning_threshold:
-            if highest_warning_peak is None or peak[2] > highest_warning_peak[2]:
-                highest_warning_peak = peak   
+        if (power_range == 0):
+            continue
+        else:
+            # Adjust the threshold percentage based on the power range
+            adjusted_threshold_percentage = default_warning_threshold_percentage * (power_range / custom_power_max)
+            calculated_threshold = custom_power_max * (1 - adjusted_threshold_percentage)
+
+            if power_alert_threshold != 0:
+                warning_threshold = Decimal(power_alert_threshold)
+            else:
+                # Ensure warning threshold is not below the minimum power rating
+                warning_threshold = max(custom_power_min, calculated_threshold)
+
+            if Decimal(peak[2]) >= warning_threshold:
+                if highest_warning_peak is None or Decimal(peak[2]) > Decimal(highest_warning_peak[2]):
+                    highest_warning_peak = peak   
 
     if highest_exceeded_peak:
         timestamp, power, power_max = highest_exceeded_peak[1], highest_exceeded_peak[2], highest_exceeded_peak[3]
@@ -894,11 +906,11 @@ async def get_average_power_per_device(username: str = Depends(get_current_user)
 async def get_peak_power_analysis(consumption_id: int, username: str = Depends(get_current_user)):
     with database_connection():
         try:
-            keys = ["consumption_id", "timestamp", "power", "power_max", "exceeded"]
+            keys = ["consumption_id", "timestamp", "power", "power_max", "power_min," "exceeded"]
 
             result = connector.execute("""
                 SELECT p.power_reading.consumption_id, p.power_reading.reading_timestamp, p.power_reading.power,
-                       p.device.custom_power_max,
+                       p.device.custom_power_max, p.device.custom_power_min,
                        CASE WHEN p.power_reading.power > p.device.custom_power_max THEN TRUE
                             ELSE NULL END AS exceeded
                 FROM p.power_reading

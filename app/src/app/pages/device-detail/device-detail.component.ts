@@ -518,19 +518,27 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
 
   // Consumption Table Customization
   getTypeClassConsumption(powerPeak: number): string {
-    var type = '';
-    var warn_threshold = 0;
+    let type = '';
+    let warn_threshold = 0;
   
-    if (this.details[0]?.power_alert_threshold == 0) {
-      warn_threshold = this.details[0]?.custom_power_max * (1 - 0.02);
+    const custom_power_min = this.details[0]?.custom_power_min;
+    const custom_power_max = this.details[0]?.custom_power_max;
+    const power_alert_threshold = this.details[0]?.power_alert_threshold;
+    const default_warning_threshold_percentage = 0.02; // 2%
+  
+    if (power_alert_threshold == 0) {
+      const power_range = custom_power_max - custom_power_min;
+      const adjusted_threshold_percentage = default_warning_threshold_percentage * (power_range / custom_power_max);
+      warn_threshold = custom_power_max * (1 - adjusted_threshold_percentage);
+      warn_threshold = Math.max(custom_power_min, warn_threshold); // Ensure not below min power
     } else {
-      warn_threshold = this.details[0]?.power_alert_threshold;
+      warn_threshold = power_alert_threshold;
     }
   
-    if (powerPeak > this.details[0].custom_power_max) {
+    if (powerPeak > custom_power_max) {
       type = 'critical';
-    } else if (powerPeak >= warn_threshold && powerPeak <= this.details[0].custom_power_max) {
-      type = 'warning';
+    } else if (powerPeak >= warn_threshold && powerPeak <= custom_power_max) {
+      type = (custom_power_min == custom_power_max) ? 'normal' : 'warning';
     } else {
       type = 'normal';
     }
@@ -544,19 +552,27 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
   }
 
   getTypeIconConsumption(powerPeak: number): string {
-    var type = '';
-    var warn_threshold = 0;
-
-    if (this.details[0]?.power_alert_threshold == 0) {
-      warn_threshold = this.details[0]?.custom_power_max * (1 - 0.02);
+    let type = '';
+    let warn_threshold = 0;
+  
+    const custom_power_min = this.details[0]?.custom_power_min;
+    const custom_power_max = this.details[0]?.custom_power_max;
+    const power_alert_threshold = this.details[0]?.power_alert_threshold;
+    const default_warning_threshold_percentage = 0.02; // 2%
+    
+    if (power_alert_threshold == 0) {
+      const power_range = custom_power_max - custom_power_min;
+      const adjusted_threshold_percentage = default_warning_threshold_percentage * (power_range / custom_power_max);
+      warn_threshold = custom_power_max * (1 - adjusted_threshold_percentage);
+      warn_threshold = Math.max(custom_power_min, warn_threshold); // Ensure not below min power
     } else {
-      warn_threshold = this.details[0]?.power_alert_threshold;
+      warn_threshold = power_alert_threshold;
     }
   
-    if (powerPeak > this.details[0].custom_power_max) {
+    if (powerPeak > custom_power_max) {
       type = 'critical';
-    } else if (powerPeak >= warn_threshold && powerPeak <= this.details[0].custom_power_max) {
-      type = 'warning';
+    } else if (powerPeak >= warn_threshold && powerPeak <= custom_power_max) {
+      type = (custom_power_min == custom_power_max) ? 'normal' : 'warning';
     } else {
       type = 'normal';
     }
