@@ -519,12 +519,20 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
   // Consumption Table Customization
   getTypeClassConsumption(powerPeak: number): string {
     var type = '';
-    if (powerPeak > this.details[0].custom_power_max) {
-      type = 'critical'
-    } else if ((powerPeak >= this.details[0].power_alert_threshold && powerPeak <= this.details[0].custom_power_max) && this.details[0].power_alert_threshold != 0) {
-      type = 'warning'
+    var warn_threshold = 0;
+  
+    if (this.details[0]?.power_alert_threshold == 0) {
+      warn_threshold = this.details[0]?.custom_power_max * (1 - 0.02);
     } else {
-      type = 'normal'
+      warn_threshold = this.details[0]?.power_alert_threshold;
+    }
+  
+    if (powerPeak > this.details[0].custom_power_max) {
+      type = 'critical';
+    } else if (powerPeak >= warn_threshold && powerPeak <= this.details[0].custom_power_max) {
+      type = 'warning';
+    } else {
+      type = 'normal';
     }
 
     switch (type) {
@@ -537,14 +545,22 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
 
   getTypeIconConsumption(powerPeak: number): string {
     var type = '';
-    if (powerPeak > this.details[0].custom_power_max) {
-      type = 'critical'
-    } else if ((powerPeak >= this.details[0].power_alert_threshold && powerPeak <= this.details[0].custom_power_max) && this.details[0].power_alert_threshold != 0) {
-      type = 'warning'
-    } else {
-      type = 'normal'
-    }
+    var warn_threshold = 0;
 
+    if (this.details[0]?.power_alert_threshold == 0) {
+      warn_threshold = this.details[0]?.custom_power_max * (1 - 0.02);
+    } else {
+      warn_threshold = this.details[0]?.power_alert_threshold;
+    }
+  
+    if (powerPeak > this.details[0].custom_power_max) {
+      type = 'critical';
+    } else if (powerPeak >= warn_threshold && powerPeak <= this.details[0].custom_power_max) {
+      type = 'warning';
+    } else {
+      type = 'normal';
+    }
+  
     switch (type) {
       case 'normal': return 'check_circle';
       case 'warning': return 'warning';

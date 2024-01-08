@@ -59,11 +59,6 @@ export class LoginComponent {
     this.username = '';
     this.password = '';
   }
-
-  // Easter Egg
-  onForgotPassword() {
-    this.alertService.showSnackBar("Close your eyes... concentrate, remember !", 'Ok...', 6000);
-  }
 }
 
 interface Output {

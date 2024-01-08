@@ -42,7 +42,7 @@
     <br>
     <mat-dialog-actions style="display: flex; justify-content: space-between;">
         <div>
-            <button mat-raised-button color="primary" (click)="onViewDevice()">View Device</button>
+            <button mat-raised-button color="primary" (click)="onViewDevice()">{{data.type == 'U' ? 'View Account' : 'View Device'}}</button>
         </div>
         <div>
             <button mat-button (click)="onBack()">Back</button>

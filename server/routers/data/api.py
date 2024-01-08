@@ -86,38 +86,38 @@ def convert_to_json(result, keys):
     json_data = json.dumps(data, cls=ExtendedEncoder)
     return json.loads(json_data)
 
-def generate_alert_message(exceeded_peaks, close_to_limit_peaks, consumption_id):
-    # Convert percentages to Decimal for compatibility
-    warning_threshold_percentage = Decimal('0.05')  # Top 05% under power_max
-    info_threshold_percentage = Decimal('0.20')     # Top 20% under power_max
+def generate_alert_message(exceeded_peaks, non_exceeded_peaks, consumption_id, power_alert_threshold):
+    
+    # Default warning threshold percentage (if no user power_alert_threshold is specified)
+    default_warning_threshold_percentage = Decimal('0.02')  # Default system - 2% before max power rating
 
     highest_exceeded_peak = None
     highest_warning_peak = None
-    highest_info_peak = None
 
+    # Find the highest exceeded peak
     for peak in exceeded_peaks:
         if highest_exceeded_peak is None or peak[2] > highest_exceeded_peak[2]:
             highest_exceeded_peak = peak
 
-    for peak in close_to_limit_peaks:
-        warning_threshold = peak[3] * (1 - warning_threshold_percentage)
-        info_threshold = peak[3] * (1 - info_threshold_percentage)
+    # Find the highest warning peak
+    for peak in non_exceeded_peaks:
+        if power_alert_threshold != 0:
+            warning_threshold = power_alert_threshold
+        else:
+            warning_threshold = peak[3] * (1 - default_warning_threshold_percentage)
 
         if peak[2] >= warning_threshold:
             if highest_warning_peak is None or peak[2] > highest_warning_peak[2]:
-                highest_warning_peak = peak
-        elif peak[2] >= info_threshold:
-            if highest_info_peak is None or peak[2] > highest_info_peak[2]:
-                highest_info_peak = peak
+                highest_warning_peak = peak   
 
     if highest_exceeded_peak:
         timestamp, power, power_max = highest_exceeded_peak[1], highest_exceeded_peak[2], highest_exceeded_peak[3]
         timestamp = timestamp.strftime("%d/%m/%Y, %I:%M %p")
-        title = "Critical Power Usage"
+        title = "Critical Power Draw"
         type = 'C'
         description = (
-            f"Critical Alert: On {timestamp}, Power draw of {power} W has exceeded the "
-            f"threshold of {power_max} W, for Consumption ID {consumption_id}. This level of consumption "
+            f"Critical Alert - [{timestamp}]: Power draw of {power:.1f} W has exceeded the "
+            f"device maximum power rating of {power_max:.1f} W, for Consumption ID {consumption_id}. This level of consumption "
             "may indicate a potential issue with the device or abnormal operation."
         )
         suggestion = (
@@ -127,30 +127,23 @@ def generate_alert_message(exceeded_peaks, close_to_limit_peaks, consumption_id)
     elif highest_warning_peak:
         timestamp, power, power_max = highest_warning_peak[1], highest_warning_peak[2], highest_warning_peak[3]
         timestamp = timestamp.strftime("%d/%m/%Y, %I:%M %p")
-        title = "Power Usage Warning"
+        title = "Power Draw Warning"
         type = 'W'
-        description = (
-            f"Warning Alert: On {timestamp}, Power usage of {power} W has approached the alert threshold "
-            f"of {power_max} W, for Consumption ID {consumption_id}. This might lead to potential "
-            "capacity challenges if left unchecked."
-        )
+        if power_alert_threshold != 0:
+            description = (
+                f"Warning Alert - [{timestamp}]: Power draw of {power:.1f} W has exceeded your set alert threshold "
+                f"of {warning_threshold:.1f} W, for Consumption ID {consumption_id}. This might lead to potential "
+                "capacity challenges if left unchecked, provided that your set alert threshold is accurate for your device."
+            )
+        else:
+            description = (
+                f"Warning Alert - [{timestamp}]: Power draw of {power:.1f} W has exceeded default system alert threshold "
+                f"of {warning_threshold:.1f} W, for Consumption ID {consumption_id}. This might lead to potential "
+                "capacity challenges if left unchecked, as it indicates poor operating efficiency."
+            )
         suggestion = (
-            "Review your current power usage patterns. Consider rescheduling high-power activities "
-            "to off-peak hours or distributing the load across different circuits."
-        )
-    elif highest_info_peak:
-        timestamp, power, power_max = highest_info_peak[1], highest_info_peak[2], highest_info_peak[3]
-        timestamp = timestamp.strftime("%d/%m/%Y, %I:%M %p")
-        title = "Power Usage Information"
-        type = 'I'
-        description = (
-            f"Information Alert: On {timestamp}, Power consumption of {power} W was within acceptable ranges but was "
-            f"nearing the alert threshold of {power_max} W, for Consumption ID {consumption_id}. It's "
-            "advisable to keep an eye on this trend."
-        )
-        suggestion = (
-            "Consider regular monitoring to ensure the consumption remains within safe limits. "
-            "Exploring energy-efficient alternatives may also help in optimizing power usage."
+            "Review your current power usage patterns and alert threshold. Consider rescheduling high-power activities "
+            "to off-peak hours, enabling 'Eco' mode, or distributing the load across different circuits."
         )
     else:
         # No significant power draw - no alert needed
@@ -164,7 +157,7 @@ def generate_energy_alert_message(total_energy_consumption, energy_threshold, co
         type = 'I'
         description = (
             f"Energy Consumption Notice: Your energy consumption of {total_energy_consumption:.2f} kWh for Consumption ID {consumption_id} "
-            f"has surpassed the set threshold of {energy_threshold} kWh. "
+            f"has surpassed the set threshold of {energy_threshold:.2f} kWh. "
             "This indicates a higher than usual energy demand."
         )
         suggestion = (
@@ -715,7 +708,7 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                         power = 0
                         inactivity_duration -= 1
                     else:
-                        if random.random() < 0.001:  # 0,1% chance to spike
+                        if random.random() < 0.0008:  # 0,08% chance to spike
                             power = random.uniform(power_max_float, power_max_float * 1.2)
                             was_spike = True
                             was_inactive = False
@@ -902,13 +895,11 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
     with database_connection():
         try:
             keys = ["consumption_id", "timestamp", "power", "power_max", "exceeded"]
-            info_threshold_percentage = 0.20  # 20% close to the limit
 
             result = connector.execute("""
                 SELECT p.power_reading.consumption_id, p.power_reading.reading_timestamp, p.power_reading.power,
                        p.device.custom_power_max,
                        CASE WHEN p.power_reading.power > p.device.custom_power_max THEN TRUE
-                            WHEN p.power_reading.power > (p.device.custom_power_max * (1 - %s)) THEN FALSE
                             ELSE NULL END AS exceeded
                 FROM p.power_reading
                 INNER JOIN p.device_consumption ON p.power_reading.consumption_id = p.device_consumption.consumption_id
@@ -916,7 +907,7 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
                 INNER JOIN p.device_type ON p.device.device_type = p.device_type.type_name
                 INNER JOIN p.user ON p.device.user_username = p.user.username
                 WHERE p.power_reading.consumption_id = %s AND p.user.username = %s
-            """, (info_threshold_percentage, consumption_id, username))
+            """, (consumption_id, username))
 
             if not result:
                 return []
@@ -926,11 +917,25 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
 
             json_data = convert_to_json(peaks, keys)
             
-            # Analyze peaks for alert generation
-            exceeded_peaks = [row for row in peaks if row[-1]]
-            close_to_limit_peaks = [row for row in peaks if not row[-1]]
+            # Fetch the power alert threshold for the device
+            power_alert_threshold_result = connector.execute("""
+                SELECT p.device.power_alert_threshold
+                FROM p.device
+                INNER JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+                WHERE p.device_consumption.consumption_id = %s AND p.device.user_username = %s
+                LIMIT 1
+            """, (consumption_id, username))
+            
+            power_alert_threshold = 0
+            if power_alert_threshold_result:
+                power_alert_threshold = power_alert_threshold_result[0][0]
 
-            alert_message = generate_alert_message(exceeded_peaks, close_to_limit_peaks, consumption_id)
+            # Split in peaks that exceeded and not exceeded max power rating
+            exceeded_peaks = [row for row in peaks if row[-1]]
+            non_exceeded_peaks = [row for row in result if not row[-1]]
+
+            # Generate either Warning or Critical alerts
+            alert_message = generate_alert_message(exceeded_peaks, non_exceeded_peaks, consumption_id, power_alert_threshold)
             if alert_message:
                 alert_title, alert_description, alert_suggestion, alert_type = alert_message
                 
@@ -939,7 +944,7 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
                     VALUES (%s, (SELECT device_id FROM p.device_consumption WHERE consumption_id = %s LIMIT 1), %s, %s, %s, NOW(), %s, 'N');
                 """, (username, consumption_id, alert_title, alert_description, alert_suggestion, alert_type))
 
-            # Fetch the energy consumption threshold for the device
+            # Fetch the energy and power consumption threshold for the device
             energy_threshold_result = connector.execute("""
                 SELECT p.device.energy_alert_threshold
                 FROM p.device
