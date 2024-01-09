@@ -29,3 +29,27 @@ a:hover, a:active{
     font-size: 0.8em;
     color: #333;
 }
+
+.footer-link-container {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+}
+
+.footer-link {
+    color: darkblue;
+}
+
+.vertical-divider {
+    margin-left: 5px;
+    margin-right: 5px;
+    color: black;
+    height: 12px;
+}
+
+.horizontal-divider {
+    width: 220px;
+    margin-left: auto;
+    margin-right: auto;
+}
