@@ -8,12 +8,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class BasicDialogComponent {
 
-  constructor(private dialogRef: MatDialogRef<BasicDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any){
+  constructor(private dialogRef: MatDialogRef<BasicDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.dialogRef.backdropClick().subscribe(() => {
       this.dialogRef.close(false);
     });
   }
-  
+
   onCancel() {
     this.dialogRef.close(false);
   }

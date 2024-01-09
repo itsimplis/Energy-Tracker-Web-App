@@ -80,7 +80,7 @@ export class NewConsumptionDialogComponent {
   onApplyClick() {
     let startDate = this.consumptionForm.get('startDate')?.value;
     let endDate = this.consumptionForm.get('endDate')?.value;
-  
+
     if (startDate) {
       startDate = this.formatDate(new Date(startDate));
       this.consumptionForm.get('startDate')!.setValue(startDate);
@@ -89,7 +89,7 @@ export class NewConsumptionDialogComponent {
       endDate = this.formatDate(new Date(endDate));
       this.consumptionForm.get('endDate')!.setValue(endDate);
     }
-  
+
     this.updateDurationDays();
   }
 }

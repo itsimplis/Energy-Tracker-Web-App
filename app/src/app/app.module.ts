@@ -58,6 +58,7 @@ import { DeviceDetailComponent } from './pages/device-detail/device-detail.compo
 import { NewConsumptionDialogComponent } from './dialog/new-consumption-dialog/new-consumption-dialog.component';
 import { NewDeviceDialogComponent } from './dialog/new-device-dialog/new-device-dialog.component';
 import { ViewAlertDialogComponent } from './dialog/view-alert-dialog/view-alert-dialog.component';
+import { ImportDialogComponent } from './dialog/import-dialog/import-dialog.component';
 
 // Custom date formats
 export const MY_DATE_FORMATS = {
@@ -89,7 +90,8 @@ export const MY_DATE_FORMATS = {
     DeviceDetailComponent,
     NewConsumptionDialogComponent,
     NewDeviceDialogComponent,
-    ViewAlertDialogComponent
+    ViewAlertDialogComponent,
+    ImportDialogComponent
   ],
   imports: [
     AppRoutingModule,

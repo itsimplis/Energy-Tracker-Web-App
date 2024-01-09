@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { NewDeviceDialogComponent } from '../dialog/new-device-dialog/new-device-dialog.component';
 import { BasicDialogComponent } from '../dialog/basic-dialog/basic-dialog.component';
 import { NewConsumptionDialogComponent } from '../dialog/new-consumption-dialog/new-consumption-dialog.component';
 import { ViewAlertDialogComponent } from '../dialog/view-alert-dialog/view-alert-dialog.component';
+import { ImportDialogComponent } from '../dialog/import-dialog/import-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,13 @@ import { ViewAlertDialogComponent } from '../dialog/view-alert-dialog/view-alert
 export class DialogService {
 
   constructor(private matDialog: MatDialog) { }
+
+  private messageSource = new BehaviorSubject<{ text: string, showSpinner: boolean, showCheckIcon: boolean }[]>([]);
+  currentMessage = this.messageSource.asObservable();
+
+  updateMessages(messages: { text: string, showSpinner: boolean, showCheckIcon: boolean }[]) {
+    this.messageSource.next(messages);
+  }
 
   openDialog(component: any, config?: MatDialogConfig): Observable<any> {
     const dialogRef = this.matDialog.open(component, config);
@@ -48,5 +56,12 @@ export class DialogService {
     dialogConfig.width = '600px';
     dialogConfig.data = data;
     return this.openDialog(ViewAlertDialogComponent, dialogConfig);
+  }
+
+  openImportDialog(data: any[]): Observable<any> {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '400px';
+    dialogConfig.data = data;
+    return this.openDialog(ImportDialogComponent, dialogConfig);
   }
 }

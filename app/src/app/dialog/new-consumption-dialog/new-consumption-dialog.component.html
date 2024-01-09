@@ -12,18 +12,19 @@
         <mat-form-field class="example-form-field">
             <mat-label>Consumption Period</mat-label>
             <mat-date-range-input [rangePicker]="rangePicker">
-              <input matStartDate formControlName="startDate" placeholder="Start date">
-              <input matEndDate formControlName="endDate" placeholder="End date">
+                <input matStartDate formControlName="startDate" placeholder="Start date">
+                <input matEndDate formControlName="endDate" placeholder="End date">
             </mat-date-range-input>
             <mat-hint align="start"><strong>Select the consumption period (DD/MM/YYYY – DD/MM/YYYY)</strong></mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
             <mat-date-range-picker #rangePicker>
-              <mat-date-range-picker-actions>
-                <button mat-button matDateRangePickerCancel>Cancel</button>
-                <button mat-raised-button color="primary" (click)="onApplyClick()" matDateRangePickerApply>Apply</button>
-              </mat-date-range-picker-actions>
+                <mat-date-range-picker-actions>
+                    <button mat-button matDateRangePickerCancel>Cancel</button>
+                    <button mat-raised-button color="primary" (click)="onApplyClick()"
+                        matDateRangePickerApply>Apply</button>
+                </mat-date-range-picker-actions>
             </mat-date-range-picker>
-          </mat-form-field>
+        </mat-form-field>
         <br>
         <mat-form-field appearance="outline" floatLabel="always">
             <mat-label>Duration Days (Consumption period)</mat-label>
@@ -37,10 +38,12 @@
         <mat-form-field class="example-form-field" floatLabel="always">
             <mat-label>Power Readings File</mat-label>
             <input #fileInput matInput type="text" [value]="fileName" readonly="true" (change)="onFileSelected($event)">
-            <mat-hint align="start"><strong>Choose the .csv file with the power readings for this consumption</strong></mat-hint>
-                <button mat-button color="primary" style="margin-right: 10px;" mat-raised-button matSuffix aria-label="Clear" (click)="fileInput.click()">
-                    <mat-icon class="file-icon">file_open</mat-icon>
-                </button>
+            <mat-hint align="start"><strong>Choose the .csv file with the power readings for this
+                    consumption</strong></mat-hint>
+            <button mat-button color="primary" style="margin-right: 10px;" mat-raised-button matSuffix
+                aria-label="Clear" (click)="fileInput.click()">
+                <mat-icon class="file-icon">file_open</mat-icon>
+            </button>
         </mat-form-field>
 
     </form>

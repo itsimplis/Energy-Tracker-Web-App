@@ -7,6 +7,7 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { DialogService } from 'src/app/service/dialog.service';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'devices',
@@ -162,28 +163,40 @@ export class DevicesComponent implements OnInit {
   onAddNewConsumption(device_id: number) {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
+        this.dialogService.openImportDialog([]).subscribe(result => {});
+        this.dialogService.updateMessages([{ text: "Batch importing data from files...", showSpinner: true, showCheckIcon: false }]);
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
-            data.consumption_ids.forEach((consumption_id: number) => {
-              this.dataApiService.getPeakPowerAnalysis(consumption_id).subscribe({
-                next: (analysisData) => {
-                  this.alertService.loadAlerts();
-                  this.loadDevices();
-                },
-                error: (analysisError) => {
-                  console.error("Error during analysis for consumption_id", consumption_id, ": ", analysisError);
-                }
-              });
+            this.dialogService.updateMessages([{ text: "Analyzing imported data...", showSpinner: true, showCheckIcon: false }]);
+  
+            // Create an array of observables for each consumption_id analysis
+            const analysisObservables = data.consumption_ids.map((consumption_id: number) => 
+              this.dataApiService.getPeakPowerAnalysis(consumption_id)
+            );
+  
+            // Use forkJoin to wait for all observables to complete
+            forkJoin(analysisObservables).subscribe({
+              next: (analysisDataArray) => {
+                // Aanalyses are completed
+                this.alertService.loadAlerts();
+                this.loadDevices();
+                this.output.result = 'success';
+                this.output.message = data.message;
+                this.alertService.showSnackBar(this.output.message);
+                this.dialogService.updateMessages([{ text: "Data import and analysis complete!", showSpinner: false, showCheckIcon: true }]);
+              },
+              error: (error) => {
+                this.alertService.showSnackBar("An error occurred in analysis!");
+                console.log(error);
+              }
             });
-            this.output.result = 'success';
-            this.output.message = data.message;
-            this.alertService.showSnackBar(this.output.message);
+  
           },
           error: (error) => {
             this.alertService.showSnackBar("An error occurred!");
             console.log(error);
           }
-        })
+        });
       } else {
         console.log("Addition of new consumption log cancelled!")
       }

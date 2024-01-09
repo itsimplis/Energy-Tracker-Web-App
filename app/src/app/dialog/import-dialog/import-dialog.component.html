@@ -1,0 +1,16 @@
+<mat-card>
+    <mat-card-content>
+        <div style="display: flex; margin-left: auto; margin-right: auto; align-self: center; text-align: center;">
+            <ng-container *ngFor="let message of messages">
+                <div style="display: flex; align-items: center;">
+                    <span>{{ message.text }}</span>
+                    <mat-spinner style="margin-left: 8px;" *ngIf="message.showSpinner" diameter="20"></mat-spinner>
+                    <mat-icon style="margin-left: 8px;" *ngIf="message.showCheckIcon" color="primary">check_circle</mat-icon>
+                </div>
+            </ng-container>
+        </div>
+    </mat-card-content>
+    <mat-dialog-actions align="end">
+        <button mat-button color="primary" (click)="onClose()">Close</button>
+    </mat-dialog-actions>
+</mat-card>
