@@ -35,6 +35,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 
@@ -124,6 +125,7 @@ export const MY_DATE_FORMATS = {
     MatTooltipModule,
     MatGridListModule,
     MatSliderModule,
+    MatProgressSpinnerModule,
     MatButtonToggleModule
   ],
   providers: [

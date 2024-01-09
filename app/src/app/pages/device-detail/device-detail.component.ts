@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Color, ScaleType, LegendPosition } from '@swimlane/ngx-charts';
+import { Color, ScaleType, LegendPosition, LineChartComponent } from '@swimlane/ngx-charts';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -17,7 +17,7 @@ import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.c
   styleUrls: ['./device-detail.component.scss']
 })
 export class DeviceDetailComponent implements OnInit {
-
+@ViewChild('timelineChart') timelineChart!: LineChartComponent;
   private routeSubscription!: Subscription;
   private deviceAlertsSubscription!: Subscription;
 
@@ -342,11 +342,14 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
           {
             name: 'Power Readings',
             series: data.map(item => ({
-              name: `${(new Date(item.reading_timestamp as string)).toLocaleDateString()}, ${(new Date(item.reading_timestamp as string)).getHours()}:00`,
+              name: new Date(item.reading_timestamp),
               value: item.power as number,
             }))
           }
         ];
+        if (this.timelineChart) {
+          this.timelineChart.filteredDomain = null;
+        }
       },
       error: (error) => {
         console.error(error);

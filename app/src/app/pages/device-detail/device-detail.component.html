@@ -292,16 +292,16 @@
                     selectedStartDate |
                     date:'dd/MM/yyyy' }} - {{ selectedEndDate | date:'dd/MM/yyyy' }}</h3>
                 <div>
-                    <ngx-charts-line-chart class="chart-container" [scheme]="colorScheme"
+                    <ngx-charts-line-chart #timelineChart class="chart-container" [scheme]="colorScheme"
                         [results]="consumption_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                         [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
                         yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisMin" [referenceLines]="chartRefLines"
-                        [showRefLines]="true" [showRefLabels]="true">
+                        [showRefLines]="true" [showRefLabels]="true" [timeline]="true">
                     </ngx-charts-line-chart>
                 </div>
             </div>
             <ng-template #noPowerReadingsContent>
-                <h3 align="center" class="rounded-label">Select a consumption record from the table</h3>
+                <h3 align="center" class="rounded-label">View timeline by selecting a consumption record from the table</h3>
             </ng-template>
         </div>
         <ng-template #noConsumptionsContent>
