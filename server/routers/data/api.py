@@ -375,7 +375,9 @@ async def get_device_consumption(device_id: int, username: str = Depends(get_cur
             FROM p.device
             JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
             JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
-            WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
+            WHERE p.device.id = %s AND p.device.user_username = %s
+            ORDER BY p.consumption.start_date
+            """, (device_id, username))
             json_data = convert_to_json(result, keys)
 
         return json_data
@@ -419,7 +421,9 @@ async def get_device_power_readings(device_id: int, username: str = Depends(get_
             JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
             JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
             JOIN p.power_reading ON p.consumption.id = p.power_reading.consumption_id
-            WHERE p.device.id = %s AND p.device.user_username = %s""", (device_id, username))
+            WHERE p.device.id = %s AND p.device.user_username = %s
+            ORDER BY p.power_reading.reading_timestamp                           
+            """, (device_id, username))
             json_data = convert_to_json(result, keys)
 
             return json_data
