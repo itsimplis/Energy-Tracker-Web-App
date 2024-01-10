@@ -54,8 +54,8 @@ export class DashboardComponent implements OnInit {
   loadAveragePowerPerDevice() {
     this.dataApiService.getAveragePowerPerDevice().subscribe({
       next: (data: DeviceData[]) => {
-        const categoryGroupedData = this.groupDataBy('category','average', data);
-        const typeGroupedData = this.groupDataBy('type','average', data);
+        const categoryGroupedData = this.groupDataBy('category', 'average', data);
+        const typeGroupedData = this.groupDataBy('type', 'average', data);
 
         this.averagePowerCategoryGrouped = Object.keys(categoryGroupedData).map(category => ({
           name: category,
@@ -82,8 +82,8 @@ export class DashboardComponent implements OnInit {
   loadTotalPowerPerDevice() {
     this.dataApiService.getTotalPowerPerDevice().subscribe({
       next: (data: DeviceData[]) => {
-        const categoryGroupedData = this.groupDataBy('category','total', data);
-        const typeGroupedData = this.groupDataBy('type','total', data);
+        const categoryGroupedData = this.groupDataBy('category', 'total', data);
+        const typeGroupedData = this.groupDataBy('type', 'total', data);
 
         this.totalPowerCategoryGrouped = Object.keys(categoryGroupedData).map(category => ({
           name: category,
@@ -164,34 +164,34 @@ export class DashboardComponent implements OnInit {
   // Group data by either device category or device type
   private groupDataBy(groupBy: string, chart: string, data: DeviceData[]): Record<string, { name: string; value: number; extra: { code: number } }[]> {
     const groupedData: Record<string, { name: string; value: number; extra: { code: number } }[]> = {};
-    var group = '';
+    const groupTotals: Record<string, number> = {};
     data.forEach(device => {
-      if (groupBy == 'category') {
-        group = device.device_category;
-      } else if (groupBy == 'type') {
-        group = device.device_type;
-      }
+      const group = groupBy === 'category' ? device.device_category : device.device_type;
 
       if (!groupedData[group]) {
         groupedData[group] = [];
+        groupTotals[group] = 0;
       }
 
-      if (chart == 'total') {
-        groupedData[group].push({
-          name: device.device_name,
-          value: device.total_power,
-          extra: { code: device.device_id }
-        });
-      } else if (chart == 'average') {
-        groupedData[group].push({
-          name: device.device_name,
-          value: device.average_power,
-          extra: { code: device.device_id }
-        });
-      }
+      const value = chart === 'total' ? device.total_power : device.average_power;
+      groupedData[group].push({
+        name: device.device_name,
+        value: value,
+        extra: { code: device.device_id }
+      });
+      groupTotals[group] += value;
     });
 
-    return groupedData;
+    // Sort groups by their total values
+    const sortedGroups = Object.keys(groupedData).sort((a, b) => groupTotals[b] - groupTotals[a]);
+
+    // Create chart data from sorted groups
+    const sortedChartData: Record<string, { name: string; value: number; extra: { code: number } }[]> = {};
+    sortedGroups.forEach(group => {
+      sortedChartData[group] = groupedData[group];
+    });
+
+    return sortedChartData;
   }
 
   // Find the device with the highest total power consumption
