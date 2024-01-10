@@ -17,7 +17,7 @@ import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.c
   styleUrls: ['./device-detail.component.scss']
 })
 export class DeviceDetailComponent implements OnInit {
-@ViewChild('timelineChart') timelineChart!: LineChartComponent;
+  @ViewChild('timelineChart') timelineChart!: LineChartComponent;
   private routeSubscription!: Subscription;
   private deviceAlertsSubscription!: Subscription;
 
@@ -37,7 +37,7 @@ export class DeviceDetailComponent implements OnInit {
   output: Output;
   aggregation: 'sum' | 'average' | 'none' = 'none';
   columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'power_max', 'files_names', 'actions'];
-  columnsAlert: string[] = ['title', 'description', 'type', 'read_status', 'suggestion', 'date'];
+  columnsAlert: string[] = ['title', 'description', 'consumption_id', 'type', 'read_status', 'suggestion', 'date', 'actions'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
 
@@ -97,7 +97,7 @@ export class DeviceDetailComponent implements OnInit {
     this.dataApiService.getDevice(device_id).subscribe({
       next: (data) => {
         this.details = data;
-        this.chartRefLines = [{"name": "Min Power Rating","value": this.details[0]?.custom_power_min},{"name": "Max Power Rating","value": this.details[0]?.custom_power_max}];
+        this.chartRefLines = [{ "name": "Min Power Rating", "value": this.details[0]?.custom_power_min }, { "name": "Max Power Rating", "value": this.details[0]?.custom_power_max }];
       },
       error: (error) => {
         console.log(error);
@@ -137,57 +137,57 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
-groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'sum' | 'average' | 'none' = 'none'): { name: string; series: SeriesItem[] }[] {
+  groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'sum' | 'average' | 'none' = 'none'): { name: string; series: SeriesItem[] }[] {
     const groupedData: Record<string, GroupedDataItem> = {};
 
     data.forEach((reading: PowerReading) => {
-        const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
-        if (!groupedData[period]) {
-            groupedData[period] = {
-                name: period,
-                series: [],
-                startDate: new Date(reading.start_date)
-            };
-        }
+      const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
+      if (!groupedData[period]) {
+        groupedData[period] = {
+          name: period,
+          series: [],
+          startDate: new Date(reading.start_date)
+        };
+      }
 
-        const readingDate = new Date(reading.reading_timestamp as string);
-        const dayLabel = `Day ${readingDate.getDate()}`; // Day of the reading
+      const readingDate = new Date(reading.reading_timestamp as string);
+      const dayLabel = `Day ${readingDate.getDate()}`; // Day of the reading
 
-        if (aggregationType === 'none') {
-            const hourLabel = `${readingDate.getHours()}:00`; // Hour of the reading
-            groupedData[period].series.push({
-                name: `${dayLabel}, ${hourLabel}`,
-                value: reading.power
-            });
-        } else {
-            let daySeries = groupedData[period].series.find(s => s.name === dayLabel);
-            if (!daySeries) {
-                daySeries = { name: dayLabel, value: 0, count: 0 };
-                groupedData[period].series.push(daySeries);
-            }
-            if (aggregationType === 'average' && reading.power !== 0) {
-                // Only add non-zero readings for average calculation
-                daySeries.value += reading.power;
-                daySeries.count! += 1;
-            } else if (aggregationType !== 'average') {
-                daySeries.value += reading.power;
-                daySeries.count! += 1;
-            }
+      if (aggregationType === 'none') {
+        const hourLabel = `${readingDate.getHours()}:00`; // Hour of the reading
+        groupedData[period].series.push({
+          name: `${dayLabel}, ${hourLabel}`,
+          value: reading.power
+        });
+      } else {
+        let daySeries = groupedData[period].series.find(s => s.name === dayLabel);
+        if (!daySeries) {
+          daySeries = { name: dayLabel, value: 0, count: 0 };
+          groupedData[period].series.push(daySeries);
         }
+        if (aggregationType === 'average' && reading.power !== 0) {
+          // Only add non-zero readings for average calculation
+          daySeries.value += reading.power;
+          daySeries.count! += 1;
+        } else if (aggregationType !== 'average') {
+          daySeries.value += reading.power;
+          daySeries.count! += 1;
+        }
+      }
     });
 
     if (aggregationType === 'average') {
-        Object.values(groupedData).forEach(group => {
-            group.series.forEach(day => {
-                if (day.count !== undefined && day.count > 0) {
-                    day.value /= day.count;
-                }
-            });
+      Object.values(groupedData).forEach(group => {
+        group.series.forEach(day => {
+          if (day.count !== undefined && day.count > 0) {
+            day.value /= day.count;
+          }
         });
+      });
     }
 
     return Object.values(groupedData).map(({ name, series }) => ({ name, series }));
-}
+  }
 
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
   groupPowerReadingsByPeriodkWh(data: PowerReading[]): any[] {
@@ -262,17 +262,17 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
   onAddNewConsumption(device_id: number) {
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
-        this.dialogService.openImportDialog([]).subscribe(result => {});
+        this.dialogService.openImportDialog([]).subscribe(result => { });
         this.dialogService.updateMessages([{ text: "Batch importing data from files...", showSpinner: true, showCheckIcon: false }]);
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
             this.dialogService.updateMessages([{ text: "Analyzing imported data...", showSpinner: true, showCheckIcon: false }]);
-  
+
             // Create an array of observables for each consumption_id analysis
-            const analysisObservables = data.consumption_ids.map((consumption_id: number) => 
+            const analysisObservables = data.consumption_ids.map((consumption_id: number) =>
               this.dataApiService.getPeakPowerAnalysis(consumption_id)
             );
-  
+
             // Use forkJoin to wait for all observables to complete
             forkJoin(analysisObservables).subscribe({
               next: (analysisDataArray) => {
@@ -292,7 +292,7 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
                 console.log(error);
               }
             });
-  
+
           },
           error: (error) => {
             this.alertService.showSnackBar("An error occurred!");
@@ -374,7 +374,7 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
       next: (blob) => {
         const sanitizedDeviceName = device_name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
         const filename = `data_downloaded_${sanitizedDeviceName}.xlsx`;
-  
+
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -392,10 +392,10 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
     });
   }
 
-  onRowButtonClick(event: MouseEvent, consumption_id: number, filename: string) {
+  onConsumptionRowDownloadButtonClick(event: MouseEvent, consumption_id: number, filename: string) {
     event.stopPropagation();
     this.dataApiService.downloadConsumptionPowerReadings(consumption_id).subscribe({
-      next: (blob) => {  
+      next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -410,6 +410,49 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
       complete: () => {
         this.alertService.showSnackBar("File download complete.");
       },
+    });
+  }
+
+  onConsumptionRowDeleteButtonClick(event: MouseEvent, consumption_id: number) {
+    event.stopPropagation();
+    this.dataApiService.removeConsumption(consumption_id).subscribe({
+      next: (data) => {
+        this.output.result = 'success';
+        this.output.message = data.message;
+        this.alertService.showSnackBar(this.output.message);
+        const device_id = this.details[0]?.id;
+        this.loadDeviceConsumption(device_id);
+        this.loadDevicePowerReadings(device_id);
+        this.alertService.loadAlerts();
+        this.alertService.loadDeviceAlerts(device_id);
+        this.loadDeviceDetail(device_id);
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
+      }
+    });
+  }
+
+  onAlertRowDeleteButtonClick(event: MouseEvent, alert_id: number) {
+    event.stopPropagation();
+    const device_id = this.details[0]?.id;
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    dialogConfig.data = { title: 'Alert Deletion', content: 'This will delete the selected alert.' }
+    const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.alertService.removeAlert(device_id, alert_id);
+          this.loadDeviceDetail(device_id);
+        } else {
+          this.alertService.showSnackBar("Alerts deletion was cancelled!");
+        }
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
+      }
     });
   }
 
@@ -535,12 +578,12 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
   getTypeClassConsumption(powerPeak: number): string {
     let type = '';
     let warn_threshold = 0;
-  
+
     const custom_power_min = this.details[0]?.custom_power_min;
     const custom_power_max = this.details[0]?.custom_power_max;
     const power_alert_threshold = this.details[0]?.power_alert_threshold;
     const default_warning_threshold_percentage = 0.02; // 2%
-  
+
     if (power_alert_threshold == 0) {
       const power_range = custom_power_max - custom_power_min;
       const adjusted_threshold_percentage = default_warning_threshold_percentage * (power_range / custom_power_max);
@@ -549,7 +592,7 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
     } else {
       warn_threshold = power_alert_threshold;
     }
-  
+
     if (powerPeak > custom_power_max) {
       type = 'critical';
     } else if (powerPeak >= warn_threshold && powerPeak <= custom_power_max) {
@@ -569,12 +612,12 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
   getTypeIconConsumption(powerPeak: number): string {
     let type = '';
     let warn_threshold = 0;
-  
+
     const custom_power_min = this.details[0]?.custom_power_min;
     const custom_power_max = this.details[0]?.custom_power_max;
     const power_alert_threshold = this.details[0]?.power_alert_threshold;
     const default_warning_threshold_percentage = 0.02; // 2%
-    
+
     if (power_alert_threshold == 0) {
       const power_range = custom_power_max - custom_power_min;
       const adjusted_threshold_percentage = default_warning_threshold_percentage * (power_range / custom_power_max);
@@ -583,7 +626,7 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
     } else {
       warn_threshold = power_alert_threshold;
     }
-  
+
     if (powerPeak > custom_power_max) {
       type = 'critical';
     } else if (powerPeak >= warn_threshold && powerPeak <= custom_power_max) {
@@ -591,7 +634,7 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
     } else {
       type = 'normal';
     }
-  
+
     switch (type) {
       case 'normal': return 'check_circle';
       case 'warning': return 'warning';
@@ -604,13 +647,13 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
   getChartYAxisMaxValue(current_consumption_peak: number): number {
     if (this.details && this.details[0]) {
       let yAxisMaxValue = 0;
-  
+
       if (current_consumption_peak > this.details[0].custom_power_max) {
         yAxisMaxValue = current_consumption_peak + (0.1 * current_consumption_peak);
       } else {
         yAxisMaxValue = this.details[0].custom_power_max + (0.1 * this.details[0].custom_power_max);
       }
-  
+
       return yAxisMaxValue;
     } else {
       return current_consumption_peak;

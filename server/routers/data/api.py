@@ -36,6 +36,7 @@ class ExtendedEncoder(json.JSONEncoder):
     
 class AddAlert(BaseModel):
     device_id: Optional[int] = None
+    consumption_id: Optional[int] = None
     title: str
     description: str
     suggestion: str
@@ -46,6 +47,7 @@ class AddAlert(BaseModel):
 class AddRegistrationAlert(BaseModel):
     username: str
     device_id: Optional[int] = None
+    consumption_id: Optional[int] = None
     title: str
     description: str
     suggestion: str
@@ -254,6 +256,31 @@ async def update_alert(data: UpdateAlert, username: str = Depends(get_current_us
     return {"message": f"Alert updated!"}
 
 # ===============================================================================================
+# Endpoint remove a single alert
+@router.delete("/removeAlert/{alert_id}")
+async def remove_alert(alert_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            result = connector.execute(
+                """SELECT * FROM p.alert WHERE p.alert.id = %s AND p.alert.username = %s""", (alert_id, username)
+            )
+            if not result:
+                raise HTTPException(
+                    status_code=404, detail=f"Alert with id {alert_id} does not exist."
+                )
+            connector.execute(
+                "DELETE FROM p.alert WHERE p.alert.id = %s", (alert_id,)
+            )
+            connector.commit()
+            return {"message": "Alert removed successfully!"}
+
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            connector.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
 # Endpoint to clear all alerts of a user
 @router.delete("/removeAlerts")
 async def remove_alerts(username: str = Depends(get_current_user)):
@@ -392,9 +419,9 @@ async def get_device_consumption(device_id: int, username: str = Depends(get_cur
 async def get_device_alerts(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
-            keys = ["id", "title", "description", "device_id", "device_type", "device_name", "suggestion", "date", "type", "read_status"]
+            keys = ["id", "title", "description", "device_id", "consumption_id", "device_type", "device_name", "suggestion", "date", "type", "read_status"]
             result = connector.execute("""
-            SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.device_id, p.device.device_type, p.device.device_name, p.alert.suggestion, p.alert.date, p.alert.type, p.alert.read_status
+            SELECT p.alert.id, p.alert.title, p.alert.description, p.alert.device_id, p.alert.consumption_id, p.device.device_type, p.device.device_name, p.alert.suggestion, p.alert.date, p.alert.type, p.alert.read_status
             FROM p.alert
             JOIN p.device ON p.alert.device_id = p.device.id
             WHERE p.alert.device_id = %s AND p.device.user_username = %s""", (device_id, username))
@@ -535,22 +562,64 @@ async def remove_device_alerts(device_id: int, username: str = Depends(get_curre
 
 
 # ===============================================================================================
+# Endpoint to remove a single consumption record 
+@router.delete("/removeConsumption/{consumption_id}")
+async def remove_consumption(consumption_id: int, username: str = Depends(get_current_user)):
+    with database_connection():
+        try:     
+            # First, delete the related alerts
+            connector.execute("""
+                DELETE FROM p.alert 
+                WHERE consumption_id IN (
+                    SELECT id FROM p.consumption WHERE id = %s AND EXISTS (
+                        SELECT 1 FROM p.device
+                        JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+                        WHERE p.device_consumption.consumption_id = %s AND p.device.user_username = %s
+                    )
+                )""",
+                (consumption_id, consumption_id, username)
+            )
+
+            # Then, delete the consumption record
+            connector.execute("""
+                DELETE FROM p.device_consumption 
+                WHERE consumption_id = %s AND EXISTS (
+                    SELECT 1 FROM p.device
+                    JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+                    WHERE p.device_consumption.consumption_id = %s AND p.device.user_username = %s
+                )""",
+                (consumption_id, consumption_id, username)
+            )
+
+            connector.commit()
+            return {"message": "Consumption record and related alerts removed successfully!"}
+
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            connector.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
 # Endpoint to remove all consumption records for a specific device (and, optionally associated alerts)
 @router.delete("/removeAllDeviceConsumption/{device_id}")
-async def remove_all_device_consumption(device_id: int, deleteAlerts: bool = False, username: str = Depends(get_current_user)):
+async def remove_all_device_consumption(device_id: int, username: str = Depends(get_current_user)):
     with database_connection():
-        try:
-            
-            # Delete related alerts if deleteAlerts is True            
-            if deleteAlerts:
-                connector.execute("""
-                    DELETE FROM p.alert 
-                    WHERE device_id = %s AND EXISTS (
+        try:     
+            # First, delete related alerts
+            connector.execute("""
+                DELETE FROM p.alert 
+                WHERE consumption_id IN (
+                    SELECT p.consumption.id FROM p.consumption
+                    JOIN p.device_consumption ON p.consumption.id = p.device_consumption.consumption_id
+                    WHERE p.device_consumption.device_id = %s AND EXISTS (
                         SELECT 1 FROM p.device WHERE id = %s AND user_username = %s
-                    )""",
-                    (device_id, device_id, username)
-                )
-            
+                    )
+                )""",
+                (device_id, device_id, username)
+            )
+
+            # Then, delete all device consumption records
             connector.execute("""
                 DELETE FROM p.device_consumption 
                 WHERE device_id = %s AND EXISTS (
@@ -560,9 +629,9 @@ async def remove_all_device_consumption(device_id: int, deleteAlerts: bool = Fal
             )
 
             connector.commit()
-            return {"message": "All device consumption records" + (" and related alerts" if deleteAlerts else "") + " have been cleared!"}
+            return {"message": "All device consumption records and related alerts have been cleared!"}
 
-        except HTTPException:
+        except HTTPException as e:
             raise e
         except Exception as e:
             connector.rollback()
@@ -956,9 +1025,9 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
                 alert_title, alert_description, alert_suggestion, alert_type = alert_message
                 
                 connector.execute("""
-                    INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status)
-                    VALUES (%s, (SELECT device_id FROM p.device_consumption WHERE consumption_id = %s LIMIT 1), %s, %s, %s, NOW(), %s, 'N');
-                """, (username, consumption_id, alert_title, alert_description, alert_suggestion, alert_type))
+                    INSERT INTO p.alert (username, device_id, consumption_id, title, description, suggestion, date, type, read_status)
+                    VALUES (%s, (SELECT device_id FROM p.device_consumption WHERE consumption_id = %s LIMIT 1), %s, %s, %s, %s, NOW(), %s, 'N');
+                """, (username, consumption_id, consumption_id, alert_title, alert_description, alert_suggestion, alert_type))
 
             # Fetch the energy and power consumption threshold for the device
             energy_threshold_result = connector.execute("""
@@ -983,9 +1052,9 @@ async def get_peak_power_analysis(consumption_id: int, username: str = Depends(g
 
                         # Insert the alert into the database
                         connector.execute("""
-                            INSERT INTO p.alert (username, device_id, title, description, suggestion, date, type, read_status)
-                            VALUES (%s, (SELECT device_id FROM p.device_consumption WHERE consumption_id = %s LIMIT 1), %s, %s, %s, NOW(), %s, 'N');
-                        """, (username, consumption_id, alert_title, alert_description, alert_suggestion, alert_type))
+                            INSERT INTO p.alert (username, device_id, consumption_id, title, description, suggestion, date, type, read_status)
+                            VALUES (%s, (SELECT device_id FROM p.device_consumption WHERE consumption_id = %s LIMIT 1), %s, %s, %s, %s, NOW(), %s, 'N');
+                        """, (username, consumption_id, consumption_id, alert_title, alert_description, alert_suggestion, alert_type))
 
             connector.commit()
             return json_data

@@ -30,7 +30,7 @@ export class RegisterComponent {
       next: (data) => {
         this.output.result = 'success';
         this.output.message = data.message;
-        this.alertService.addRegistrationAlert(this.username, null, "Welcome user !", "Welcome. Your account has been successfully created!", "Your account is by default set as 'Public', with Notifications being 'Enabled'. It is adviced to update your profile details and settings", new Date().toISOString(), 'U', 'N', false);
+        this.alertService.addRegistrationAlert(this.username, null, null, "Welcome user !", "Welcome. Your account has been successfully created!", "Your account is by default set as 'Public', with Notifications being 'Enabled'. It is adviced to update your profile details and settings", new Date().toISOString(), 'U', 'N', false);
         this.alertService.showSnackBar(this.output.message, 'Close', 3500)
         this.authenticationService.notifyRegister();
       },

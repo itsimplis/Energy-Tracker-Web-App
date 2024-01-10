@@ -262,8 +262,13 @@
                         <th mat-header-cell *matHeaderCellDef> Actions </th>
                         <td mat-cell *matCellDef="let row">
                             <button mat-stroked-button color="primary"
-                                (click)="onRowButtonClick($event, row.consumption_id, row.files_names)"
-                                style="text-wrap: nowrap;">Download</button>
+                                (click)="onConsumptionRowDownloadButtonClick($event, row.consumption_id, row.files_names)"
+                                style="text-wrap: nowrap;">Download Data 
+                            </button>
+                            <button mat-stroked-button color="warn"
+                                (click)="onConsumptionRowDeleteButtonClick($event, row.consumption_id)"
+                                style="text-wrap: nowrap;">Delete
+                            </button>
                         </td>
                     </ng-container>
 
@@ -347,6 +352,10 @@
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
                         <td mat-cell *matCellDef="let row"> {{row.description}} </td>
                     </ng-container>
+                    <ng-container matColumnDef="consumption_id">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Consumption ID </th>
+                        <td mat-cell *matCellDef="let row"> {{ row.consumption_id ? row.consumption_id : 'record deleted' }} </td>
+                    </ng-container>
                     <ng-container matColumnDef="type">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
                         <td mat-cell *matCellDef="let row"><span class="cell-container"><span
@@ -367,7 +376,16 @@
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Suggestion </th>
                         <td mat-cell *matCellDef="let row"> {{row.suggestion}} </td>
                     </ng-container>
-
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef> Actions </th>
+                        <td mat-cell *matCellDef="let row">
+                            <button mat-stroked-button color="warn"
+                                (click)="onAlertRowDeleteButtonClick($event, row.id)"
+                                style="text-wrap: nowrap;">Delete
+                            </button>
+                        </td>
+                    </ng-container>
+                    
                     <!-- Row -->
                     <tr mat-header-row *matHeaderRowDef="columnsAlert"></tr>
                     <tr mat-row *matRowDef="let row; columns: columnsAlert;" (click)="onAlertRowClick(row)"></tr>

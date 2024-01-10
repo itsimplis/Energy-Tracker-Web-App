@@ -28,10 +28,16 @@ export class DataApiService {
     return this.http.delete<any>(`${this.baseUrl}/data/removeAlerts`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
+  // [DELETE] Remove a single alert
+  removeAlert(alert_id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/data/removeAlert/${alert_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
   // [POST] Add an alert for the user
-  addAlert(device_id: number | null, title: string, description: string, suggestion: string, date: string, type: string, read_status: string): Observable<any> {
+  addAlert(device_id: number | null, consumption_id: number | null = null, title: string, description: string, suggestion: string, date: string, type: string, read_status: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/data/addAlert`, {
       device_id: device_id,
+      consumption_id: consumption_id,
       title: title,
       description: description,
       suggestion: suggestion,
@@ -42,9 +48,10 @@ export class DataApiService {
   }
 
   // [POST] Add an alert for the user
-  addRegistrationAlert(device_id: number | null, username: string, title: string, description: string, suggestion: string, date: string, type: string, read_status: string): Observable<any> {
+  addRegistrationAlert(device_id: number | null, consumption_id: number | null = null, username: string, title: string, description: string, suggestion: string, date: string, type: string, read_status: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/data/addRegistrationAlert`, {
       device_id: device_id,
+      consumption_id: consumption_id,
       username: username,
       title: title,
       description: description,
@@ -147,6 +154,11 @@ export class DataApiService {
     return this.http.delete<any>(`${this.baseUrl}/data/removeAllDeviceConsumption/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
+  // [DELETE] Remove a single consumption record
+  removeConsumption(consumption_id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/data/removeConsumption/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
 
   //========================================
   // POWER READINGS API CALLS
@@ -172,12 +184,12 @@ export class DataApiService {
     return this.http.get<Blob>(`${this.baseUrl}/data/downloadAllConsumptionPowerReadings/${deviceId}`, { responseType: 'blob' as 'json', headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
-   // [GET] Download power readings as an Excel file for a specific consumption of device
-   downloadConsumptionPowerReadings(consumption_id: number): Observable<Blob> {
+  // [GET] Download power readings as an Excel file for a specific consumption of device
+  downloadConsumptionPowerReadings(consumption_id: number): Observable<Blob> {
     return this.http.get<Blob>(`${this.baseUrl}/data/downloadConsumptionPowerReadings/${consumption_id}`, { responseType: 'blob' as 'json', headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
-  
+
 
 
   //========================================

@@ -68,6 +68,7 @@ CREATE TABLE p.alert (
     id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR(100) REFERENCES p.user(username) ON DELETE CASCADE,
     device_id INT NULL REFERENCES p.device(id) ON DELETE CASCADE,
+    consumption_id INT NULL REFERENCES p.consumption(id),
     title VARCHAR(100),
     description VARCHAR(512),
     suggestion VARCHAR (512),
