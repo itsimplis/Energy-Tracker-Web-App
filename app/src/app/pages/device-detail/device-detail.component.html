@@ -185,7 +185,7 @@
                         <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'"
                             [results]="device_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                             [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-                            [gradient]="true" xAxisLabel="Day, Time" yAxisLabel="Power Draw (W)"
+                            [gradient]="true" xAxisLabel="Day - Hour" yAxisLabel="Power Draw (W)"
                             [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
                             [showRefLabels]="true">
                         </ngx-charts-line-chart>
@@ -199,7 +199,7 @@
                         <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'"
                             [results]="device_readings_daily" [xAxis]="true" [yAxis]="true" [legend]="true"
                             [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-                            [gradient]="true" xAxisLabel="Day, Time" yAxisLabel="Power Draw (W)"
+                            [gradient]="true" xAxisLabel="Day - Hour" yAxisLabel="Power Draw (W)"
                             [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
                             [showRefLabels]="true">
                         </ngx-charts-line-chart>
@@ -294,7 +294,7 @@
                 <div>
                     <ngx-charts-line-chart #timelineChart class="chart-container" [scheme]="colorScheme"
                         [results]="consumption_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
-                        [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Day, Time"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Date - Timeline"
                         yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisMin" [referenceLines]="chartRefLines"
                         [showRefLines]="true" [showRefLabels]="true" [timeline]="true">
                     </ngx-charts-line-chart>

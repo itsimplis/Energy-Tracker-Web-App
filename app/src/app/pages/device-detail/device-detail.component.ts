@@ -601,16 +601,20 @@ groupPowerReadingsByConsumptionPeriod(data: PowerReading[], aggregationType: 'su
   }
 
   // Add a 10% margin to yAxisMax for better visual clarity of peaks
-  getChartYAxisMaxValue(curren_consumption_peak: number): number {
-    var yAxisMaxValue = 0;
-    
-    if (curren_consumption_peak > this.details[0].custom_power_max) {
-      yAxisMaxValue = curren_consumption_peak + (0.1 * curren_consumption_peak);
+  getChartYAxisMaxValue(current_consumption_peak: number): number {
+    if (this.details && this.details[0]) {
+      let yAxisMaxValue = 0;
+  
+      if (current_consumption_peak > this.details[0].custom_power_max) {
+        yAxisMaxValue = current_consumption_peak + (0.1 * current_consumption_peak);
+      } else {
+        yAxisMaxValue = this.details[0].custom_power_max + (0.1 * this.details[0].custom_power_max);
+      }
+  
+      return yAxisMaxValue;
     } else {
-      yAxisMaxValue = this.details[0].custom_power_max + (0.1 * this.details[0].custom_power_max);
+      return current_consumption_peak;
     }
-
-    return yAxisMaxValue;
   }
 
   colorScheme: Color = {
