@@ -86,7 +86,7 @@
           <div *ngIf="totalPower && totalPower.length > 0; else noPowerReadingsContent">
             <ngx-charts-bar-vertical [results]="totalPower" [xAxis]="true" [yAxis]="true" [legend]="true"
               [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-              xAxisLabel="Device" yAxisLabel="Total Power (Watts)" (select)="onChartDeviceSelect($event)">
+              xAxisLabel="Device" yAxisLabel="Total Energy (kWh)" (select)="onChartDeviceSelect($event)">
             </ngx-charts-bar-vertical>
           </div>
         </div>
@@ -95,7 +95,7 @@
           <div *ngIf="totalPowerTypeGrouped && totalPowerTypeGrouped.length > 0; else noPowerReadingsContent">
             <ngx-charts-bar-vertical-stacked [results]="totalPowerTypeGrouped" [xAxis]="true" [yAxis]="true"
               [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-              [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)"
+              [gradient]="true" xAxisLabel="Device Type" yAxisLabel="Total Energy (kWh)"
               (select)="onChartDeviceSelect($event)">
             </ngx-charts-bar-vertical-stacked>
           </div>
@@ -105,7 +105,7 @@
           <div *ngIf="totalPowerCategoryGrouped && totalPowerCategoryGrouped.length > 0; else noPowerReadingsContent">
             <ngx-charts-bar-vertical-stacked [results]="totalPowerCategoryGrouped" [xAxis]="true" [yAxis]="true"
               [legend]="true" [legendTitle]="'Device List'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-              [gradient]="true" xAxisLabel="Category" yAxisLabel="Total Power (Watts)"
+              [gradient]="true" xAxisLabel="Device Category" yAxisLabel="Total Energy (kWh)"
               (select)="onChartDeviceSelect($event)">
             </ngx-charts-bar-vertical-stacked>
           </div>
@@ -181,7 +181,7 @@
         <div *ngIf="highestReadings && highestReadings.length > 0; else noPowerReadingsContent">
           <ngx-charts-line-chart class="line-chart-container" [results]="highestReadings" [xAxis]="true" [yAxis]="true"
             [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-            xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
+            xAxisLabel="Date - Timeline" yAxisLabel="Consumption (Watts)" [timeline]="true" (select)="onChartDeviceSelect($event)">
           </ngx-charts-line-chart>
         </div>
       </mat-card-content>
@@ -198,7 +198,7 @@
         <div *ngIf="lowestReadings && lowestReadings.length > 0; else noPowerReadingsContent">
           <ngx-charts-line-chart class="line-chart-container" [results]="lowestReadings" [xAxis]="true" [yAxis]="true"
             [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
-            xAxisLabel="Day" yAxisLabel="Consumption (Watts)" (select)="onChartDeviceSelect($event)">
+            xAxisLabel="Date - Timeline" yAxisLabel="Consumption (Watts)" [timeline]="true" (select)="onChartDeviceSelect($event)">
           </ngx-charts-line-chart>
         </div>
       </mat-card-content>

@@ -124,7 +124,7 @@ export class DashboardComponent implements OnInit {
           {
             name: device.device_name,
             series: data.map(item => ({
-              name: `${new Date(item.reading_timestamp as string).toLocaleDateString()}, ${(new Date(item.reading_timestamp as string).getHours()).toLocaleString()}:00`,
+              name: new Date(item.reading_timestamp),
               value: item.power as number,
               extra: {
                 code: device.device_id
@@ -146,7 +146,7 @@ export class DashboardComponent implements OnInit {
           {
             name: device.device_name,
             series: data.map(item => ({
-              name: `${new Date(item.reading_timestamp as string).toLocaleDateString()}, ${(new Date(item.reading_timestamp as string).getHours()).toLocaleString()}:00`,
+              name: new Date(item.reading_timestamp),
               value: item.power as number,
               extra: {
                 code: device.device_id

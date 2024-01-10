@@ -82,17 +82,17 @@
 
 :host ::ng-deep ngx-charts-pie-grid .label.percent-label {
     font-size: clamp(12px, 2.5vw, 25px) !important;
-    font-weight: 900;
+    font-weight: 200;
 }
 
 /* Targeting the category label (e.g., "Kitchen") */
 :host ::ng-deep ngx-charts-pie-grid .label:not(.percent-label) {
     font-size: clamp(10px, 1.2vw, 18px) !important;
-    font-weight: 300;
+    font-weight: 200;
 }
 
 :host ::ng-deep ngx-charts-pie-grid .label.ng-star-inserted:not(.percent-label) {
-    font-weight: 900;
+    font-weight: 200;
     display: none;
     //padding-top: 60px !important;
 }

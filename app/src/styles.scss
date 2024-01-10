@@ -25,8 +25,50 @@ body {
     margin-bottom: 0px;
 }
 
-ngx-charts-bar-vertical .x.axis text {
-    font-weight: bold !important;
+//Global chart X-Y Axis customization
+ngx-charts-bar-vertical .x.axis text:not(.tick .ng-star-inserted) {
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+
+ngx-charts-bar-vertical .y.axis text:not(.tick .ng-star-inserted) {
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+
+ngx-charts-bar-vertical-stacked .x.axis text:not(.tick .ng-star-inserted) {
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+
+ngx-charts-bar-vertical-stacked .y.axis text:not(.tick .ng-star-inserted) {
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+
+ngx-charts-bar-vertical-2d .x.axis text:not(.tick .ng-star-inserted) {
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+
+ngx-charts-bar-vertical-2d .y.axis text:not(.tick .ng-star-inserted) {
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+
+ngx-charts-line-chart .x.axis text:not(.tick .ng-star-inserted, .refline-label) {
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+
+ngx-charts-line-chart .y.axis text:not(.tick .ng-star-inserted, .refline-label) {
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+
+ngx-charts-line-chart text.refline-label {
+    font-weight: 600 !important;
+    font-size: 11px !important;
 }
 
 // Global rounded-label
