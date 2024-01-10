@@ -1146,9 +1146,9 @@ async def get_user_consumption_comparison_by_category(username: str = Depends(ge
             raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
-# Endpoint to get the average total power consumption per age group, measured in kilowatt-hours
-@router.get("/getAveragePowerConsumptionByAgeGroup")
-async def get_average_power_consumption_by_age_group():
+# Endpoint to get the average total energy consumption per age group, measured in kilowatt-hours
+@router.get("/getAverageEnergyConsumptionByAgeGroup")
+async def get_average_energy_consumption_by_age_group():
     with database_connection():
         try:
             keys = ["age_group", "average_total_power_consumption"]
@@ -1167,38 +1167,69 @@ async def get_average_power_consumption_by_age_group():
                 JOIN p.device ON p.user.username = p.device.user_username
                 JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
                 JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
-                WHERE p.user.visibility = 'public'
+                WHERE p.user.visibility = 'public' AND p.user.age <> ''
                 GROUP BY age_group
                 """)
             
-            json_data = convert_to_json(result, keys)
-
-            return json_data
+            if result is not None:
+                json_data = convert_to_json(result, keys)
+                return json_data
+            else:
+                return {"message": "No data found"}
         except HTTPException as e:
             raise e
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
-# Endpoint to get the average total power consumption per user, per gender, measured in kilowatt-hours (kWh)
-@router.get("/getAveragePowerConsumptionByGender")
-async def get_average_power_consumption_by_gender():
+# Endpoint to get the average total energy consumption per gender, measured in kilowatt-hours (kWh)
+@router.get("/getAverageEnergyConsumptionByGender")
+async def get_average_energy_consumption_by_gender():
     with database_connection():
         try:
             keys = ["gender", "average_total_power_consumption"]
             result = connector.execute("""
-                SELECT p.user.gender, SUM(p.power_reading.power) / COUNT(DISTINCT p.user.username) / 1000 AS average_total_power_consumption_kWh
+                SELECT p.user.gender, SUM(p.power_reading.power) / COUNT(DISTINCT p.user.username) / 1000 AS average_total_power_consumption
                 FROM p.user
                 JOIN p.device ON p.user.username = p.device.user_username
                 JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
                 JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
-                WHERE p.user.visibility = 'public'
+                WHERE p.user.visibility = 'public' AND p.user.gender <> ''
                 GROUP BY p.user.gender
                 """)
             
-            json_data = convert_to_json(result, keys)
-
-            return json_data
+            if result is not None:
+                json_data = convert_to_json(result, keys)
+                return json_data
+            else:
+                return {"message": "No data found"}
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
+# ===============================================================================================
+# Endpoint to get the average total energy consumption per country, measured in kilowatt-hours (kWh)
+@router.get("/getAverageEnergyConsumptionByCountry")
+async def get_average_energy_consumption_by_country():
+    with database_connection():
+        try:
+            keys = ["country", "average_total_power_consumption"]
+            result = connector.execute("""
+                SELECT p.user.country, SUM(p.power_reading.power) / COUNT(DISTINCT p.user.username) / 1000 AS average_total_power_consumption
+                FROM p.user
+                JOIN p.device ON p.user.username = p.device.user_username
+                JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
+                JOIN p.power_reading ON p.device_consumption.consumption_id = p.power_reading.consumption_id
+                WHERE p.user.visibility = 'public' AND p.user.country <> ''
+                GROUP BY p.user.country
+                """)
+            
+            if result is not None:
+                json_data = convert_to_json(result, keys)
+                return json_data
+            else:
+                return {"message": "No data found"}
         except HTTPException as e:
             raise e
         except Exception as e:

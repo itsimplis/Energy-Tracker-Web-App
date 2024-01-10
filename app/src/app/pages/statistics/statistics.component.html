@@ -43,7 +43,7 @@
                         *ngIf="userTotalPowerPerCategory && userTotalPowerPerCategory.length > 0; else noPowerReadingsContent">
                         <ngx-charts-bar-vertical-2d [results]="userTotalPowerPerCategory" [xAxis]="true" [yAxis]="true"
                             [gradient]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [legend]="true"
-                            [legendTitle]="'User'" xAxisLabel="Device Category" yAxisLabel="Total Energy (kWh)"
+                            [legendTitle]="'User'" xAxisLabel="Device Category" yAxisLabel="Total Power (kWh)"
                             [roundDomains]="true" [roundEdges]="true">
                         </ngx-charts-bar-vertical-2d>
                     </div>
@@ -72,7 +72,7 @@
             </mat-card>
         </div>
         <div class="age-gender-charts">
-            <!-- Average Power Consumption by Age Group Chart -->
+            <!-- Average Energy Consumption by Age Group Chart -->
             <mat-card class="dashboard-card-chart">
                 <mat-card-header>
                     <mat-card-title>Average Total Energy Consumption (kWh) - Per Age Group</mat-card-title>
@@ -81,16 +81,15 @@
                 <mat-card-content>
                     <br>
                     <div
-                        *ngIf="averagePowerConsumptionAgeGroup && averagePowerConsumptionAgeGroup.length > 0; else noPowerReadingsContent">
-                        <ngx-charts-pie-chart [results]="averagePowerConsumptionAgeGroup" [trimLabels]="false"
-                            [gradient]="true" [labels]="true" xAxisLabel="Age Group"
-                            yAxisLabel="Average Total Power (kWh)" [legend]="true" [legendTitle]="'Age Group'">
+                        *ngIf="averageEnergyConsumptionAgeGroup && averageEnergyConsumptionAgeGroup.length > 0; else noPowerReadingsContent">
+                        <ngx-charts-pie-chart [results]="averageEnergyConsumptionAgeGroup" [trimLabels]="false"
+                            [gradient]="true" [labels]="true" [legend]="true" [legendTitle]="'Age Group'">
                         </ngx-charts-pie-chart>
                     </div>
                 </mat-card-content>
             </mat-card>
 
-            <!-- Average Power Consumption by Gender Chart -->
+            <!-- Average Energy Consumption by Gender Chart -->
             <mat-card class="dashboard-card-chart">
                 <mat-card-header>
                     <mat-card-title>Average Total Energy Consumption (kWh) - Per Gender </mat-card-title>
@@ -99,10 +98,26 @@
                 <mat-card-content>
                     <br>
                     <div
-                        *ngIf="averagePowerConsumptionGender && averagePowerConsumptionGender.length > 0; else noPowerReadingsContent">
-                        <ngx-charts-pie-chart [results]="averagePowerConsumptionGender" [trimLabels]="false"
-                            [gradient]="true" [labels]="true" xAxisLabel="Gender" yAxisLabel="Average Total Power (kWh)"
-                            [legend]="true" [legendTitle]="'Gender'">
+                        *ngIf="averageEnergyConsumptionGender && averageEnergyConsumptionGender.length > 0; else noPowerReadingsContent">
+                        <ngx-charts-pie-chart [results]="averageEnergyConsumptionGender" [trimLabels]="false"
+                            [gradient]="true" [labels]="true" [legend]="true" [legendTitle]="'Gender'">
+                        </ngx-charts-pie-chart>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Average Energy Consumption by Country -->
+            <mat-card class="dashboard-card-chart">
+                <mat-card-header>
+                    <mat-card-title>Average Total Energy Consumption (kWh) - Per Country </mat-card-title>
+                    <mat-card-subtitle>Average total energy consumed per country</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <br>
+                    <div
+                        *ngIf="averageEnergyConsumptionCountry && averageEnergyConsumptionCountry.length > 0; else noPowerReadingsContent">
+                        <ngx-charts-pie-chart [results]="averageEnergyConsumptionCountry" [trimLabels]="false"
+                            [gradient]="true" [labels]="true" [legend]="true" [legendTitle]="'Country'">
                         </ngx-charts-pie-chart>
                     </div>
                 </mat-card-content>

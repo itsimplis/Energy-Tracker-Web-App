@@ -16,8 +16,9 @@ export class StatisticsComponent {
   totalPowerTypeGrouped: any[];
   averagePowerCategoryGrouped: any[];
   averagePowerTypeGrouped: any[];
-  averagePowerConsumptionAgeGroup: any[];
-  averagePowerConsumptionGender: any[];
+  averageEnergyConsumptionAgeGroup: any[];
+  averageEnergyConsumptionGender: any[];
+  averageEnergyConsumptionCountry: any[];
   highestReadings: any[];
   lowestReadings: any[];
   globalTopTenAveragePower: any[];
@@ -33,8 +34,9 @@ export class StatisticsComponent {
     this.totalPowerTypeGrouped = [];
     this.averagePowerCategoryGrouped = [];
     this.averagePowerTypeGrouped = [];
-    this.averagePowerConsumptionAgeGroup = [];
-    this.averagePowerConsumptionGender = [];
+    this.averageEnergyConsumptionAgeGroup = [];
+    this.averageEnergyConsumptionGender = [];
+    this.averageEnergyConsumptionCountry = [];
     this.lowestReadings = [];
     this.highestReadings = [];
     this.globalTopTenAveragePower = [];
@@ -47,8 +49,9 @@ export class StatisticsComponent {
     this.loadGlobalTopTenAveragePowerDrawDevices();
     this.loadTotalPowerConsumptionComparisonByCategory();
     this.loadTotalUsageComparisonByCategory();
-    this.loadAveragePowerConsumptionByAgeGroup();
-    this.loadAveragePowerConsumptionByGender();
+    this.loadAverageEnergyConsumptionByAgeGroup();
+    this.loadAverageEnergyConsumptionByGender();
+    this.loadAverageEnergyConsumptionByCountry();
   }
 
   loadDashboardCounters() {
@@ -108,10 +111,10 @@ export class StatisticsComponent {
     });
   }
 
-  loadAveragePowerConsumptionByAgeGroup() {
-    this.dataApiService.getAveragePowerConsumptionByAgeGroup().subscribe({
+  loadAverageEnergyConsumptionByAgeGroup() {
+    this.dataApiService.getAverageEnergyConsumptionByAgeGroup().subscribe({
       next: (data) => {
-        this.averagePowerConsumptionAgeGroup = data.map(item => ({
+        this.averageEnergyConsumptionAgeGroup = data.map(item => ({
           "name": item.age_group,
           "value": item.average_total_power_consumption
         }));
@@ -122,11 +125,25 @@ export class StatisticsComponent {
     });
   }
 
-  loadAveragePowerConsumptionByGender() {
-    this.dataApiService.getAveragePowerConsumptionByGender().subscribe({
+  loadAverageEnergyConsumptionByGender() {
+    this.dataApiService.getAverageEnergyConsumptionByGender().subscribe({
       next: (data) => {
-        this.averagePowerConsumptionGender = data.map(item => ({
+        this.averageEnergyConsumptionGender = data.map(item => ({
           "name": item.gender,
+          "value": item.average_total_power_consumption
+        }));
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  loadAverageEnergyConsumptionByCountry() {
+    this.dataApiService.getAverageEnergyConsumptionByCountry().subscribe({
+      next: (data) => {
+        this.averageEnergyConsumptionCountry = data.map(item => ({
+          "name": item.country,
           "value": item.average_total_power_consumption
         }));
       },
@@ -292,8 +309,9 @@ export class StatisticsComponent {
     this.loadGlobalTopTenAveragePowerDrawDevices();
     this.loadTotalPowerConsumptionComparisonByCategory();
     this.loadTotalUsageComparisonByCategory();
-    this.loadAveragePowerConsumptionByAgeGroup();
-    this.loadAveragePowerConsumptionByGender();
+    this.loadAverageEnergyConsumptionByAgeGroup();
+    this.loadAverageEnergyConsumptionByGender();
+    this.loadAverageEnergyConsumptionByCountry();
   }
 
   setTotalChartType(groupBy: string = 'deviceTotal') {

@@ -230,12 +230,17 @@ export class DataApiService {
   }
 
   // [GET] Get average power consumption by age group
-  getAveragePowerConsumptionByAgeGroup(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/data/getAveragePowerConsumptionByAgeGroup`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  getAverageEnergyConsumptionByAgeGroup(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getAverageEnergyConsumptionByAgeGroup`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
-  // [GET] Get average power consumption by gender
-  getAveragePowerConsumptionByGender(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/data/getAveragePowerConsumptionByGender`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  // [GET] Get average energy consumption by gender
+  getAverageEnergyConsumptionByGender(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getAverageEnergyConsumptionByGender`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
+  // [GET] Get average power consumption by country
+  getAverageEnergyConsumptionByCountry(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/data/getAverageEnergyConsumptionByCountry`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 }

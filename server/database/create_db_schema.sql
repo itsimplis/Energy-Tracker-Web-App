@@ -24,7 +24,7 @@ CREATE TABLE p.user (
 	first_name VARCHAR(100),
 	last_name VARCHAR(100),
 	age VARCHAR(3),
-	gender VARCHAR(10),
+	gender VARCHAR(30),
 	country VARCHAR(50),
     visibility VARCHAR(10),
     notifications VARCHAR(3)
