@@ -171,12 +171,28 @@
             <mat-divider></mat-divider>
             <br>
 
+            <h2>Cumulative Energy Consumption (kWh)</h2>
+            <div
+                *ngIf="device_readings_cumulative_kWh && device_readings_cumulative_kWh.length > 0; else noPowerReadingsContent">
+                <div>
+                    <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'"
+                        [results]="device_readings_cumulative_kWh" [xAxis]="true" [yAxis]="true" [legend]="true"
+                        [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
+                        [gradient]="true" xAxisLabel="Day" yAxisLabel="Cumulative Energy (kWh)" [autoScale]="true">
+                    </ngx-charts-line-chart>
+                </div>
+            </div>
+
+            <br>
+            <mat-divider></mat-divider>
+            <br>
+
             <h2>Power Draw (W)</h2>
             <!-- Consumption Chart -->
             <mat-button-toggle-group #group="matButtonToggleGroup" [value]="aggregation"
                 (valueChange)="setPowerReadingsChartType(group.value)" aria-label="Chart Type">
-                <mat-button-toggle value="none">Hourly</mat-button-toggle>
-                <mat-button-toggle value="average">Daily (Average)</mat-button-toggle>
+                <mat-button-toggle value="none">Hourly Readings</mat-button-toggle>
+                <mat-button-toggle value="average">Daily Readings (Average)</mat-button-toggle>
             </mat-button-toggle-group>
 
             <div *ngIf="this.aggregation == 'none'">
@@ -185,7 +201,7 @@
                         <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'"
                             [results]="device_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                             [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-                            [gradient]="true" xAxisLabel="Day - Hour" yAxisLabel="Power Draw (W)"
+                            [gradient]="true" xAxisLabel="Day - Hour" yAxisLabel="Power Draw (W)" [autoScale]="true"
                             [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
                             [showRefLabels]="true">
                         </ngx-charts-line-chart>
@@ -210,6 +226,7 @@
             <mat-divider></mat-divider>
             <br>
 
+            <h2>Imported Consumption Records</h2>
             <div class="table-toolbar">
                 <mat-form-field floatLabel="always">
                     <mat-label>Filter</mat-label>
@@ -225,7 +242,6 @@
                         <mat-icon>delete_sweep</mat-icon><span>Clear Device Consumption</span>
                     </button>
                 </div>
-
             </div>
 
             <!-- Consumption Table -->
@@ -250,9 +266,16 @@
                     <ng-container matColumnDef="power_max">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Power Draw Peak (W) </th>
                         <td mat-cell *matCellDef="let row"> <span class="cell-container"><span
-                                    [ngClass]="getTypeClassConsumption(row.power_max)"><mat-icon
-                                        class="cell-icon">{{getTypeIconConsumption(row.power_max)}}</mat-icon> {{
+                                    [ngClass]="getTypeClassPower(row.power_max)"><mat-icon
+                                        class="cell-icon">{{getTypeIconPower(row.power_max)}}</mat-icon> {{
                                     row.power_max}} W</span></span></td>
+                    </ng-container>
+                    <ng-container matColumnDef="energy_max">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Energy Consumption (kWh) </th>
+                        <td mat-cell *matCellDef="let row"> <span class="cell-container"><span
+                                    [ngClass]="getTypeClassEnergy(row.energy_max)"><mat-icon
+                                        class="cell-icon">{{getTypeIconEnergy(row.energy_max)}}</mat-icon> {{
+                                    row.energy_max}} kWh</span></span></td>
                     </ng-container>
                     <ng-container matColumnDef="files_names">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> File Name </th>
@@ -261,14 +284,16 @@
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef> Actions </th>
                         <td mat-cell *matCellDef="let row">
-                            <button mat-stroked-button color="primary"
-                                (click)="onConsumptionRowDownloadButtonClick($event, row.consumption_id, row.files_names)"
-                                style="text-wrap: nowrap;">Download Data 
-                            </button>
-                            <button mat-stroked-button color="warn"
-                                (click)="onConsumptionRowDeleteButtonClick($event, row.consumption_id)"
-                                style="text-wrap: nowrap;">Delete
-                            </button>
+                            <div class="consumption-row-buttons">
+                                <button mat-stroked-button color="primary"
+                                    (click)="onConsumptionRowDownloadButtonClick($event, row.consumption_id, row.files_names)"
+                                    style="text-wrap: nowrap;">Download Data
+                                </button>
+                                <button mat-stroked-button color="warn"
+                                    (click)="onConsumptionRowDeleteButtonClick($event, row.consumption_id)"
+                                    style="text-wrap: nowrap;">Delete
+                                </button>
+                            </div>
                         </td>
                     </ng-container>
 
@@ -291,22 +316,38 @@
             <mat-divider></mat-divider>
             <br>
 
-            <!-- Consumption Chart -->
-            <div *ngIf="consumption_readings && consumption_readings.length > 0; else noPowerReadingsContent">
-                <h3 align="left" class="rounded-label"> <strong>Device consumption for period: </strong> {{
+            <!-- Single Consumption Power Draw Chart -->
+            <div *ngIf="(consumption_readings && consumption_readings.length > 0) || (consumption_energy && consumption_energy.length > 0); else noPowerReadingsContent">
+                <h3 align="left" class="rounded-label"> <strong>Device power draw for period: </strong> {{
                     selectedStartDate |
                     date:'dd/MM/yyyy' }} - {{ selectedEndDate | date:'dd/MM/yyyy' }}</h3>
                 <div>
-                    <ngx-charts-line-chart #timelineChart class="chart-container" [scheme]="colorScheme"
+                    <ngx-charts-line-chart #timelineChartPower class="chart-container" [scheme]="colorScheme"
                         [results]="consumption_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                         [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Date - Timeline"
                         yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisMin" [referenceLines]="chartRefLines"
                         [showRefLines]="true" [showRefLabels]="true" [timeline]="true">
                     </ngx-charts-line-chart>
                 </div>
+
+                <br>
+                <!-- Single Consumption Cumulative EnergyChart -->
+                <h3 align="left" class="rounded-label"> <strong>Device cumulative energy consumption for period:
+                    </strong> {{
+                    selectedStartDate |
+                    date:'dd/MM/yyyy' }} - {{ selectedEndDate | date:'dd/MM/yyyy' }}</h3>
+                <div>
+                    <ngx-charts-line-chart #timelineChartEnergy class="chart-container" [scheme]="colorScheme"
+                        [results]="consumption_energy" [xAxis]="true" [yAxis]="true" [legend]="true"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Date - Timeline"
+                        yAxisLabel="Cumulative Energy (kWh)" [referenceLines]="chartRefLinesEnergy"
+                        [showRefLines]="true" [showRefLabels]="true" [timeline]="true" [yScaleMax]="chartEnergyYAxisMax">
+                    </ngx-charts-line-chart>
+                </div>
             </div>
             <ng-template #noPowerReadingsContent>
-                <h3 align="center" class="rounded-label">View timeline by selecting a consumption record from the table</h3>
+                <h3 align="center" class="rounded-label">View timeline by selecting a consumption record from the table
+                </h3>
             </ng-template>
         </div>
         <ng-template #noConsumptionsContent>
@@ -350,11 +391,12 @@
                     </ng-container>
                     <ng-container matColumnDef="description">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
-                        <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+                        <td mat-cell class="ellipsis-text" *matCellDef="let row"> {{row.description}} </td>
                     </ng-container>
-                    <ng-container matColumnDef="consumption_id">
+                    <ng-container matColumnDef="consumption_id_ref">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Consumption ID </th>
-                        <td mat-cell *matCellDef="let row"> {{ row.consumption_id ? row.consumption_id : 'record deleted' }} </td>
+                        <td mat-cell *matCellDef="let row"> {{ row.consumption_id ? row.consumption_id : 'record
+                            deleted' }} </td>
                     </ng-container>
                     <ng-container matColumnDef="type">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
@@ -374,18 +416,17 @@
                     </ng-container>
                     <ng-container matColumnDef="suggestion">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Suggestion </th>
-                        <td mat-cell *matCellDef="let row"> {{row.suggestion}} </td>
+                        <td mat-cell class="ellipsis-text" *matCellDef="let row"> {{row.suggestion}} </td>
                     </ng-container>
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef> Actions </th>
                         <td mat-cell *matCellDef="let row">
                             <button mat-stroked-button color="warn"
-                                (click)="onAlertRowDeleteButtonClick($event, row.id)"
-                                style="text-wrap: nowrap;">Delete
+                                (click)="onAlertRowDeleteButtonClick($event, row.id)" style="text-wrap: nowrap;">Delete
                             </button>
                         </td>
                     </ng-container>
-                    
+
                     <!-- Row -->
                     <tr mat-header-row *matHeaderRowDef="columnsAlert"></tr>
                     <tr mat-row *matRowDef="let row; columns: columnsAlert;" (click)="onAlertRowClick(row)"></tr>

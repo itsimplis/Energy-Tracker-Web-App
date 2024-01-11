@@ -12,11 +12,11 @@
 }
 
 .mat-row:nth-child(even) {
-    background-color: #f7f7f7; /* Light color for even rows */
+    background-color: #f7f7f7;
 }
 
 .mat-row:nth-child(odd) {
-    background-color: #ffffff; /* Keep white or set a different color for odd rows */
+    background-color: #ffffff;
 }
 
 .mat-mdc-row:hover {
@@ -90,8 +90,8 @@
 
   .cell-container {
     display: flex;
-    align-items: center; /* This will vertically center the items */
-    justify-content: flex-start; /* Align items to the start */
+    align-items: center;
+    justify-content: flex-start;
   }
 
   .cell-icon {

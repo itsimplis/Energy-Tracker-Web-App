@@ -17,27 +17,32 @@ import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.c
   styleUrls: ['./device-detail.component.scss']
 })
 export class DeviceDetailComponent implements OnInit {
-  @ViewChild('timelineChart') timelineChart!: LineChartComponent;
+  @ViewChild('timelineChartPower') timelineChartPower!: LineChartComponent;
+  @ViewChild('timelineChartEnergy') timelineChartEnergy!: LineChartComponent;
   private routeSubscription!: Subscription;
   private deviceAlertsSubscription!: Subscription;
 
   details: any[];
   consumptions: any[];
   consumption_readings: any[];
+  consumption_energy: any[];
   device_readings: any[];
   device_readings_daily: any[];
   device_readings_kWh: any[];
+  device_readings_cumulative_kWh: any[];
   alerts: any[];
   chartRefLines: any[];
+  chartRefLinesEnergy: any[];
   chartYAxisMin: number;
   chartYAxisGroupedMin: number;
+  chartEnergyYAxisMax: number;
   selectedStartDate: string | null = null;
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
   output: Output;
   aggregation: 'sum' | 'average' | 'none' = 'none';
-  columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'power_max', 'files_names', 'actions'];
-  columnsAlert: string[] = ['title', 'description', 'consumption_id', 'type', 'read_status', 'suggestion', 'date', 'actions'];
+  columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'power_max', 'energy_max', 'files_names', 'actions'];
+  columnsAlert: string[] = ['title', 'description', 'consumption_id_ref', 'type', 'read_status', 'suggestion', 'date', 'actions'];
   dataSourceConsumption!: MatTableDataSource<any[]>;
   dataSourceAlert!: MatTableDataSource<any[]>;
 
@@ -51,13 +56,17 @@ export class DeviceDetailComponent implements OnInit {
     this.details = [];
     this.consumptions = [];
     this.consumption_readings = [];
+    this.consumption_energy = [];
     this.device_readings = [];
     this.device_readings_daily = [];
     this.device_readings_kWh = [];
+    this.device_readings_cumulative_kWh = [];
     this.alerts = [];
     this.chartRefLines = [];
+    this.chartRefLinesEnergy = [];
     this.chartYAxisMin = 0;
     this.chartYAxisGroupedMin = 0;
+    this.chartEnergyYAxisMax = 0;
     this.output = { result: '', message: '' };
     this.aggregation = 'none';
   }
@@ -97,7 +106,17 @@ export class DeviceDetailComponent implements OnInit {
     this.dataApiService.getDevice(device_id).subscribe({
       next: (data) => {
         this.details = data;
-        this.chartRefLines = [{ "name": "Min Power Rating", "value": this.details[0]?.custom_power_min }, { "name": "Max Power Rating", "value": this.details[0]?.custom_power_max }];
+        if (this.details[0]?.power_alert_threshold == 0) {
+          this.chartRefLines = [{ "name": "Min Power Rating", "value": this.details[0]?.custom_power_min }, { "name": "Max Power Rating", "value": this.details[0]?.custom_power_max }];
+        } else {
+          this.chartRefLines = [{ "name": "Min Power Rating", "value": this.details[0]?.custom_power_min }, { "name": "User Threshold", "value": this.details[0]?.power_alert_threshold }, { "name": "Max Power Rating", "value": this.details[0]?.custom_power_max }];
+        }
+        if (this.details[0]?.energy_alert_threshold == 0) {
+          this.chartRefLinesEnergy = [];
+        } else {
+          this.chartRefLinesEnergy = [{ "name": "User Threshold", "value": this.details[0]?.energy_alert_threshold }];
+        }
+
       },
       error: (error) => {
         console.log(error);
@@ -110,6 +129,7 @@ export class DeviceDetailComponent implements OnInit {
       next: (data) => {
         this.consumptions = data;
         this.chartYAxisGroupedMin = this.getChartYAxisMaxValue(this.getHighestPowerPeak());
+        this.chartEnergyYAxisMax = this.getChartEnergyYAxisMaxValue(this.getConsumptionEnergyMax());
         this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
         this.dataSourceConsumption.data = this.consumptions;
         setTimeout(() => {
@@ -129,6 +149,7 @@ export class DeviceDetailComponent implements OnInit {
         this.device_readings = this.groupPowerReadingsByConsumptionPeriod(data, 'none');
         this.device_readings_daily = this.groupPowerReadingsByConsumptionPeriod(data, 'average');
         this.device_readings_kWh = this.groupPowerReadingsByPeriodkWh(data);
+        this.device_readings_cumulative_kWh = this.groupPowerReadingsForCumulativeEnergyChart(data);
       },
       error: (error) => {
         console.log(error);
@@ -208,6 +229,39 @@ export class DeviceDetailComponent implements OnInit {
     });
 
     return Object.values(groupedData);
+  }
+
+  groupPowerReadingsForCumulativeEnergyChart(data: PowerReading[]): any[] {
+    const groupedData: Record<string, { name: string; series: any[]; cumulativeEnergy: number }> = {};
+
+    data.forEach((reading: PowerReading) => {
+      const period = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
+      if (!groupedData[period]) {
+        groupedData[period] = { name: period, series: [], cumulativeEnergy: 0 };
+      }
+
+      const readingDate = new Date(reading.reading_timestamp as string);
+      const dayLabel = `Day ${readingDate.getDate()}`;
+
+      // Convert Watts to kWh for each reading
+      const energy = reading.power / 1000;
+
+      // Accumulate energy for the current day
+      groupedData[period].cumulativeEnergy += energy;
+
+      // Find or create the series item for the day
+      let daySeries = groupedData[period].series.find(s => s.name === dayLabel);
+      if (!daySeries) {
+        daySeries = { name: dayLabel, value: groupedData[period].cumulativeEnergy };
+        groupedData[period].series.push(daySeries);
+      } else {
+        // Update the cumulative value for the day
+        daySeries.value = groupedData[period].cumulativeEnergy;
+      }
+    });
+
+    // Format the output
+    return Object.values(groupedData).map(({ name, series }) => ({ name, series }));
   }
 
   applyFilterInConsumptions(event: Event) {
@@ -341,15 +395,17 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   onConsumptionRowClick(row: any) {
-
     this.selectedStartDate = row.start_date;
     this.selectedEndDate = row.end_date;
 
     this.dataApiService.getConsumptionPowerReadings(row.consumption_id).subscribe({
       next: (data: any[]) => {
+        let cumulativeEnergy = 0;
 
+        this.chartEnergyYAxisMax = this.getChartEnergyYAxisMaxValue(row.energy_max);
         this.chartYAxisMin = this.getChartYAxisMaxValue(row.power_max);
 
+        // Prepare data for power readings chart
         this.consumption_readings = [
           {
             name: 'Power Readings',
@@ -359,8 +415,33 @@ export class DeviceDetailComponent implements OnInit {
             }))
           }
         ];
-        if (this.timelineChart) {
-          this.timelineChart.filteredDomain = null;
+
+        // Prepare data for cumulative energy chart
+        this.consumption_energy = [
+          {
+            name: 'Cumulative Energy',
+            series: data.map(item => {
+              const readingTimestamp = new Date(item.reading_timestamp);
+
+              // Convert power in Watts to kWh (assuming each reading is for one hour)
+              const energyInKwh = item.power / 1000;
+
+              // Accumulate energy
+              cumulativeEnergy += energyInKwh;
+
+              return {
+                name: readingTimestamp,
+                value: cumulativeEnergy
+              };
+            })
+          }
+        ];
+
+        if (this.timelineChartPower) {
+          this.timelineChartPower.filteredDomain = null;
+        }
+        if (this.timelineChartEnergy) {
+          this.timelineChartEnergy.filteredDomain = null;
         }
       },
       error: (error) => {
@@ -515,6 +596,14 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
+  getConsumptionEnergyMax(): number {
+    if (this.consumptions && this.consumptions.length > 0) {
+      return Math.max(...this.consumptions.map(consumption => consumption.energy_max));
+    } else {
+      return 0;
+    }
+  }
+
   // Detail Customization
   getDeviceDisplayIcon(type: string): string {
     switch (type) {
@@ -574,8 +663,8 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
-  // Consumption Table Customization
-  getTypeClassConsumption(powerPeak: number): string {
+  // Consumption Table Power Draw Customization
+  getTypeClassPower(powerPeak: number): string {
     let type = '';
     let warn_threshold = 0;
 
@@ -588,7 +677,7 @@ export class DeviceDetailComponent implements OnInit {
       const power_range = custom_power_max - custom_power_min;
       const adjusted_threshold_percentage = default_warning_threshold_percentage * (power_range / custom_power_max);
       warn_threshold = custom_power_max * (1 - adjusted_threshold_percentage);
-      warn_threshold = Math.max(custom_power_min, warn_threshold); // Ensure not below min power
+      warn_threshold = Math.max(custom_power_min, warn_threshold);
     } else {
       warn_threshold = power_alert_threshold;
     }
@@ -609,7 +698,7 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
-  getTypeIconConsumption(powerPeak: number): string {
+  getTypeIconPower(powerPeak: number): string {
     let type = '';
     let warn_threshold = 0;
 
@@ -622,7 +711,7 @@ export class DeviceDetailComponent implements OnInit {
       const power_range = custom_power_max - custom_power_min;
       const adjusted_threshold_percentage = default_warning_threshold_percentage * (power_range / custom_power_max);
       warn_threshold = custom_power_max * (1 - adjusted_threshold_percentage);
-      warn_threshold = Math.max(custom_power_min, warn_threshold); // Ensure not below min power
+      warn_threshold = Math.max(custom_power_min, warn_threshold);
     } else {
       warn_threshold = power_alert_threshold;
     }
@@ -636,6 +725,57 @@ export class DeviceDetailComponent implements OnInit {
     }
 
     switch (type) {
+      case 'normal': return 'check_circle';
+      case 'warning': return 'warning';
+      case 'critical': return 'cancel';
+      default: return type;
+    }
+  }
+
+  // Consumption Table Energy Consumption Customization
+  getTypeClassEnergy(energyConsumption: number): string {
+    let type = '';
+
+    const energy_alert_threshold = this.details[0]?.energy_alert_threshold;
+    if (energy_alert_threshold == 0) {
+      type = 'info'
+    } else {
+      if ((energyConsumption >= energy_alert_threshold) && (energyConsumption < (energy_alert_threshold * 2))) {
+        type = 'warning'
+      } else if (energyConsumption >= (energy_alert_threshold * 2)) {
+        type = 'critical'
+      } else {
+        type = 'normal'
+      }
+    }
+
+    switch (type) {
+      case 'info': return 'informational-type';
+      case 'normal': return 'good-type';
+      case 'warning': return 'warning-type';
+      case 'critical': return 'critical-type';
+      default: return '';
+    }
+  }
+
+  getTypeIconEnergy(energyConsumption: number): string {
+    let type = '';
+
+    const energy_alert_threshold = this.details[0]?.energy_alert_threshold;
+    if (energy_alert_threshold == 0) {
+      type = 'info'
+    } else {
+      if ((energyConsumption >= energy_alert_threshold) && (energyConsumption < (energy_alert_threshold * 2))) {
+        type = 'warning'
+      } else if (energyConsumption >= (energy_alert_threshold * 2)) {
+        type = 'critical'
+      } else {
+        type = 'normal'
+      }
+    }
+
+    switch (type) {
+      case 'info': return 'info';
       case 'normal': return 'check_circle';
       case 'warning': return 'warning';
       case 'critical': return 'cancel';
@@ -660,6 +800,27 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
+  getChartEnergyYAxisMaxValue(current_consumption_energy_max: number): number {
+    if (this.details && this.details[0]) {
+      let yAxisEnergyMaxValue = 0;
+
+      if (this.details[0].energy_alert_threshold == 0) {
+        yAxisEnergyMaxValue = current_consumption_energy_max + (0.1 * current_consumption_energy_max);
+      } else {
+        if (this.details[0].energy_alert_threshold > current_consumption_energy_max) {
+          yAxisEnergyMaxValue = this.details[0].energy_alert_threshold + (0.1 * this.details[0].energy_alert_threshold);
+        } else {
+          yAxisEnergyMaxValue = current_consumption_energy_max + (0.1 * current_consumption_energy_max);
+
+        }
+      }
+
+      return yAxisEnergyMaxValue;
+    } else {
+      return current_consumption_energy_max;
+    }
+  }
+
   colorScheme: Color = {
     name: 'custom',
     selectable: true,
@@ -678,7 +839,7 @@ interface PowerReading {
 interface SeriesItem {
   name: string;
   value: number;
-  count?: number; // Optional count property for 'sum' and 'average' aggregation
+  count?: number;
 }
 
 interface GroupedDataItem {

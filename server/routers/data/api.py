@@ -396,9 +396,9 @@ async def get_device(device_id: int, username: str = Depends(get_current_user)):
 async def get_device_consumption(device_id: int, username: str = Depends(get_current_user)):
     try:
         with database_connection():
-            keys = ["consumption_id", "start_date", "end_date", "duration_days", "files_names", "power_max"]
+            keys = ["consumption_id", "start_date", "end_date", "duration_days", "files_names", "power_max", "energy_max"]
             result = connector.execute("""
-            SELECT p.consumption.id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.power_max
+            SELECT p.consumption.id, p.consumption.start_date, p.consumption.end_date, p.consumption.duration_days, p.consumption.files_names, p.consumption.power_max, p.consumption.energy_max
             FROM p.device
             JOIN p.device_consumption ON p.device.id = p.device_consumption.device_id
             JOIN p.consumption ON p.device_consumption.consumption_id = p.consumption.id
@@ -757,6 +757,8 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
 
                 interval_duration = (interval_end - current_interval_start).days
                 max_power_for_interval = 0
+                max_energy_for_interval = 0
+                energy_accumulated = 0
 
                 # Remove invalid characters from device_name
                 invalid_chars = "!@#$%^&*()[]{};:,/<>?\|`~=_+"
@@ -822,6 +824,15 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                             next_max = min(power_max_float, previous_power + max_change)
                             power = random.uniform(next_min, next_max)
 
+                    # Energy calculation (for hourly power redings)
+                    # Convert power (W) to energy (kWh) for one hour
+                    energy = power * 1 / 1000  
+                    energy_accumulated += energy
+
+                    # Update max energy if needed
+                    if energy_accumulated > max_energy_for_interval:
+                        max_energy_for_interval = energy_accumulated
+
                     connector.execute("""
                         INSERT INTO p.power_reading (consumption_id, reading_timestamp, power) 
                         VALUES (%s, %s, %s);
@@ -840,14 +851,15 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
 
                 # After generating power readings for the interval, update max_power in p.consumption
                 connector.execute("""
-                    UPDATE p.consumption SET power_max = %s WHERE p.consumption.id = %s
-                    """, (max_power_for_interval, consumption_id))
+                    UPDATE p.consumption SET power_max = %s, energy_max = %s WHERE p.consumption.id = %s
+                    """, (max_power_for_interval, max_energy_for_interval, consumption_id))
 
                 # Add the consumption_id to the list
                 consumption_ids.append(consumption_id)
                 
-                # Reset max_power_for_interval for the next interval
+                # Reset max_power_for_interval, max_energy_for_interval for the next interval
                 max_power_for_interval = 0
+                max_energy_for_interval = 0
             
             connector.commit()
             return {"message": "Consumption added successfully!", "consumption_ids": consumption_ids}

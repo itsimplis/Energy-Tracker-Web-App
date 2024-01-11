@@ -32,7 +32,7 @@
             <br>
 
             <div class="cards-container">
-                <mat-card *ngFor="let device of category.value" class="device-card">
+                <mat-card *ngFor="let device of category.value" class="device-card" (click)="onDeviceView(device.id)">
                     <!-- 3-dot but menu -->
                     <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button"
                         (click)="$event.stopPropagation()">

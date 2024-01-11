@@ -36,6 +36,7 @@ def init(no_data: bool):
             populate_device_consumption_table('consumption.csv', connector)
             populate_power_reading_table(connector)
             generate_alert_table(connector, 'athtech')
+            update_device_power_limits(connector)
             print("-- Data loaded successfully!")
             print("-- Database initialization finished!\n")
         except Exception as e:
@@ -292,11 +293,21 @@ def populate_device_consumption_table(data_file, conn):
 #-----------------------------------------------------------------------------------------------
 def process_csv_file(file_path):
     df = pd.read_csv(file_path)
-    
     df['timestamp'] = pd.to_datetime(df['timestamp'])
     df.set_index('timestamp', inplace=True)
 
-    resampled_df = df.resample('1H').mean()
+    # Remove zero values
+    #df_non_zero = df[df['power'] != 0]
+
+    # Outlier detection for low outliers only
+    #q1 = df_non_zero['power'].quantile(0.25)
+    #lower_bound = q1 - 1.5 * (q1 - df_non_zero['power'].quantile(0.05))
+
+    # Filter out low outliers
+    #filtered_df = df_non_zero[df_non_zero['power'] >= lower_bound]
+
+    # Resample and calculate the mean
+    resampled_df = df.resample('1H').mean().fillna(method='ffill')  # Forward fill for NaN values
 
     resampled_df.reset_index(inplace=True)
     readings = resampled_df.values.tolist()
@@ -320,13 +331,28 @@ def populate_power_reading_table(connector):
                 continue
 
             data_file_path = os.path.join(current_dir, file_name)
-            
+            max_energy_for_consumption = 0 # Track the total energy consumption
+            max_power_for_consumption = 0  # Track the maximum power
+
             try:
                 # Process the CSV file and get aggregated readings
                 readings = process_csv_file(data_file_path)
+                
+                # Sort readings by timestamp
+                sorted_readings = sorted(readings, key=lambda x: x[0])
 
                 # Prepare data for insertion
-                insert_data = [(consumption_id, reading[0], reading[1]) for reading in readings]
+                insert_data = []
+                total_energy = 0
+
+                # Loop through readings
+                for reading in sorted_readings:
+                    timestamp, power = reading[0], reading[1]
+                    insert_data.append((consumption_id, timestamp, power))
+                    energy = power / 1000  # Convert power to kWh for this reading
+                    total_energy += energy
+                    max_energy_for_consumption = max(max_energy_for_consumption, total_energy)
+                    max_power_for_consumption = max(max_power_for_consumption, power)  # Update max power
 
                 # Batch insert into power_reading table
                 query = "INSERT INTO p.power_reading (consumption_id, reading_timestamp, power) VALUES %s"
@@ -334,7 +360,14 @@ def populate_power_reading_table(connector):
                     extras.execute_values(cur, query, insert_data, page_size=1000)
                 connector.commit()
 
-                print(f"---- Inserted hourly power readings for consumption ID {consumption_id}")
+                # Update energy_max and power_max in p.consumption table
+                update_query = """
+                UPDATE p.consumption SET energy_max = %s, power_max = %s WHERE id = %s
+                """
+                connector.execute(update_query, (max_energy_for_consumption, max_power_for_consumption, consumption_id))
+                connector.commit()
+
+                print(f"---- Inserted hourly power readings and updated max values for consumption ID {consumption_id}")
 
             except FileNotFoundError:
                 print(f"File not found: '{data_file_path}'. Skipping.")
@@ -388,6 +421,32 @@ def generate_alert_table(conn, username):
     finally:
         conn.disconnect()
 
+# [DEVICE] Update device's power limits
+#-----------------------------------------------------------------------------------------------
+def update_device_power_limits(connector):
+    try:
+        connector.connect()
+        print("-- Updating device power limits...")
+
+        update_query = """
+        UPDATE p.device
+        SET custom_power_min = 0,
+            custom_power_max = (p.consumption.power_max * 1.1)
+        FROM p.consumption
+        JOIN p.device_consumption
+        ON p.consumption.id = p.device_consumption.consumption_id
+        WHERE p.device_consumption.device_id = p.device.id;
+        """
+        connector.execute(update_query)
+        connector.commit()
+
+        print("-- Device power limits updated successfully.")
+
+    except psycopg2.Error as e:
+        connector.rollback()
+        print(f"Error executing update: {e}")
+    finally:
+        connector.disconnect()
 
 # Call initialization
 init(args.no_data)

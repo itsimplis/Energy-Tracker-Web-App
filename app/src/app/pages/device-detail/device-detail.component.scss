@@ -23,13 +23,32 @@ th {
     background-color: #ffffff;
 }
 
-.mat-column-power_max {
-    min-width: 160px; 
+.mat-column-power_max, .mat-column-energy_max {
+    min-width: 190px; 
 }
+
+.mat-column-consumption_id_ref {
+    min-width: max-content;
+}
+
+.ellipsis-text {
+    max-width: 500px;
+    overflow: hidden !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 
 .mat-mdc-row:hover {
     background-color: whitesmoke !important;
     cursor: pointer !important;
+}
+
+.consumption-row-buttons {
+    display: flex;
+    justify-content: flex-start;
+    justify-items: flex-start;
+    align-items: center;
+    gap: 20px;
 }
 
 :host ::ng-deep .mat-expansion-panel-header-description {
