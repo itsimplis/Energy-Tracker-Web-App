@@ -28,7 +28,7 @@ Create a database with the following configuration:
 
 ## Python FastAPI server
 
-Run `python -m uvicorn server.min:app --reload` to start the python fastapi server.  
+Run `python -m uvicorn server.main:app --reload` to start the python fastapi server.  
 
 ## Angular server
 
