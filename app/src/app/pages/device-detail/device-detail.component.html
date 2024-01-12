@@ -188,7 +188,7 @@
             <br>
 
             <h2>Power Draw (W)</h2>
-            <!-- Consumption Chart -->
+            <!-- Power Draw Chart -->
             <mat-button-toggle-group #group="matButtonToggleGroup" [value]="aggregation"
                 (valueChange)="setPowerReadingsChartType(group.value)" aria-label="Chart Type">
                 <mat-button-toggle value="none">Hourly Readings</mat-button-toggle>
@@ -201,8 +201,8 @@
                         <ngx-charts-line-chart class="chart-container no-default-fill" [scheme]="'cool'"
                             [results]="device_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                             [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
-                            [gradient]="true" xAxisLabel="Day - Hour" yAxisLabel="Power Draw (W)" [autoScale]="true"
-                            [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
+                            [gradient]="true" xAxisLabel="Day - Hour" yAxisLabel="Power Draw (W)"
+                            [yScaleMax]="chartYAxisGroupedMax" [yScaleMin]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
                             [showRefLabels]="true">
                         </ngx-charts-line-chart>
                     </div>
@@ -216,7 +216,7 @@
                             [results]="device_readings_daily" [xAxis]="true" [yAxis]="true" [legend]="true"
                             [legendTitle]="'Consumption Period'" [showXAxisLabel]="true" [showYAxisLabel]="true"
                             [gradient]="true" xAxisLabel="Day - Hour" yAxisLabel="Power Draw (W)"
-                            [yScaleMax]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
+                            [yScaleMax]="chartYAxisGroupedMax" [yScaleMin]="chartYAxisGroupedMin" [referenceLines]="chartRefLines" [showRefLines]="true"
                             [showRefLabels]="true">
                         </ngx-charts-line-chart>
                     </div>
@@ -325,7 +325,7 @@
                     <ngx-charts-line-chart #timelineChartPower class="chart-container" [scheme]="colorScheme"
                         [results]="consumption_readings" [xAxis]="true" [yAxis]="true" [legend]="true"
                         [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" xAxisLabel="Date - Timeline"
-                        yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisMin" [referenceLines]="chartRefLines"
+                        yAxisLabel="Power Draw (W)" [yScaleMax]="chartYAxisMax" [yScaleMin]="chartYAxisMin" [referenceLines]="chartRefLines"
                         [showRefLines]="true" [showRefLabels]="true" [timeline]="true">
                     </ngx-charts-line-chart>
                 </div>

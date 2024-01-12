@@ -180,7 +180,7 @@
         <br>
         <div *ngIf="highestReadings && highestReadings.length > 0; else noPowerReadingsContent">
           <ngx-charts-line-chart class="line-chart-container" [results]="highestReadings" [xAxis]="true" [yAxis]="true"
-            [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" [scheme]="'cool'"
             xAxisLabel="Date - Timeline" yAxisLabel="Power Draw (W)" [timeline]="true" (select)="onChartDeviceSelect($event)">
           </ngx-charts-line-chart>
         </div>
@@ -197,7 +197,7 @@
         <br>
         <div *ngIf="lowestReadings && lowestReadings.length > 0; else noPowerReadingsContent">
           <ngx-charts-line-chart class="line-chart-container" [results]="lowestReadings" [xAxis]="true" [yAxis]="true"
-            [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true"
+            [legend]="true" [legendTitle]="'Device'" [showXAxisLabel]="true" [showYAxisLabel]="true" [gradient]="true" [scheme]="'ocean'"
             xAxisLabel="Date - Timeline" yAxisLabel="Power Draw (W)" [timeline]="true" (select)="onChartDeviceSelect($event)">
           </ngx-charts-line-chart>
         </div>

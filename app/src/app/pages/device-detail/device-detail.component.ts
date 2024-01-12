@@ -34,7 +34,9 @@ export class DeviceDetailComponent implements OnInit {
   chartRefLines: any[];
   chartRefLinesEnergy: any[];
   chartYAxisMin: number;
+  chartYAxisMax: number;
   chartYAxisGroupedMin: number;
+  chartYAxisGroupedMax: number;
   chartEnergyYAxisMax: number;
   selectedStartDate: string | null = null;
   selectedEndDate: string | null = null;
@@ -65,7 +67,9 @@ export class DeviceDetailComponent implements OnInit {
     this.chartRefLines = [];
     this.chartRefLinesEnergy = [];
     this.chartYAxisMin = 0;
+    this.chartYAxisMax = 0;
     this.chartYAxisGroupedMin = 0;
+    this.chartYAxisGroupedMax = 0;
     this.chartEnergyYAxisMax = 0;
     this.output = { result: '', message: '' };
     this.aggregation = 'none';
@@ -128,7 +132,7 @@ export class DeviceDetailComponent implements OnInit {
     this.dataApiService.getDeviceConsumption(device_id).subscribe({
       next: (data) => {
         this.consumptions = data;
-        this.chartYAxisGroupedMin = this.getChartYAxisMaxValue(this.getHighestPowerPeak());
+        this.chartYAxisGroupedMax = this.getChartYAxisMaxValue(this.getHighestPowerPeak());
         this.chartEnergyYAxisMax = this.getChartEnergyYAxisMaxValue(this.getConsumptionEnergyMax());
         this.dataSourceConsumption = new MatTableDataSource(this.consumptions);
         this.dataSourceConsumption.data = this.consumptions;
@@ -150,6 +154,7 @@ export class DeviceDetailComponent implements OnInit {
         this.device_readings_daily = this.groupPowerReadingsByConsumptionPeriod(data, 'average');
         this.device_readings_kWh = this.groupPowerReadingsByPeriodkWh(data);
         this.device_readings_cumulative_kWh = this.groupPowerReadingsForCumulativeEnergyChart(data);
+        this.chartYAxisGroupedMin = this.getChartYAxisMinValue(this.getLowestPowerDraw());
       },
       error: (error) => {
         console.log(error);
@@ -402,9 +407,6 @@ export class DeviceDetailComponent implements OnInit {
       next: (data: any[]) => {
         let cumulativeEnergy = 0;
 
-        this.chartEnergyYAxisMax = this.getChartEnergyYAxisMaxValue(row.energy_max);
-        this.chartYAxisMin = this.getChartYAxisMaxValue(row.power_max);
-
         // Prepare data for power readings chart
         this.consumption_readings = [
           {
@@ -436,6 +438,10 @@ export class DeviceDetailComponent implements OnInit {
             })
           }
         ];
+
+        this.chartEnergyYAxisMax = this.getChartEnergyYAxisMaxValue(row.energy_max);
+        this.chartYAxisMax = this.getChartYAxisMaxValue(row.power_max);
+        this.chartYAxisMin = this.getChartYAxisMinValue(this.getRowLowestPowerDraw());
 
         if (this.timelineChartPower) {
           this.timelineChartPower.filteredDomain = null;
@@ -496,17 +502,32 @@ export class DeviceDetailComponent implements OnInit {
 
   onConsumptionRowDeleteButtonClick(event: MouseEvent, consumption_id: number) {
     event.stopPropagation();
-    this.dataApiService.removeConsumption(consumption_id).subscribe({
-      next: (data) => {
-        this.output.result = 'success';
-        this.output.message = data.message;
-        this.alertService.showSnackBar(this.output.message);
-        const device_id = this.details[0]?.id;
-        this.loadDeviceConsumption(device_id);
-        this.loadDevicePowerReadings(device_id);
-        this.alertService.loadAlerts();
-        this.alertService.loadDeviceAlerts(device_id);
-        this.loadDeviceDetail(device_id);
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    dialogConfig.data = { title: 'Consumption Deletion', content: 'This will delete the selected consumption and any alerts related with it.' }
+    const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.dataApiService.removeConsumption(consumption_id).subscribe({
+            next: (data) => {
+              this.output.result = 'success';
+              this.output.message = data.message;
+              this.alertService.showSnackBar(this.output.message);
+              const device_id = this.details[0]?.id;
+              this.loadDeviceConsumption(device_id);
+              this.loadDevicePowerReadings(device_id);
+              this.alertService.loadAlerts();
+              this.alertService.loadDeviceAlerts(device_id);
+              this.loadDeviceDetail(device_id);
+            },
+            error: (error) => {
+              this.alertService.showSnackBar("An error occurred!");
+            }
+          });
+        } else {
+          this.alertService.showSnackBar("Alerts deletion was cancelled!");
+        }
       },
       error: (error) => {
         this.alertService.showSnackBar("An error occurred!");
@@ -591,6 +612,22 @@ export class DeviceDetailComponent implements OnInit {
   getHighestPowerPeak(): number {
     if (this.consumptions && this.consumptions.length > 0) {
       return Math.max(...this.consumptions.map(consumption => consumption.power_max));
+    } else {
+      return 0;
+    }
+  }
+
+  getLowestPowerDraw(): number {
+    if (this.device_readings && this.device_readings.length > 0) {
+      return Math.min(...this.device_readings.map(reading => reading.power));
+    } else {
+      return 0;
+    }
+  }
+
+  getRowLowestPowerDraw(): number {
+    if (this.consumption_readings && this.consumption_readings.length > 0) {
+      return Math.min(...this.consumption_readings.map(reading => reading.power));
     } else {
       return 0;
     }
@@ -783,15 +820,32 @@ export class DeviceDetailComponent implements OnInit {
     }
   }
 
-  // Add a 10% margin to yAxisMax for better visual clarity of peaks
+  // Add a 5% margin to yAxisMax for better visual clarity of peaks
+  getChartYAxisMinValue(lowest_power_draw: number): number {
+    if (this.details && this.details[0]) {
+      let yAxisMinValue = 0;
+
+      if (lowest_power_draw <= this.details[0].custom_power_min) {
+        yAxisMinValue = lowest_power_draw;
+      } else {
+        yAxisMinValue = this.details[0].custom_power_min;
+      }
+
+      return yAxisMinValue;
+    } else {
+      return lowest_power_draw;
+    }
+  }
+
+  // Add a 5% margin to yAxisMax for better visual clarity of peaks
   getChartYAxisMaxValue(current_consumption_peak: number): number {
     if (this.details && this.details[0]) {
       let yAxisMaxValue = 0;
 
       if (current_consumption_peak > this.details[0].custom_power_max) {
-        yAxisMaxValue = current_consumption_peak + (0.1 * current_consumption_peak);
+        yAxisMaxValue = current_consumption_peak + (0.05 * current_consumption_peak);
       } else {
-        yAxisMaxValue = this.details[0].custom_power_max + (0.1 * this.details[0].custom_power_max);
+        yAxisMaxValue = this.details[0].custom_power_max + (0.05 * this.details[0].custom_power_max);
       }
 
       return yAxisMaxValue;
@@ -805,12 +859,12 @@ export class DeviceDetailComponent implements OnInit {
       let yAxisEnergyMaxValue = 0;
 
       if (this.details[0].energy_alert_threshold == 0) {
-        yAxisEnergyMaxValue = current_consumption_energy_max + (0.1 * current_consumption_energy_max);
+        yAxisEnergyMaxValue = current_consumption_energy_max + (0.05 * current_consumption_energy_max);
       } else {
         if (this.details[0].energy_alert_threshold > current_consumption_energy_max) {
-          yAxisEnergyMaxValue = this.details[0].energy_alert_threshold + (0.1 * this.details[0].energy_alert_threshold);
+          yAxisEnergyMaxValue = this.details[0].energy_alert_threshold + (0.05 * this.details[0].energy_alert_threshold);
         } else {
-          yAxisEnergyMaxValue = current_consumption_energy_max + (0.1 * current_consumption_energy_max);
+          yAxisEnergyMaxValue = current_consumption_energy_max + (0.05 * current_consumption_energy_max);
 
         }
       }
