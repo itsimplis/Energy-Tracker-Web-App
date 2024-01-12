@@ -160,7 +160,8 @@ export class DevicesComponent implements OnInit {
     });
   }
 
-  onAddNewConsumption(device_id: number) {
+  onAddNewConsumption(event: MouseEvent, device_id: number) {
+    event.stopPropagation();
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
         this.dialogService.openImportDialog([]).subscribe(result => {});

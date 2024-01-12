@@ -319,6 +319,7 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   onAddNewConsumption(device_id: number) {
+    
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
         this.dialogService.openImportDialog([]).subscribe(result => { });
@@ -611,6 +612,7 @@ export class DeviceDetailComponent implements OnInit {
 
   getHighestPowerPeak(): number {
     if (this.consumptions && this.consumptions.length > 0) {
+      console.log(this.consumptions)
       return Math.max(...this.consumptions.map(consumption => consumption.power_max));
     } else {
       return 0;
@@ -619,7 +621,15 @@ export class DeviceDetailComponent implements OnInit {
 
   getLowestPowerDraw(): number {
     if (this.device_readings && this.device_readings.length > 0) {
-      return Math.min(...this.device_readings.map(reading => reading.power));
+      let allPowerValues: any[] = [];
+  
+      // Iterate over each group and extract all power values
+      this.device_readings.forEach(group => {
+        allPowerValues.push(...group.series.map((item: { value: any; }) => item.value));
+      });
+  
+      // Find the minimum power value from the extracted power values
+      return Math.min(...allPowerValues);
     } else {
       return 0;
     }
@@ -627,10 +637,14 @@ export class DeviceDetailComponent implements OnInit {
 
   getRowLowestPowerDraw(): number {
     if (this.consumption_readings && this.consumption_readings.length > 0) {
-      return Math.min(...this.consumption_readings.map(reading => reading.power));
-    } else {
-      return 0;
+      const series = this.consumption_readings[0].series;
+      if (series && series.length > 0) {
+        const lowestPower = Math.min(...series.map((item: { value: any; }) => item.value));
+        console.log(lowestPower);
+        return lowestPower;
+      }
     }
+    return 0;
   }
 
   getConsumptionEnergyMax(): number {
