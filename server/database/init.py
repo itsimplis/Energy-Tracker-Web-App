@@ -35,7 +35,7 @@ def init(no_data: bool):
             populate_device_table('consumption.csv', connector)
             populate_device_consumption_table('consumption.csv', connector)
             populate_power_reading_table(connector)
-            generate_alert_table(connector, 'athtech')
+            #generate_alert_table(connector, 'athtech')
             update_device_power_limits(connector)
             print("-- Data loaded successfully!")
             print("-- Database initialization finished!\n")
