@@ -41,6 +41,7 @@ export class DeviceDetailComponent implements OnInit {
   selectedStartDate: string | null = null;
   selectedEndDate: string | null = null;
   panelOpenState: boolean = false;
+  deviceConfigurationChanged: boolean = false;
   output: Output;
   aggregation: 'sum' | 'average' | 'none' = 'none';
   columnsConsumption: string[] = ['consumption_id', 'start_date', 'end_date', 'duration_days', 'power_max', 'energy_max', 'files_names', 'actions'];
@@ -292,14 +293,45 @@ export class DeviceDetailComponent implements OnInit {
       next: (data) => {
         this.dialogService.openEditDeviceDialog(data).subscribe(result => {
           if (result) {
+            this.deviceConfigurationChanged = this.checkForDeviceChanges(result);
             this.dataApiService.updateDevice(device_id, result.deviceCategory, result.deviceType, result.deviceName, result.alertEnergyThreshold, result.alertPowerThreshold, result.usageFrequency, result.customPowerMin, result.customPowerMax).subscribe({
               next: (data) => {
-                this.output.result = 'success';
-                this.output.message = data.message;
-                this.alertService.showSnackBar(this.output.message);
-                this.loadDeviceDetail(device_id);
-                this.loadDeviceConsumption(device_id);
-                this.alertService.loadAlerts();
+                if (this.deviceConfigurationChanged && this.consumptions.length > 0) {
+                  this.alertService.removeDeviceAlerts(device_id);
+                  this.dialogService.openImportDialog([]).subscribe(result => { });
+                  this.dialogService.updateMessages([{ text: "Re-analyzing consumption data...", showSpinner: true, showCheckIcon: false }]);
+                  // Create an array of observables for each consumption_id analysis
+                  const analysisObservables = this.consumptions.map((consumption: any) =>
+                    this.dataApiService.getPeakPowerAnalysis(consumption.consumption_id)
+                  );
+
+                  // Use forkJoin to wait for all observables to complete
+                  forkJoin(analysisObservables).subscribe({
+                    next: (analysisDataArray) => {
+                      // Aanalyses are completed
+                      this.alertService.loadAlerts();
+                      this.alertService.loadDeviceAlerts(device_id);
+                      this.loadDeviceDetail(device_id);
+                      this.output.result = 'success';
+                      this.output.message = data.message;
+                      this.alertService.showSnackBar(this.output.message);
+                      this.loadDeviceConsumption(device_id);
+                      this.loadDevicePowerReadings(device_id);
+                      this.dialogService.updateMessages([{ text: "Data re-analysis complete!", showSpinner: false, showCheckIcon: true }]);
+                    },
+                    error: (error) => {
+                      this.alertService.showSnackBar("An error occurred in analysis!");
+                      console.log(error);
+                    }
+                  });
+                } else {
+                  this.output.result = 'success';
+                  this.output.message = data.message;
+                  this.alertService.showSnackBar(this.output.message);
+                  this.loadDeviceDetail(device_id);
+                  this.loadDeviceConsumption(device_id);
+                  this.alertService.loadAlerts();
+                }
               },
               error: (error) => {
                 this.alertService.showSnackBar("An error occured!");
@@ -318,8 +350,22 @@ export class DeviceDetailComponent implements OnInit {
     })
   }
 
+  checkForDeviceChanges(result: any): boolean {
+
+    const custom_power_min = this.details[0]?.custom_power_min;
+    const custom_power_max = this.details[0]?.custom_power_max;
+    const power_alert_threshold = this.details[0]?.power_alert_threshold;
+    const energy_alert_threshold = this.details[0]?.energy_alert_threshold;
+
+    if ((result.alertEnergyThreshold != energy_alert_threshold) || (result.alertPowerThreshold != power_alert_threshold) || (result.customPowerMin != custom_power_min) || (result.customPowerMax != custom_power_max)) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   onAddNewConsumption(device_id: number) {
-    
+
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
         this.dialogService.openImportDialog([]).subscribe(result => { });
@@ -327,7 +373,6 @@ export class DeviceDetailComponent implements OnInit {
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
             this.dialogService.updateMessages([{ text: "Analyzing imported data...", showSpinner: true, showCheckIcon: false }]);
-
             // Create an array of observables for each consumption_id analysis
             const analysisObservables = data.consumption_ids.map((consumption_id: number) =>
               this.dataApiService.getPeakPowerAnalysis(consumption_id)
@@ -612,7 +657,6 @@ export class DeviceDetailComponent implements OnInit {
 
   getHighestPowerPeak(): number {
     if (this.consumptions && this.consumptions.length > 0) {
-      console.log(this.consumptions)
       return Math.max(...this.consumptions.map(consumption => consumption.power_max));
     } else {
       return 0;
@@ -622,12 +666,12 @@ export class DeviceDetailComponent implements OnInit {
   getLowestPowerDraw(): number {
     if (this.device_readings && this.device_readings.length > 0) {
       let allPowerValues: any[] = [];
-  
+
       // Iterate over each group and extract all power values
       this.device_readings.forEach(group => {
         allPowerValues.push(...group.series.map((item: { value: any; }) => item.value));
       });
-  
+
       // Find the minimum power value from the extracted power values
       return Math.min(...allPowerValues);
     } else {
@@ -814,12 +858,12 @@ export class DeviceDetailComponent implements OnInit {
 
     const energy_alert_threshold = this.details[0]?.energy_alert_threshold;
     if (energy_alert_threshold == 0) {
-      type = 'info'
+      type = 'normal'
     } else {
-      if ((energyConsumption >= energy_alert_threshold) && (energyConsumption < (energy_alert_threshold * 2))) {
+      if ((energyConsumption >= energy_alert_threshold) && (energyConsumption < (energy_alert_threshold * 3))) {
+        type = 'info'
+      } else if (energyConsumption >= (energy_alert_threshold * 3)) {
         type = 'warning'
-      } else if (energyConsumption >= (energy_alert_threshold * 2)) {
-        type = 'critical'
       } else {
         type = 'normal'
       }

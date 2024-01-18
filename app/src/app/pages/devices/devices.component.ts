@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Route, Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { AlertService } from 'src/app/service/alert.service';
 import { AuthenticationService } from 'src/app/service/authentication.service';
 import { DataApiService } from 'src/app/service/data-api.service';
@@ -17,15 +17,20 @@ import { forkJoin } from 'rxjs';
 
 export class DevicesComponent implements OnInit {
   devices: any[];
+  consumptions: any[];
+  alerts: any[];
   devicesByCategory: { [category: string]: any[] } = {};
   filterText: string = '';
   filteredDevicesByCategory: { [category: string]: any[] } = {};
   dialogRef!: DialogRef;
   panelOpenState: boolean = false;
+  deviceConfigurationChanged: boolean = false;
   output: Output;
 
-  constructor(private dataApiService: DataApiService, private authenticationService: AuthenticationService, private alertService: AlertService, private router: Router, private dialogService: DialogService) {
+  constructor(private dataApiService: DataApiService, private alertService: AlertService, private router: Router, private dialogService: DialogService) {
     this.devices = [];
+    this.consumptions = [];
+    this.alerts = [];
     this.output = { result: '', message: '' };
   }
 
@@ -75,6 +80,17 @@ export class DevicesComponent implements OnInit {
     });
   }
 
+  loadDeviceConsumption(device_id: number) {
+    this.dataApiService.getDeviceConsumption(device_id).subscribe({
+      next: (data) => {
+        this.consumptions = data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
   onAddNewDevice() {
     this.dialogService.openNewDeviceDialog().subscribe(result => {
       if (result) {
@@ -102,17 +118,47 @@ export class DevicesComponent implements OnInit {
   }
 
   onDeviceEdit(device_id: number) {
+    this.loadDeviceConsumption(device_id);
     this.dataApiService.getDevice(device_id).subscribe({
       next: (data) => {
         this.dialogService.openEditDeviceDialog(data).subscribe(result => {
           if (result) {
+            this.deviceConfigurationChanged = this.checkForDeviceChanges(result, device_id);
             this.dataApiService.updateDevice(device_id, result.deviceCategory, result.deviceType, result.deviceName, result.alertEnergyThreshold, result.alertPowerThreshold, result.usageFrequency, result.customPowerMin, result.customPowerMax).subscribe({
               next: (data) => {
-                this.output.result = 'success';
-                this.output.message = data.message;
-                this.alertService.showSnackBar(this.output.message);
-                this.loadDevices();
-                this.alertService.loadAlerts();
+                if (this.deviceConfigurationChanged && this.consumptions.length > 0) {
+                  this.alertService.removeDeviceAlerts(device_id);
+                  this.dialogService.openImportDialog([]).subscribe(result => { });
+                  this.dialogService.updateMessages([{ text: "Re-analyzing consumption data...", showSpinner: true, showCheckIcon: false }]);
+                  // Create an array of observables for each consumption_id analysis
+                  const analysisObservables = this.consumptions.map((consumption: any) =>
+                    this.dataApiService.getPeakPowerAnalysis(consumption.consumption_id)
+                  );
+
+                  // Use forkJoin to wait for all observables to complete
+                  forkJoin(analysisObservables).subscribe({
+                    next: (analysisDataArray) => {
+                      // Analyses are completed
+                      this.loadDevices();
+                      this.alertService.loadAlerts();
+                      this.alertService.loadDeviceAlerts(device_id);
+                      this.output.result = 'success';
+                      this.output.message = data.message;
+                      this.alertService.showSnackBar(this.output.message);
+                      this.dialogService.updateMessages([{ text: "Data re-analysis complete!", showSpinner: false, showCheckIcon: true }]);
+                    },
+                    error: (error) => {
+                      this.alertService.showSnackBar("An error occurred in analysis!");
+                      console.log(error);
+                    }
+                  });
+                } else {
+                  this.output.result = 'success';
+                  this.output.message = data.message;
+                  this.alertService.showSnackBar(this.output.message);
+                  this.loadDevices();
+                  this.alertService.loadAlerts();
+                }
               },
               error: (error) => {
                 this.alertService.showSnackBar("An error occured!");
@@ -210,11 +256,11 @@ export class DevicesComponent implements OnInit {
       if (result) {
         // Open the import dialog for all devices
         this.dialogService.openImportDialog([]).subscribe(result => { });
-  
+
         for (const device of this.devices) { // Assuming `this.devices` is your list of devices
           await this.processDeviceConsumptionForAll(device.id, result.startDate, result.endDate, result.durationDays);
         }
-  
+
         // Once all devices are processed, display completion message
         this.dialogService.updateMessages([{ text: "Data import and analysis complete for all devices!", showSpinner: false, showCheckIcon: true }]);
       } else {
@@ -222,21 +268,21 @@ export class DevicesComponent implements OnInit {
       }
     });
   }
-  
+
   processDeviceConsumptionForAll(device_id: number, startDate: string, endDate: string, durationDays: number) {
     return new Promise<void>((resolve, reject) => {
       // Update message for the current device
       this.dialogService.updateMessages([{ text: `Device ${device_id} - Batch importing data from files...`, showSpinner: true, showCheckIcon: false }]);
-      
+
       this.dataApiService.addConsumptionPowerReadings(device_id, startDate, endDate, durationDays).subscribe({
         next: (data) => {
           this.dialogService.updateMessages([{ text: `Device ${device_id} - Analyzing imported data...`, showSpinner: true, showCheckIcon: false }]);
-  
+
           // Create an array of observables for each consumption_id analysis
           const analysisObservables = data.consumption_ids.map((consumption_id: number) =>
             this.dataApiService.getPeakPowerAnalysis(consumption_id)
           );
-  
+
           // Use forkJoin to wait for all observables to complete
           forkJoin(analysisObservables).subscribe({
             next: (analysisDataArray) => {
@@ -265,10 +311,18 @@ export class DevicesComponent implements OnInit {
     });
   }
 
-  onClearDeviceConsumption(device_id: number) {
-    this.dataApiService.removeAllDeviceConsumption(device_id).subscribe({
+  checkForDeviceChanges(result: any, device_id: number): boolean {
 
-    })
+    const custom_power_min = (this.devices.find(d => d.id == device_id)).custom_power_min;
+    const custom_power_max = (this.devices.find(d => d.id == device_id)).custom_power_max;
+    const power_alert_threshold = (this.devices.find(d => d.id == device_id)).power_alert_threshold;
+    const energy_alert_threshold = (this.devices.find(d => d.id == device_id)).energy_alert_threshold;
+    result.alertEnergyThreshold, result.alertPowerThreshold, result.usageFrequency, result.customPowerMin, result.customPowerMax
+    if ((result.alertEnergyThreshold != energy_alert_threshold) || (result.alertPowerThreshold != power_alert_threshold) || (result.customPowerMin != custom_power_min) || (result.customPowerMax != custom_power_max)) {
+      return true
+    } else {
+      return false
+    }
   }
 
   applyFilter(event: Event) {
@@ -289,6 +343,36 @@ export class DevicesComponent implements OnInit {
 
   hasDevicesInCategory(category: string): boolean {
     return this.filteredDevicesByCategory[category]?.length > 0;
+  }
+
+  getTypeClassAlert(alert_level: string) {
+    switch (alert_level) {
+      case 'info': return 'informational-type'
+      case 'normal': return 'good-type';
+      case 'warning': return 'warning-type';
+      case 'critical': return 'critical-type';
+      default: return 'good-type';
+    }
+  }
+
+  getTypeIconAlert(alert_level: string): string {
+    switch (alert_level) {
+      case 'info': return 'info'
+      case 'normal': return 'check_circle';
+      case 'warning': return 'warning';
+      case 'critical': return 'cancel';
+      default: return 'check_circle';
+    }
+  }
+
+  getTypeTooltipAlert(alert_level: string): string {
+    switch (alert_level) {
+      case 'info': return 'Your device has informational alerts !'
+      case 'normal': return 'Your device looks good';
+      case 'warning': return 'Your device has warning alerts !';
+      case 'critical': return 'Your device has critical alerts !';
+      default: return 'check_circle';
+    }
   }
 }
 

@@ -166,7 +166,7 @@ def generate_alert_message(exceeded_peaks, non_exceeded_peaks, consumption_id, p
     return title, description, suggestion, type
 
 def generate_energy_alert_message(total_energy_consumption, energy_threshold, consumption_id):
-    if total_energy_consumption > energy_threshold:
+    if (total_energy_consumption > energy_threshold) and (total_energy_consumption <= (energy_threshold * 3)):
         title = "High Energy Consumption"
         type = 'I'
         description = (
@@ -180,6 +180,20 @@ def generate_energy_alert_message(total_energy_consumption, energy_threshold, co
             "can help in reducing energy consumption."
         )
         return title, description, suggestion, type
+    elif (total_energy_consumption > (energy_threshold * 3)):
+        title = "Too High Energy Consumption"
+        type = 'W'
+        description = (
+            f"Energy Consumption Notice: Your energy consumption of {total_energy_consumption:.2f} kWh for Consumption ID {consumption_id} "
+            f"has surpassed the set threshold of {energy_threshold:.2f} kWh. "
+            "This indicates an exceptionally higher than usual energy demand."
+        )
+        suggestion = (
+            "Immediate action is required due to the exceptionally high energy consumption. "
+            "Consider conducting a comprehensive energy audit to identify the primary sources of excessive usage. "
+            "Replacing old, energy-inefficient equipment with high-efficiency alternatives. "
+            "You may also seek professional advice on implementing an energy management system for more sustainable usage."
+        )
 
 # **************************************************************************************************** #
 # ALERTS ENDPOINTS #
@@ -342,12 +356,19 @@ async def get_device_types(device_category: str):
 async def get_devices(username: str = Depends(get_current_user)):
     try:
         with database_connection():
-            keys = ["id", "user_username", "device_type", "device_category", "device_name", "consumption_logs_count", "unread_alerts_count", "total_alerts_count"]
+            keys = ["id", "user_username", "device_type", "device_category", "device_name", "consumption_logs_count", "unread_alerts_count", "total_alerts_count", "custom_power_min", "custom_power_max", "energy_alert_threshold", "power_alert_threshold", "alert_level"]
             result = connector.execute("""
             SELECT p.device.id, p.device.user_username, p.device.device_type, p.device.device_category, p.device.device_name,
                 COALESCE(sub_consumption.consumption_count, 0) AS consumption_logs_count,
                 COALESCE(sub_alerts.unread_alerts_count, 0) AS unread_alerts_count,
-                COALESCE(sub_alerts.total_alerts_count, 0) AS total_alerts_count
+                COALESCE(sub_alerts.total_alerts_count, 0) AS total_alerts_count,
+                p.device.custom_power_min, p.device.custom_power_max, p.device.energy_alert_threshold, p.device.power_alert_threshold,
+                CASE
+                    WHEN EXISTS (SELECT 1 FROM p.alert WHERE device_id = p.device.id AND p.alert.type = 'C') THEN 'critical'
+                    WHEN EXISTS (SELECT 1 FROM p.alert WHERE device_id = p.device.id AND p.alert.type = 'W') THEN 'warning'
+                    WHEN EXISTS (SELECT 1 FROM p.alert WHERE device_id = p.device.id AND p.alert.type = 'I') THEN 'info'
+                    ELSE 'normal'
+                END AS alert_level
             FROM p.device
             LEFT JOIN (SELECT device_id, COUNT(*) AS consumption_count FROM p.device_consumption GROUP BY device_id) AS sub_consumption
                 ON p.device.id = sub_consumption.device_id
@@ -361,7 +382,7 @@ async def get_devices(username: str = Depends(get_current_user)):
             json_data = convert_to_json(result, keys)
 
         return json_data
-    except HTTPException:
+    except HTTPException as e:
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -62,13 +62,15 @@
                         <div mat-card-avatar class="device-icon">
                             <mat-icon>{{ getCategoryIcon(category.key) }}</mat-icon>
                         </div>
-                        <mat-card-title>{{ device.device_name }}</mat-card-title>
+                        <mat-card-title>{{ device.device_name }}<span
+                            [ngClass]="getTypeClassAlert(device.alert_level)"><mat-icon
+                                class="cell-icon" matTooltip={{getTypeTooltipAlert(device.alert_level)}} matTooltipPosition="above" >{{getTypeIconAlert(device.alert_level)}}</mat-icon></span></mat-card-title>
                         <mat-card-subtitle>{{ device.device_type }}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
                         <div class="count-container">
                             <div class="count-item consumption-logs" #tooltip="matTooltip"
-                                matTooltip="The number of consumptions recorded for this device"
+                                matTooltip="The number of consumptions records for this device"
                                 matTooltipPosition="right">
                                 <span class="count-label">Consumption Logs</span>
                                 <span class="count-value">{{ device.consumption_logs_count }}</span>

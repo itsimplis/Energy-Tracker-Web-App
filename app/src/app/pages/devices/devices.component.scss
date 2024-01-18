@@ -112,6 +112,38 @@ h3 {
     margin: 0px;
 }
 
+.informational-type,
+.good-type,
+.warning-type,
+.critical-type,
+.system-type,
+.read-type,
+.unread-type {
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+}
+
+.good-type {
+    color: rgb(26, 177, 26);
+}
+
+.informational-type {
+    color: blue;
+}
+
+.warning-type {
+    color: rgb(255, 129, 71);
+}
+
+.critical-type {
+    color: red;
+}
+
+.system-type {
+    color: gray;
+}
+
 @media (max-width: 768px) {
     .device-card {
         max-width: 100%;
