@@ -833,12 +833,12 @@ export class DeviceDetailComponent implements OnInit {
 
     const energy_alert_threshold = this.details[0]?.energy_alert_threshold;
     if (energy_alert_threshold == 0) {
-      type = 'info'
+      type = 'normal'
     } else {
       if ((energyConsumption >= energy_alert_threshold) && (energyConsumption < (energy_alert_threshold * 2))) {
-        type = 'warning'
+        type = 'info'
       } else if (energyConsumption >= (energy_alert_threshold * 2)) {
-        type = 'critical'
+        type = 'warning'
       } else {
         type = 'normal'
       }
