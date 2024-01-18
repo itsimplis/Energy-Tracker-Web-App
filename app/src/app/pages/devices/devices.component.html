@@ -7,10 +7,18 @@
             </mat-form-field>
         </div>
         <h1 style="flex: 1;"><strong>MY DEVICES</strong></h1>
-        <div class="add-device-button">
-            <button mat-raised-button color="primary" (click)="onAddNewDevice()">
-                <mat-icon>add</mat-icon><span>Add New Device</span>
+        <div class="manage-devices-button">
+            <button mat-raised-button color="primary" [matMenuTriggerFor]="menu">
+                <mat-icon>settings</mat-icon><span>Manage Devices</span>
             </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="onAddNewDevice()">
+                    <mat-icon>add_circle_outline</mat-icon><span>Add New Device</span>
+                </button>
+                <button mat-menu-item [disabled]="devices.length == 0" (click)="onAddNewConsumptionForAllDevices()">
+                    <mat-icon>power</mat-icon><span>Import All Consumption</span>
+                </button>
+            </mat-menu>
         </div>
     </div>
     <mat-divider></mat-divider>
@@ -23,7 +31,7 @@
                     <h3><strong>{{ category.key | uppercase }}</strong></h3>
                 </mat-panel-title>
                 <mat-panel-description>
-                    <h3><strong>{{ category.value.length }} devices</strong></h3>
+                    <h3><strong>devices: {{ category.value.length }}</strong></h3>
                     <mat-icon>{{ getCategoryIcon(category.key) }}</mat-icon>
                 </mat-panel-description>
             </mat-expansion-panel-header>
@@ -40,7 +48,7 @@
                     </button>
                     <mat-menu #menu="matMenu">
                         <button mat-menu-item (click)="onDeviceView(device.id)">
-                            <mat-icon>remove_red_eye</mat-icon><span>View</span>
+                            <mat-icon>remove_red_eye</mat-icon><span>Details</span>
                         </button>
                         <button mat-menu-item (click)="onDeviceEdit(device.id)">
                             <mat-icon>edit</mat-icon><span>Edit</span>

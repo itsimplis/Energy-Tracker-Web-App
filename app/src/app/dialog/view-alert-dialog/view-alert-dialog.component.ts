@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AlertService } from 'src/app/service/alert.service';
 
 @Component({
   selector: 'app-view-alert-dialog',
@@ -7,7 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./view-alert-dialog.component.scss']
 })
 export class ViewAlertDialogComponent {
-  constructor(private dialogRef: MatDialogRef<ViewAlertDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any){
+  constructor(private dialogRef: MatDialogRef<ViewAlertDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private alertService: AlertService){
     this.dialogRef.backdropClick().subscribe(() => {
       this.dialogRef.close(false);
     });
@@ -18,7 +19,8 @@ export class ViewAlertDialogComponent {
   }
 
   onMarkAsRead() {
-    this.dialogRef.close(true);
+    this.alertService.updateAlerts(this.data.id);
+    this.data.read_status = 'Y';
   }
 
   onViewDevice() {

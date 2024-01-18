@@ -60,7 +60,7 @@ export class DialogService {
 
   openImportDialog(data: any[]): Observable<any> {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '400px';
+    dialogConfig.width = '500px';
     dialogConfig.data = data;
     return this.openDialog(ImportDialogComponent, dialogConfig);
   }

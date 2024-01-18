@@ -164,17 +164,17 @@ export class DevicesComponent implements OnInit {
     event.stopPropagation();
     this.dialogService.openNewConsumptionDialog().subscribe(result => {
       if (result) {
-        this.dialogService.openImportDialog([]).subscribe(result => {});
+        this.dialogService.openImportDialog([]).subscribe(result => { });
         this.dialogService.updateMessages([{ text: "Batch importing data from files...", showSpinner: true, showCheckIcon: false }]);
         this.dataApiService.addConsumptionPowerReadings(device_id, result.startDate, result.endDate, result.durationDays).subscribe({
           next: (data) => {
             this.dialogService.updateMessages([{ text: "Analyzing imported data...", showSpinner: true, showCheckIcon: false }]);
-  
+
             // Create an array of observables for each consumption_id analysis
-            const analysisObservables = data.consumption_ids.map((consumption_id: number) => 
+            const analysisObservables = data.consumption_ids.map((consumption_id: number) =>
               this.dataApiService.getPeakPowerAnalysis(consumption_id)
             );
-  
+
             // Use forkJoin to wait for all observables to complete
             forkJoin(analysisObservables).subscribe({
               next: (analysisDataArray) => {
@@ -191,7 +191,7 @@ export class DevicesComponent implements OnInit {
                 console.log(error);
               }
             });
-  
+
           },
           error: (error) => {
             this.alertService.showSnackBar("An error occurred!");
@@ -204,9 +204,70 @@ export class DevicesComponent implements OnInit {
     });
   }
 
+  async onAddNewConsumptionForAllDevices() {
+    // Open the New Consumption Dialog once for all devices
+    this.dialogService.openNewConsumptionDialog().subscribe(async result => {
+      if (result) {
+        // Open the import dialog for all devices
+        this.dialogService.openImportDialog([]).subscribe(result => { });
+  
+        for (const device of this.devices) { // Assuming `this.devices` is your list of devices
+          await this.processDeviceConsumptionForAll(device.id, result.startDate, result.endDate, result.durationDays);
+        }
+  
+        // Once all devices are processed, display completion message
+        this.dialogService.updateMessages([{ text: "Data import and analysis complete for all devices!", showSpinner: false, showCheckIcon: true }]);
+      } else {
+        console.log("Addition of new consumption log cancelled!");
+      }
+    });
+  }
+  
+  processDeviceConsumptionForAll(device_id: number, startDate: string, endDate: string, durationDays: number) {
+    return new Promise<void>((resolve, reject) => {
+      // Update message for the current device
+      this.dialogService.updateMessages([{ text: `Device ${device_id} - Batch importing data from files...`, showSpinner: true, showCheckIcon: false }]);
+      
+      this.dataApiService.addConsumptionPowerReadings(device_id, startDate, endDate, durationDays).subscribe({
+        next: (data) => {
+          this.dialogService.updateMessages([{ text: `Device ${device_id} - Analyzing imported data...`, showSpinner: true, showCheckIcon: false }]);
+  
+          // Create an array of observables for each consumption_id analysis
+          const analysisObservables = data.consumption_ids.map((consumption_id: number) =>
+            this.dataApiService.getPeakPowerAnalysis(consumption_id)
+          );
+  
+          // Use forkJoin to wait for all observables to complete
+          forkJoin(analysisObservables).subscribe({
+            next: (analysisDataArray) => {
+              // Analyses are completed
+              this.alertService.loadAlerts();
+              this.loadDevices();
+              this.output.result = 'success';
+              this.output.message = data.message;
+              this.alertService.showSnackBar(this.output.message);
+              this.dialogService.updateMessages([{ text: "Data import and analysis complete!", showSpinner: false, showCheckIcon: true }]);
+              resolve();
+            },
+            error: (error) => {
+              this.alertService.showSnackBar("An error occurred in analysis!");
+              console.log(error);
+              reject(error);
+            }
+          });
+        },
+        error: (error) => {
+          this.alertService.showSnackBar("An error occurred!");
+          console.log(error);
+          reject(error);
+        }
+      });
+    });
+  }
+
   onClearDeviceConsumption(device_id: number) {
     this.dataApiService.removeAllDeviceConsumption(device_id).subscribe({
-      
+
     })
   }
 

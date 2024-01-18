@@ -1,6 +1,6 @@
-<h2 mat-dialog-title align="center">New Consumption Record
+<h2 mat-dialog-title align="center">Import Consumption
     <span>
-        <h4 class="dialog-subtitle"> Save the consumption over a time period for your device</h4>
+        <h4 class="dialog-subtitle"> Save the consumption over a time period for your device(s)</h4>
         <mat-divider></mat-divider>
     </span>
 </h2>
@@ -31,15 +31,16 @@
             <input matInput formControlName="durationDays" placeholder="Calculated Duration" readonly="true">
             <mat-hint align="start"><strong>Automatically calculated</strong></mat-hint>
         </mat-form-field>
-        <br>
+
+        <h2 align="center"> - or -</h2>
         <div class="file-input-container" hidden>
             <input #fileInput type="file" id="file" accept=".csv" (change)="onFileSelected($event)" hidden>
         </div>
         <mat-form-field class="example-form-field" floatLabel="always">
             <mat-label>Power Readings File</mat-label>
             <input #fileInput matInput type="text" [value]="fileName" readonly="true" (change)="onFileSelected($event)">
-            <mat-hint align="start"><strong>Choose the .csv file with the power readings for this
-                    consumption</strong></mat-hint>
+            <mat-hint align="start"><strong>Choose the .csv file with the power readings for a
+                    consumption period</strong></mat-hint>
             <button mat-button color="primary" style="margin-right: 10px;" mat-raised-button matSuffix
                 aria-label="Clear" (click)="fileInput.click()">
                 <mat-icon class="file-icon">file_open</mat-icon>

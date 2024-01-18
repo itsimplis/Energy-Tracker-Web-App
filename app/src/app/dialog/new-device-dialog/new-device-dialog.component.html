@@ -70,19 +70,17 @@
             </div>
             <mat-divider></mat-divider>
             <mat-form-field class="form-field" appearance="fill" floatLabel="always">
-                <mat-label>Energy Consumption Alert Threshold (kWh)</mat-label>
-                <input matInput formControlName="alertEnergyThreshold" type="number">
-                <span matSuffix class="numeric-percentage">kWh</span>
-                <mat-hint align="start"><strong>The energy consumption threshold for alerts (default: '0' = disabled)</strong></mat-hint>
-            </mat-form-field>
-
-            <mat-form-field class="form-field" appearance="fill" floatLabel="always">
                 <mat-label>Power Draw Threshold (W)</mat-label>
                 <input matInput formControlName="alertPowerThreshold" type="number">
                 <span matSuffix class="numeric-percentage">W</span>
                 <mat-hint align="start"><strong>The power draw threshold for warning alerts (default: '0' = disabled)</strong></mat-hint>
             </mat-form-field>
-
+            <mat-form-field class="form-field" appearance="fill" floatLabel="always">
+                <mat-label>Energy Consumption Threshold (kWh)</mat-label>
+                <input matInput formControlName="alertEnergyThreshold" type="number">
+                <span matSuffix class="numeric-percentage">kWh</span>
+                <mat-hint align="start"><strong>The monthly energy consumption threshold for alerts (default: '0' = disabled)</strong></mat-hint>
+            </mat-form-field>
         </div>
 
     </form>

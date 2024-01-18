@@ -143,9 +143,6 @@ export class AlertsComponent implements OnInit, OnDestroy {
         if (result == 'redirect') {
           this.onButtonClick(row.device_id);
         }
-        else if (result === true) {
-          this.alertService.updateAlerts(row.id);
-        }
       },
       error: (error) => {
         this.alertService.showSnackBar("An error occurred!");
