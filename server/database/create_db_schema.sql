@@ -45,8 +45,8 @@ CREATE TABLE p.device (
     device_type VARCHAR(100) NOT NULL REFERENCES p.device_type(type_name),
     device_category VARCHAR(50),
     device_name TEXT,
-    energy_alert_threshold NUMERIC(10, 1) DEFAULT 0.0,
-    power_alert_threshold NUMERIC(10, 1) DEFAULT 0.0,
+    energy_alert_threshold NUMERIC(10, 2) DEFAULT 0.00,
+    power_alert_threshold NUMERIC(10, 2) DEFAULT 0.00,
     usage_frequency CHAR(1) DEFAULT('N'),
     custom_power_min NUMERIC(10, 2),
     custom_power_max NUMERIC(10, 2)
