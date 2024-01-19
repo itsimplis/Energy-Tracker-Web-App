@@ -336,17 +336,14 @@ def populate_power_reading_table(connector):
 
             try:
                 # Process the CSV file and get aggregated readings
-                readings = process_csv_file(data_file_path)
-                
-                # Sort readings by timestamp
-                sorted_readings = sorted(readings, key=lambda x: x[0])
+                readings = process_csv_file(data_file_path)             
 
                 # Prepare data for insertion
                 insert_data = []
                 total_energy = 0
 
                 # Loop through readings
-                for reading in sorted_readings:
+                for reading in readings:
                     timestamp, power = reading[0], reading[1]
                     insert_data.append((consumption_id, timestamp, power))
                     energy = power / 1000  # Convert power to kWh for this reading
