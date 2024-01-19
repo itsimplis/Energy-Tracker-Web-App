@@ -312,7 +312,6 @@ export class DevicesComponent implements OnInit {
   }
 
   checkForDeviceChanges(result: any, device_id: number): boolean {
-
     const custom_power_min = (this.devices.find(d => d.id == device_id)).custom_power_min;
     const custom_power_max = (this.devices.find(d => d.id == device_id)).custom_power_max;
     const power_alert_threshold = (this.devices.find(d => d.id == device_id)).power_alert_threshold;
@@ -359,7 +358,7 @@ export class DevicesComponent implements OnInit {
     switch (alert_level) {
       case 'info': return 'info'
       case 'normal': return 'check_circle';
-      case 'warning': return 'warning';
+      case 'warning': return 'error';
       case 'critical': return 'cancel';
       default: return 'check_circle';
     }
@@ -368,7 +367,7 @@ export class DevicesComponent implements OnInit {
   getTypeTooltipAlert(alert_level: string): string {
     switch (alert_level) {
       case 'info': return 'Your device has informational alerts !'
-      case 'normal': return 'Your device looks good';
+      case 'normal': return 'Your device looks good !';
       case 'warning': return 'Your device has warning alerts !';
       case 'critical': return 'Your device has critical alerts !';
       default: return 'check_circle';

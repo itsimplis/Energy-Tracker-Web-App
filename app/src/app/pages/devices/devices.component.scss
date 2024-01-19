@@ -50,9 +50,7 @@
 
 .count-value {
     border-radius: 20px;
-    /* Gives a rounded shape */
     border: 2px solid;
-    /* Adjust border thickness */
     border-color: lightblue;
     background-color: lightblue;
     font-weight: bold;
@@ -95,6 +93,7 @@
     font-size: 40px;
     height: 40px;
     width: 40px;
+    margin-top: 5px;
 }
 
 .menu-button {
@@ -110,6 +109,19 @@ button {
 
 h3 {
     margin: 0px;
+}
+
+.icon-wrapper {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    box-shadow: 0 0 3px black;
+    padding: 1px;
+}
+
+.cell-icon {
+    font-size: 24px;
 }
 
 .informational-type,
