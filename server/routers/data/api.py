@@ -194,6 +194,7 @@ def generate_energy_alert_message(total_energy_consumption, energy_threshold, co
             "Replacing old, energy-inefficient equipment with high-efficiency alternatives. "
             "You may also seek professional advice on implementing an energy management system for more sustainable usage."
         )
+        return title, description, suggestion, type
 
 # **************************************************************************************************** #
 # ALERTS ENDPOINTS #
