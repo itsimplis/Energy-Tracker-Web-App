@@ -185,7 +185,7 @@ def generate_energy_alert_message(total_energy_consumption, energy_threshold, co
         type = 'W'
         description = (
             f"Energy Consumption Notice: Your energy consumption of {total_energy_consumption:.2f} kWh for Consumption ID {consumption_id} "
-            f"has surpassed the set threshold of {energy_threshold:.2f} kWh. "
+            f"has surpassed (3x) the set threshold of {energy_threshold:.2f} kWh. "
             "This indicates an exceptionally higher than usual energy demand."
         )
         suggestion = (
@@ -914,7 +914,8 @@ async def get_consumption_power_readings(consumption_id: int, username: str = De
             result = connector.execute("""
                 SELECT p.power_reading.reading_timestamp, p.power_reading.power
                 FROM p.power_reading
-                WHERE p.power_reading.consumption_id = %s""", (consumption_id,))
+                WHERE p.power_reading.consumption_id = %s
+                ORDER BY p.power_reading.reading_timestamp ASC""", (consumption_id,))
             json_data = convert_to_json(result, keys)
             
             return json_data
