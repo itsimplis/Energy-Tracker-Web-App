@@ -777,7 +777,7 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                 if interval_end > end_date:
                     interval_end = end_date
 
-                interval_duration = (interval_end - current_interval_start).days
+                interval_duration = (interval_end - current_interval_start).days +1;
                 max_power_for_interval = 0
                 max_energy_for_interval = 0
                 energy_accumulated = 0
