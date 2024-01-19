@@ -835,7 +835,7 @@ export class DeviceDetailComponent implements OnInit {
     if (energy_alert_threshold == 0) {
       type = 'normal'
     } else {
-      if ((energyConsumption >= energy_alert_threshold) && (energyConsumption < (energy_alert_threshold * 2))) {
+      if ((energyConsumption >= energy_alert_threshold) && (energyConsumption < (energy_alert_threshold * 3))) {
         type = 'info'
       } else if (energyConsumption >= (energy_alert_threshold * 2)) {
         type = 'warning'
