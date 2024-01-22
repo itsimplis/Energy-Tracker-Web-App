@@ -11,7 +11,7 @@ Run `cd app` to navigate to the app directory.
 Run `npm install @swimlane/ngx-charts d3` to install ngx-charts and D3.  
 Run `npm install @types/d3-shape @types/d3-scale @types/d3-selection` to install D3 Typescript definitions.  
 
-## Database initiliazation
+## Database initialiazation
 
 Make sure 'consumption.csv' file is present and placed under: `server\database\` folder.  
 Create a database with the following configuration:
