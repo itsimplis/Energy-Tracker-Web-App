@@ -30,6 +30,10 @@ export class DeviceDetailComponent implements OnInit {
   device_readings_daily: any[];
   device_readings_kWh: any[];
   device_readings_cumulative_kWh: any[];
+  totalKwhCost: number = 0;
+  averageKwhCost: number = 0;
+  costPerKwh: number = 0.14;
+  selectedPeriodKwh: { name: string, cost: number, change: number } | null = null;
   alerts: any[];
   chartRefLines: any[];
   chartRefLinesEnergy: any[];
@@ -219,11 +223,12 @@ export class DeviceDetailComponent implements OnInit {
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
   groupPowerReadingsByPeriodkWh(data: PowerReading[]): any[] {
     const groupedData: Record<string, any> = {};
+    this.totalKwhCost = 0;
 
     data.forEach((reading: PowerReading) => {
       const periodKey = `${new Date(reading.start_date as string).toLocaleDateString()} - ${new Date(reading.end_date as string).toLocaleDateString()}`;
       if (!groupedData[periodKey]) {
-        groupedData[periodKey] = { name: periodKey, value: 0 };
+        groupedData[periodKey] = { name: periodKey, value: 0, cost: 0 };
       }
       // Convert Watts to kWh for each reading
       groupedData[periodKey].value += reading.power / 1000; // Convert to kWh
@@ -232,7 +237,13 @@ export class DeviceDetailComponent implements OnInit {
     // Round the final kWh values for better readability
     Object.keys(groupedData).forEach(key => {
       groupedData[key].value = Number(groupedData[key].value.toFixed(2));
+      groupedData[key].cost = Number((groupedData[key].value * this.costPerKwh).toFixed(2));
+      this.totalKwhCost += groupedData[key].cost;
     });
+
+    // Calculate average cost
+    const numberOfPeriods = Object.keys(groupedData).length;
+    this.averageKwhCost = numberOfPeriods > 0 ? this.totalKwhCost / numberOfPeriods : 0;
 
     return Object.values(groupedData);
   }
@@ -931,6 +942,29 @@ export class DeviceDetailComponent implements OnInit {
     } else {
       return current_consumption_energy_max;
     }
+  }
+
+  calculateTotalAndAverageCosts() {
+    if (this.device_readings_kWh.length > 0) {
+      this.averageKwhCost = this.totalKwhCost / this.device_readings_kWh.length;
+    }
+  }
+
+  onPeriodSelection(event: any) {
+    const selectedPeriodData = this.device_readings_kWh.find(period => period.name === event.name);
+    if (selectedPeriodData) {
+      const percentageChange = this.averageKwhCost > 0 ? ((selectedPeriodData.cost - this.averageKwhCost) / this.averageKwhCost) * 100 : 0;
+      this.selectedPeriodKwh = {
+        name: selectedPeriodData.name,
+        cost: selectedPeriodData.cost,
+        change: percentageChange
+      };
+    } else {
+      this.selectedPeriodKwh = null;
+    }
+
+    console.log("Selected Period Data:", selectedPeriodData);
+    console.log("Percentage Change:", this.selectedPeriodKwh!.change);
   }
 
   colorScheme: Color = {
