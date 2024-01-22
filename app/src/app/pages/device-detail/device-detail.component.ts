@@ -32,7 +32,7 @@ export class DeviceDetailComponent implements OnInit {
   device_readings_cumulative_kWh: any[];
   totalKwhCost: number = 0;
   averageKwhCost: number = 0;
-  costPerKwh: number = 0.14;
+  costPerKwh: number = 0.12;
   selectedPeriodKwh: { name: string, cost: number, change: number } | null = null;
   alerts: any[];
   chartRefLines: any[];

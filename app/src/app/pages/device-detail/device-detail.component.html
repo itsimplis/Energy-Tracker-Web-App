@@ -159,7 +159,7 @@
                 <!-- Card for User Device Count -->
                 <mat-card class="dashboard-card">
                     <mat-card-header>
-                        <mat-card-title>Total Energy Cost</mat-card-title>
+                        <mat-card-title>Total Energy Cost (€)</mat-card-title>
                         <mat-card-subtitle>Total energy cost for all periods</mat-card-subtitle>
                         <div class="dashboard-card-data-container">
                             <h1 class="dashboard-card-data-number">{{ totalKwhCost | currency:'EUR'}}</h1>
@@ -170,8 +170,8 @@
                 </mat-card>
                 <mat-card class="dashboard-card">
                     <mat-card-header>
-                        <mat-card-title>Average Energy Cost</mat-card-title>
-                        <mat-card-subtitle>Average monthly energy cost of all periods</mat-card-subtitle>
+                        <mat-card-title>Average Energy Cost (€)</mat-card-title>
+                        <mat-card-subtitle>Average monthly energy cost for all periods</mat-card-subtitle>
                         <div class="dashboard-card-data-container">
                             <h1 class="dashboard-card-data-number">{{ averageKwhCost | currency:'EUR' }}</h1>
                         </div>
@@ -188,7 +188,7 @@
             <h2>Energy Consumption (kWh)</h2>
             <!-- Consumption Chart -->
             <div *ngIf="device_readings_kWh && device_readings_kWh.length > 0; else noPowerReadingsContent">
-                <div style="width: 90%;">
+                <div >
                     <ngx-charts-gauge class="chart-container" [scheme]="'cool'" [results]="device_readings_kWh"
                         [legend]="true" [legendTitle]="'Consumption Period'" [showAxis]="true" units="kWh"
                         [bigSegments]="10" [startAngle]="-100" [angleSpan]="200" [margin]="[20, 70, -100, 70]"
@@ -199,8 +199,8 @@
             <div class="cards-container" *ngIf="selectedPeriodKwh; else noSelectedPeriodKwh">
                 <mat-card class="dashboard-card">
                     <mat-card-header>
-                        <mat-card-title>{{ selectedPeriodKwh.name }}</mat-card-title>
-                        <mat-card-subtitle>Average monthly energy cost of all periods</mat-card-subtitle>
+                        <mat-card-title>Period Energy Cost (€)</mat-card-title>
+                        <mat-card-subtitle>Selected period: {{ selectedPeriodKwh.name }}</mat-card-subtitle>
                         <div class="dashboard-card-data-container">
                             <h1 class="dashboard-card-data-number">{{ selectedPeriodKwh.cost | currency:'EUR' }}</h1>
                         </div>
@@ -210,13 +210,12 @@
                 </mat-card>
                 <mat-card class="dashboard-card">
                     <mat-card-header>
-                        <mat-card-title>Change from Average</mat-card-title>
+                        <mat-card-title>Change from Average (%)</mat-card-title>
                         <mat-card-subtitle>Percentage difference from average for that period</mat-card-subtitle>
                         <div class="dashboard-card-data-container">
-                            <h1 class="dashboard-card-data-number"><span
-                                    [ngStyle]="{'color': selectedPeriodKwh.change > 0 ? 'red' : 'green'}">
-                                    ({{ selectedPeriodKwh.change | number:'1.0-2' }}%)
-                                </span></h1>
+                            <h1 class="dashboard-card-data-number"><span [ngStyle]="{'color': selectedPeriodKwh.change > 0 ? 'red' : 'green'}">
+                                {{ selectedPeriodKwh.change > 0 ? '+' : '' }}{{ selectedPeriodKwh.change | number:'1.0-2' }}%
+                            </span></h1>
                         </div>
                     </mat-card-header>
                     <mat-card-content>
