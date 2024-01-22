@@ -1,102 +1,116 @@
 .table-toolbar {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
 }
 
 .mat-card-table {
-    border: 10px solid rgb(227, 241, 246);
-    box-shadow: 0px 0px 8px rgba(52, 52, 108, 0.5);
-    overflow-x: auto;
+  border: 10px solid rgb(227, 241, 246);
+  box-shadow: 0px 0px 8px rgba(52, 52, 108, 0.5);
+  overflow-x: auto;
 }
 
 .mat-row:nth-child(even) {
-    background-color: #f7f7f7;
+  background-color: #f7f7f7;
 }
 
 .mat-row:nth-child(odd) {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .mat-mdc-row:hover {
-    background-color: whitesmoke !important;
-    cursor: pointer !important;
+  background-color: whitesmoke !important;
+  cursor: pointer !important;
 }
 
 .highlighted {
-    border: 2px solid #555;
-    box-shadow: 0px 0px 8px rgba(52, 52, 108, 0.99);
-    background-color: #f9f9f9;
+  border: 2px solid #555;
+  box-shadow: 0px 0px 8px rgba(52, 52, 108, 0.99);
+  background-color: #f9f9f9;
 }
 
 :host ::ng-deep.mat-mdc-card-content {
-    padding-left: 0px !important;
-    padding-bottom: 5px !important;
+  padding-left: 0px !important;
+  padding-bottom: 5px !important;
 }
 
 :host ::ng-deep.alert-icon .mat-icon {
-    height: 40px !important;
-    width: 40px !important;
-    margin-left: 10px !important;
+  height: 40px !important;
+  width: 40px !important;
+  margin-left: 10px !important;
 }
 
-.informational-type, .warning-type, .critical-type, .system-type, .read-type, .unread-type {
-    border: 1px solid;
-    border-radius: 6px;
-    padding-left: 10px;
-    padding-right: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.informational-type,
+.warning-type,
+.critical-type,
+.system-type,
+.read-type,
+.unread-type {
+  border: 1px solid;
+  border-radius: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 // Table Cell styling for alert types
 .informational-type {
-    border-color: rgba(0, 0, 255, 0.1);
-    background-color: rgba(0, 0, 255, 0.1);
-    color: blue;
-  }
-  
-  .warning-type {
-    border-color: rgba(255, 99, 71, 0.1);
-    background-color: rgba(255, 99, 71, 0.1);
-    color: tomato;
-  }
+  border-color: rgba(0, 0, 255, 0.1);
+  background-color: rgba(0, 0, 255, 0.1);
+  color: blue;
+}
 
-  .critical-type {
-    border-color: rgba(255, 0, 0, 0.1);
-    background-color: rgba(255, 0, 0, 0.1);
-    color: red;
-  }
-  
-  .system-type {
-    border-color: rgba(128, 128, 128, 0.1);
-    background-color: rgba(128, 128, 128, 0.1);;
-    color: gray;
-  }
+.warning-type {
+  border-color: rgba(255, 99, 71, 0.1);
+  background-color: rgba(255, 99, 71, 0.1);
+  color: tomato;
+}
 
-  .read-type {
-    border-color: rgba(128, 128, 128, 0.1);
-    background-color: rgba(128, 128, 128, 0.1);;
-    color: gray;
-  }
-  
-  .unread-type {
-    border-color: rgba(100, 148, 237, 0.1);
-    background-color: rgba(100, 148, 237, 0.1);
-    color: cornflowerblue;
-  }
+.critical-type {
+  border-color: rgba(255, 0, 0, 0.1);
+  background-color: rgba(255, 0, 0, 0.1);
+  color: red;
+}
 
-  .cell-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
+.system-type {
+  border-color: rgba(128, 128, 128, 0.1);
+  background-color: rgba(128, 128, 128, 0.1);
+  ;
+  color: gray;
+}
 
-  .cell-icon {
-    font-size: medium;
-    height: fit-content;
-    width: fit-content;
-    margin-right: 5px;
+.read-type {
+  border-color: rgba(128, 128, 128, 0.1);
+  background-color: rgba(128, 128, 128, 0.1);
+  ;
+  color: gray;
+}
+
+.unread-type {
+  border-color: rgba(100, 148, 237, 0.1);
+  background-color: rgba(100, 148, 237, 0.1);
+  color: cornflowerblue;
+}
+
+.cell-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.cell-icon {
+  font-size: medium;
+  height: fit-content;
+  width: fit-content;
+  margin-right: 5px;
+}
+
+.ellipsis-text {
+  max-width: 450px;
+  overflow: hidden !important;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

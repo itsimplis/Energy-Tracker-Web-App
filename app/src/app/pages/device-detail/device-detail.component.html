@@ -159,6 +159,17 @@
                 <!-- Card for User Device Count -->
                 <mat-card class="dashboard-card">
                     <mat-card-header>
+                        <mat-card-title>Total Energy Usage (kWh)</mat-card-title>
+                        <mat-card-subtitle>Total energy usage for all periods</mat-card-subtitle>
+                        <div class="dashboard-card-data-container">
+                            <h1 class="dashboard-card-data-number">{{ totalKwh | number:'1.2'}} kWh</h1>
+                        </div>
+                    </mat-card-header>
+                    <mat-card-content>
+                    </mat-card-content>
+                </mat-card>
+                <mat-card class="dashboard-card">
+                    <mat-card-header>
                         <mat-card-title>Total Energy Cost (€)</mat-card-title>
                         <mat-card-subtitle>Total energy cost for all periods</mat-card-subtitle>
                         <div class="dashboard-card-data-container">
@@ -187,46 +198,73 @@
 
             <h2>Energy Consumption (kWh)</h2>
             <!-- Consumption Chart -->
-            <div *ngIf="device_readings_kWh && device_readings_kWh.length > 0; else noPowerReadingsContent">
-                <div >
+            <div *ngIf="device_readings_kWh && device_readings_kWh.length > 0; else noPowerReadingsContent"
+                class="twin-gauge-container">
+                <div style="width: 50%; min-width: 300px; max-width: 650px;">
                     <ngx-charts-gauge class="chart-container" [scheme]="'cool'" [results]="device_readings_kWh"
-                        [legend]="true" [legendTitle]="'Consumption Period'" [showAxis]="true" units="kWh"
-                        [bigSegments]="10" [startAngle]="-100" [angleSpan]="200" [margin]="[20, 70, -100, 70]"
+                        [legend]="false" [legendTitle]="'Consumption Period'" [showAxis]="true" units="kWh"
+                        [bigSegments]="10" [startAngle]="-100" [angleSpan]="200" [margin]="[0, 60, -200, 60]" [valueFormatting]="valueFormat"
                         yAxisLabel="Consumption (Watts)" (select)="onPeriodSelection($event)">
                     </ngx-charts-gauge>
                 </div>
+                <div style="width: 50%; min-width: 300px; max-width: 600px;">
+                    <div class="cards-container" style="flex-direction: column;"
+                        *ngIf="selectedPeriodKwh; else noSelectedPeriodKwh">
+                        <div style="display: flex; ">
+                            <h3 align="center" class="rounded-label"><strong>Energy usage and cost for period: </strong>{{ selectedPeriodKwh.name }}
+                            </h3>
+                            <span><button mat-icon-button aria-label="Example icon button with a vertical three dot icon" (click)="onSelectedPeriodClose()">
+                                <mat-icon>close</mat-icon>
+                              </button></span>
+                        </div> 
+                        <mat-card class="dashboard-card">
+                            <mat-card-header>
+                                <mat-card-title>Energy Usage (kWh)</mat-card-title>
+                                <mat-card-subtitle>Energy usage for the selected period</mat-card-subtitle>
+                                <div class="dashboard-card-data-container">
+                                    <h1 class="dashboard-card-data-number">{{ selectedPeriodKwh.value}} kWh</h1>
+                                </div>
+                            </mat-card-header>
+                            <mat-card-content>
+                            </mat-card-content>
+                        </mat-card>
+                        <mat-card class="dashboard-card">
+                            <mat-card-header>
+                                <mat-card-title>Energy Cost (€)</mat-card-title>
+                                <mat-card-subtitle>Energy cost for the selected period</mat-card-subtitle>
+                                <div class="dashboard-card-data-container">
+                                    <h1 class="dashboard-card-data-number">{{ selectedPeriodKwh.cost | currency:'EUR' }}
+                                    </h1>
+                                </div>
+                            </mat-card-header>
+                            <mat-card-content>
+                            </mat-card-content>
+                        </mat-card>
+                        <mat-card class="dashboard-card">
+                            <mat-card-header>
+                                <mat-card-title>Fluctuation From Average (%)</mat-card-title>
+                                <mat-card-subtitle>Percentage difference from average for that
+                                    period</mat-card-subtitle>
+                                <div class="dashboard-card-data-container">
+                                    <h1 class="dashboard-card-data-number"><span
+                                            [ngStyle]="{'color': selectedPeriodKwh.change > 0 ? 'red' : 'limegreen'}">
+                                            {{ selectedPeriodKwh.change > 0 ? '+' : '' }}{{ selectedPeriodKwh.change |
+                                            number:'1.2' }}%
+                                        </span></h1>
+                                </div>
+                            </mat-card-header>
+                            <mat-card-content>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    <ng-template #noSelectedPeriodKwh>
+                        <h3 align="center" class="rounded-label">Select a consumption period from the meter<br> to
+                            view the energy cost for that period
+                        </h3>
+                    </ng-template>
+                </div>
             </div>
-            <div class="cards-container" *ngIf="selectedPeriodKwh; else noSelectedPeriodKwh">
-                <mat-card class="dashboard-card">
-                    <mat-card-header>
-                        <mat-card-title>Period Energy Cost (€)</mat-card-title>
-                        <mat-card-subtitle>Selected period: {{ selectedPeriodKwh.name }}</mat-card-subtitle>
-                        <div class="dashboard-card-data-container">
-                            <h1 class="dashboard-card-data-number">{{ selectedPeriodKwh.cost | currency:'EUR' }}</h1>
-                        </div>
-                    </mat-card-header>
-                    <mat-card-content>
-                    </mat-card-content>
-                </mat-card>
-                <mat-card class="dashboard-card">
-                    <mat-card-header>
-                        <mat-card-title>Change from Average (%)</mat-card-title>
-                        <mat-card-subtitle>Percentage difference from average for that period</mat-card-subtitle>
-                        <div class="dashboard-card-data-container">
-                            <h1 class="dashboard-card-data-number"><span [ngStyle]="{'color': selectedPeriodKwh.change > 0 ? 'red' : 'green'}">
-                                {{ selectedPeriodKwh.change > 0 ? '+' : '' }}{{ selectedPeriodKwh.change | number:'1.0-2' }}%
-                            </span></h1>
-                        </div>
-                    </mat-card-header>
-                    <mat-card-content>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-            <ng-template #noSelectedPeriodKwh>
-                <h3 align="center" class="rounded-label">Select a consumption period from the meter gauge, to view
-                    the energy cost for that period
-                </h3>
-            </ng-template>
+
             <br>
             <mat-divider></mat-divider>
             <br>

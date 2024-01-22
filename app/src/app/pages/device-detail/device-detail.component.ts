@@ -30,10 +30,11 @@ export class DeviceDetailComponent implements OnInit {
   device_readings_daily: any[];
   device_readings_kWh: any[];
   device_readings_cumulative_kWh: any[];
+  totalKwh: number = 0;
   totalKwhCost: number = 0;
   averageKwhCost: number = 0;
   costPerKwh: number = 0.12;
-  selectedPeriodKwh: { name: string, cost: number, change: number } | null = null;
+  selectedPeriodKwh: { name: string, value: number, cost: number, change: number } | null = null;
   alerts: any[];
   chartRefLines: any[];
   chartRefLinesEnergy: any[];
@@ -223,6 +224,7 @@ export class DeviceDetailComponent implements OnInit {
   // Group power readings by consumption period, and 'Day x' name value, to be using in the chart
   groupPowerReadingsByPeriodkWh(data: PowerReading[]): any[] {
     const groupedData: Record<string, any> = {};
+    this.totalKwh = 0;
     this.totalKwhCost = 0;
 
     data.forEach((reading: PowerReading) => {
@@ -238,6 +240,7 @@ export class DeviceDetailComponent implements OnInit {
     Object.keys(groupedData).forEach(key => {
       groupedData[key].value = Number(groupedData[key].value.toFixed(2));
       groupedData[key].cost = Number((groupedData[key].value * this.costPerKwh).toFixed(2));
+      this.totalKwh += groupedData[key].value;
       this.totalKwhCost += groupedData[key].cost;
     });
 
@@ -956,15 +959,21 @@ export class DeviceDetailComponent implements OnInit {
       const percentageChange = this.averageKwhCost > 0 ? ((selectedPeriodData.cost - this.averageKwhCost) / this.averageKwhCost) * 100 : 0;
       this.selectedPeriodKwh = {
         name: selectedPeriodData.name,
+        value: selectedPeriodData.value,
         cost: selectedPeriodData.cost,
         change: percentageChange
       };
     } else {
       this.selectedPeriodKwh = null;
     }
+  }
 
-    console.log("Selected Period Data:", selectedPeriodData);
-    console.log("Percentage Change:", this.selectedPeriodKwh!.change);
+  onSelectedPeriodClose() {
+    this.selectedPeriodKwh = null;
+  }
+
+  public valueFormat(dataItem: any): string {
+    return dataItem.toFixed(2);
   }
 
   colorScheme: Color = {
