@@ -13,10 +13,7 @@ Run `npm install @types/d3-shape @types/d3-scale @types/d3-selection` to install
 
 ## Database initialization
 
-Make sure 'consumption.csv' file is present and placed under: `server\database\` folder.  
-Download dataset from: https://www.kaggle.com/datasets/ecoco2/household-appliances-power-consumption?resource=download  
-Exctract all .csv files inside `server\database\` folder.  
-Create a database with the following configuration:
+Create a database configuration like the following:
 
     host="localhost",
     port=5432,
@@ -24,10 +21,19 @@ Create a database with the following configuration:
     user="postgres",
     password="password"
 
-* Run `python -m server.database.init` to create the database schema, and start loading it with data from the dataset.  
-  ( this process may take ~ 5-10 minutes depending on your machine )  
-* Otherwise, run `python -m server.database.init --no-data` to simply create the database schema without pre-loaded data.
+### To use the app without initial data:
 
+Run `python -m server.database.init --no-data` to simply create the database schema without pre-loaded data.  
+
+### To use the app with pre-filed data from the dataset:  
+
+Make sure 'consumption.csv' file is present and placed under: `server\database\` folder.  
+Download dataset from: https://www.kaggle.com/datasets/ecoco2/household-appliances-power-consumption?resource=download  
+Exctract all .csv files inside `server\database\` folder.  
+Run `python -m server.database.init` to create the database schema, and start loading it with data from the dataset.  
+( this process may take ~ 5-10 minutes depending on your machine )  
+
+  
 ## Python FastAPI server
 
 Run `python -m uvicorn server.main:app --reload` to start the python fastapi server.  
