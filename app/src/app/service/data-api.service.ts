@@ -154,6 +154,11 @@ export class DataApiService {
     return this.http.delete<any>(`${this.baseUrl}/data/removeAllDeviceConsumption/${device_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
   }
 
+    // [DELETE] Remove all consumption records for all devices of the user
+  removeAllUserConsumption(): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/data/removeAllUserConsumptions`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });
+  }
+
   // [DELETE] Remove a single consumption record
   removeConsumption(consumption_id: number): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/data/removeConsumption/${consumption_id}`, { headers: this.authenticationService.getAuthHeaders(), withCredentials: true });

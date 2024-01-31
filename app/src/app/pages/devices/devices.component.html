@@ -18,6 +18,9 @@
                 <button mat-menu-item [disabled]="devices.length == 0" (click)="onAddNewConsumptionForAllDevices()">
                     <mat-icon>power</mat-icon><span>Import All Consumption</span>
                 </button>
+                <button mat-menu-item [disabled]="devices.length == 0" (click)="onClearConsumptionForAllDevices()">
+                    <mat-icon>power_off</mat-icon><span>Clear All Consumption</span>
+                </button>
             </mat-menu>
         </div>
     </div>

@@ -5,7 +5,8 @@ import { AuthenticationService } from 'src/app/service/authentication.service';
 import { DataApiService } from 'src/app/service/data-api.service';
 import { DialogRef } from '@angular/cdk/dialog';
 import { DialogService } from 'src/app/service/dialog.service';
-import { MatDialogConfig } from '@angular/material/dialog';
+
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { BasicDialogComponent } from 'src/app/dialog/basic-dialog/basic-dialog.component';
 import { forkJoin } from 'rxjs';
 
@@ -27,7 +28,7 @@ export class DevicesComponent implements OnInit {
   deviceConfigurationChanged: boolean = false;
   output: Output;
 
-  constructor(private dataApiService: DataApiService, private alertService: AlertService, private router: Router, private dialogService: DialogService) {
+  constructor(private dataApiService: DataApiService, private alertService: AlertService, private router: Router, private dialogService: DialogService, private matDialog: MatDialog) {
     this.devices = [];
     this.consumptions = [];
     this.alerts = [];
@@ -308,6 +309,37 @@ export class DevicesComponent implements OnInit {
           reject(error);
         }
       });
+    });
+  }
+
+  onClearConsumptionForAllDevices() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '600px';
+    dialogConfig.data = { title: 'All Devices Consumption Deletion', content: 'This will clear all consumption records for all devices listed.' }
+    const dialogRef = this.matDialog.open(BasicDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result === true) {
+          this.dataApiService.removeAllUserConsumption().subscribe({
+            next: (data) => {
+              this.output.result = 'success';
+              this.output.message = data.message;
+              this.alertService.showSnackBar(this.output.message);
+              this.alertService.loadAlerts();
+              this.loadDevices();
+            }, error: (error) => {
+              this.alertService.showSnackBar("An error occurred!");
+              console.log(error);
+            }
+          })
+        } else {
+          this.alertService.showSnackBar("All devices consumption deletion was cancelled!");
+        }
+      },
+      error: (error) => {
+        this.alertService.showSnackBar("An error occurred!");
+      }
     });
   }
 

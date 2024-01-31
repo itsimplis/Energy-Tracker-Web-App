@@ -660,6 +660,42 @@ async def remove_all_device_consumption(device_id: int, username: str = Depends(
             raise HTTPException(status_code=500, detail=str(e))
 
 # ===============================================================================================
+# Endpoint to remove all consumption records for all devices of a specific user (and, optionally associated alerts)
+@router.delete("/removeAllUserConsumptions")
+async def remove_all_user_consumptions(username: str = Depends(get_current_user)):
+    with database_connection():
+        try:
+            # First, delete related alerts for all devices of the user
+            connector.execute("""
+                DELETE FROM p.alert 
+                WHERE consumption_id IN (
+                    SELECT p.consumption.id FROM p.consumption
+                    JOIN p.device_consumption ON p.consumption.id = p.device_consumption.consumption_id
+                    JOIN p.device ON p.device_consumption.device_id = p.device.id
+                    WHERE p.device.user_username = %s
+                )""",
+                (username,)
+            )
+
+            # Then, delete all consumption records for all devices of the user
+            connector.execute("""
+                DELETE FROM p.device_consumption 
+                WHERE device_id IN (
+                    SELECT id FROM p.device WHERE user_username = %s
+                )""",
+                (username,)
+            )
+
+            connector.commit()
+            return {"message": "All consumption records and related alerts have been cleared!"}
+
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            connector.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
+
+# ===============================================================================================
 # Endpoint to add a device to user's devices
 @router.post("/addDevice")
 async def add_device(data: DeviceData, username: str = Depends(get_current_user)):
@@ -794,12 +830,23 @@ def generate_power_readings(data: AddConsumptionPowerReadings, username: str = D
                 # Define the file name with underscores and the correct file extension
                 file_name = f"{formatted_device_name}_{start_date_formatted}_{end_date_formatted}.csv"
                 
-                # Create a new consumption record for the interval
-                connector.execute("""
+                # Create a new consumption record for the interval and get the ID
+                insert_consumption_query = """
                     INSERT INTO p.consumption (start_date, end_date, duration_days, device_type, device_category, device_name, files_names) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    """, (current_interval_start, interval_end, interval_duration, device_type, device_category, device_name, file_name))
-                consumption_id = connector.execute("SELECT LASTVAL();")[0][0]
+                    VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id;
+                """
+                try:
+                    result = connector.execute(insert_consumption_query, (current_interval_start, interval_end, interval_duration, device_type, device_category, device_name, file_name))
+                    if result is not None and len(result) > 0:
+                        consumption_id = result[0][0]
+                    else:
+                        print("No ID returned from the consumption insert query")
+                        connector.rollback()
+                        return
+                except Exception as e:
+                    connector.rollback()
+                    print(f"Error inserting consumption record: {e}")
+                    raise HTTPException(status_code=500, detail=str(e))
 
                 # Link the consumption record with the device
                 connector.execute("""
