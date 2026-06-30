@@ -1,7 +1,3 @@
-# AthTech-Msc-Dissertation
-
-Dissertation Project
-
 ## Preparation
 Install node.js  
 Install python.  
